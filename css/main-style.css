@@ -5,20 +5,20 @@ body {
   font-family: 'Segoe UI', Arial, sans-serif;
 }
 
-/* Bonnet (banner) styles */
+/* Bonnet/banner styles (square, opacity, spacing) */
 .bonnet {
-  width: calc(100vw - 32px);    /* 16px spacing on each side */
-  height: 160px;                /* Square shape, adjust as needed */
-  margin: 16px auto 0 auto;     /* Top margin 16px, centers horizontally */
-  background: rgba(255,255,255,0.70); /* Opacity, change 0.90 as needed */
+  width: calc(100vw - 32px);
+  height: 160px;
+  margin: 18px auto 0 auto;
+  background: rgba(255, 182, 213, 0.90); /* soft pink, adjustable opacity */
   border-radius: 24px;
-  box-shadow: 0 8px 24px #d4006f22;
+  box-shadow: 0 0 0 8px rgba(255,182,213,0.14), 0 8px 32px 0 #d4006f22;
   font-weight: bold;
   font-size: 2.4rem;
   color: #d4006f;
   text-align: center;
   letter-spacing: 0.02em;
-  padding: 24px;                /* Space inside box for text */
+  padding: 30px 30px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -36,17 +36,20 @@ body {
 
 /* Main rectangle styles */
 .center-rectangle {
-  background: rgba(255,255,255,0.30); /* Opacity, change 0.88 as needed */
-  border-radius: 32px;
-  box-shadow: 0 6px 32px #d4006f22;
-  max-width: 480px;
+  background: linear-gradient(135deg, #ffb6d5 0%, #ff69b4 100%);
+  border-radius: 24px;
+  box-shadow: 0 0 0 8px rgba(255,182,213,0.13), 0 8px 32px 0 #d4006f22;
+  max-width: 900px;
   margin: 3em auto;
   padding: 2.3em 2em;
-  text-align: center;
+  text-align: left;
   min-height: 180px;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
+  color: #fff;
+  position: relative;
+  z-index: 1;
 }
 
 @media (max-width: 500px) {
@@ -54,6 +57,5 @@ body {
     max-width: 96vw;
     padding: 1.2em 0.7em;
     border-radius: 18px;
-    background: rgba(255,255,255,0.30); /* Opacity for mobile */
   }
 }
