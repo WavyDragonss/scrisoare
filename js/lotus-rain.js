@@ -9,18 +9,17 @@ const MAX_OPACITY = parseFloat(lotusRainBg.dataset.opacity) || 1.0;
 
 const lotusEmojis = [];
 
-// Utility to create a stylized lotus petal
+// Utility to create a lotus flower
 function createLotus(index) {
   const lotus = document.createElement('span');
+  lotus.textContent = '🌸';
   lotus.className = 'lotus-flower';
-  // For petal shape, use CSS background and border-radius
+  lotus.style.position = 'absolute';
   lotus.style.left = `${Math.random() * (screenW - 32)}px`;
   lotus.style.top = `${-Math.random() * 80}px`;
   const size = 22 + Math.random() * 18;
-  lotus.style.width = lotus.style.height = `${size}px`;
+  lotus.style.fontSize = `${size}px`;
   lotus.style.opacity = MAX_OPACITY;
-  // Random rotation for variety
-  lotus.style.transform = `rotate(${Math.random() * 360}deg)`;
   lotusRainBg.appendChild(lotus);
   lotusEmojis.push({ 
     el: lotus, 
@@ -34,7 +33,7 @@ for (let i = 0; i < NUM_LOTUS; i++) {
   createLotus(i);
 }
 
-// Animate the petals
+// Animate the lotus flowers
 function animateLotusRain() {
   for (const lotus of lotusEmojis) {
     const el = lotus.el;
@@ -55,9 +54,8 @@ function animateLotusRain() {
       el.style.left = `${Math.random() * (window.innerWidth - 32)}px`;
       el.style.top = `${-Math.random() * 80}px`;
       const size = 22 + Math.random() * 18;
-      el.style.width = el.style.height = `${size}px`;
+      el.style.fontSize = `${size}px`;
       lotus.speed = (1.2 + Math.random() * 1.5) * SPEED_MULT;
-      el.style.transform = `rotate(${Math.random() * 360}deg)`;
     }
   }
   requestAnimationFrame(animateLotusRain);

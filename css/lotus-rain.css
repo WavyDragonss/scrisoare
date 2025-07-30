@@ -4,7 +4,7 @@ html, body {
   padding: 0;
   width: 100%;
   font-family: sans-serif;
-  background: #ff69b4;
+  background: #ff69b4; /* Pink background */
   overflow-x: hidden;
   box-sizing: border-box;
   touch-action: manipulation;
@@ -18,19 +18,19 @@ html, body {
   z-index: 0;
   overflow: hidden;
 }
-
-/* Custom lotus flower petals */
-.lotus-flower {
-  position: absolute;
-  display: block;
-  width: 28px;
-  height: 28px;
-  pointer-events: none;
-  z-index: 0;
-  opacity: 1;
-  /* Pink petal illustration */
-  background: radial-gradient(circle at 50% 60%, #ffb6d5 60%, #ff69b4 100%);
-  border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
-  box-shadow: 0 2px 12px 2px #ffb6d5a0;
-  /* Optional: rotate randomly in JS for more realism */
+.content {
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  color: #fff;
+  padding: 3em 1em 1em 1em;
+}
+h1 {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 0.5em;
+}
+p {
+  font-size: 1.1rem;
+  margin-top: 0;
 }
