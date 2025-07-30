@@ -1,71 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Surpriză</title>
-  <style>
-    body {
-      background: radial-gradient(circle at 70% 30%, #ffe6f7 60%, #ffd6eb 100%);
-      min-height: 100vh;
-      font-family: 'Segoe UI', sans-serif;
-      text-align: center;
-      margin: 0;
-      padding: 0;
-      color: #d4006f;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      overflow: hidden;
-    }
-    h1 {
-      font-size: 2.5rem;
-      margin-bottom: 20px;
-      animation: pop 1s ease;
-    }
-    p {
-      font-size: 1.4rem;
-      margin-bottom: 30px;
-      color: #904e6b;
-    }
-    .hearts {
-      position: absolute;
-      width: 100%;
-      left: 0; top: 0;
-      pointer-events: none;
-      z-index: 10;
-    }
-    @keyframes pop {
-      0% { transform: scale(0.6);}
-      80% {transform: scale(1.13);}
-      100% { transform: scale(1);}
-    }
-  </style>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Scrisorica hihihi</title>
+  <link rel="stylesheet" href="css/lotus-rain.css">
+  <link rel="stylesheet" href="css/main-style.css">
+  <link rel="stylesheet" href="css/music-player.css"> <!-- Add this line -->
 </head>
 <body>
-  <div class="hearts" id="hearts"></div>
-  <h1>Te iubesc! 💖</h1>
-  <p>Ai completat totul corect!</p>
-  <audio id="yay" src="https://cdn.pixabay.com/audio/2022/10/16/audio_12c8d5f6b8.mp3" autoplay></audio>
-  <script>
-    // Cute falling hearts animation
-    function makeHeart() {
-      const heart = document.createElement('div');
-      heart.innerHTML = "💖";
-      heart.style.position = 'absolute';
-      heart.style.left = Math.random() * 100 + 'vw';
-      heart.style.top = '-40px';
-      heart.style.fontSize = (Math.random() * 24 + 24) + 'px';
-      heart.style.opacity = Math.random() * 0.5 + 0.5;
-      heart.style.transition = 'top 2.8s linear, opacity 2.8s';
-      document.getElementById('hearts').appendChild(heart);
-      setTimeout(() => {
-        heart.style.top = (window.innerHeight - 10) + 'px';
-        heart.style.opacity = 0;
-      }, 50);
-      setTimeout(() => heart.remove(), 3000);
-    }
-    setInterval(makeHeart, 250);
-  </script>
+  <!-- Lotus rain background (flowers will fall behind everything) -->
+  <div 
+    class="lotus-rain-bg"
+    data-count="50"
+    data-speed="2.5"
+    data-opacity="0.4"
+  ></div>
+
+  <!-- Bonnet/banner at the top -->
+  <div class="bonnet">
+    Bine ai venit la scrisoarea mea!❤️
+  </div>
+
+  <!-- Centered main rectangle for content -->
+  <div class="center-rectangle">
+    <p>
+      Din cauza faptului ca eu scriu urat am decis sa iti fac o scrisoare de asta:D<br>
+      Vreau sa stii cat de mult te iubesc si nu voi scrie nimic cu ai totul vine de la mine!
+    </p>
+  </div>
+
+  <!-- Lotus background effect -->
+  <script src="js/lotus-rain.js"></script>
+  <!-- Floating music player -->
+  <script src="js/music-player.js"></script>
 </body>
 </html>

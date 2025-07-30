@@ -196,3 +196,110 @@ window.onload = () => {
   const first = document.querySelector(".grid-row input");
   if (first) first.focus();
 };
+
+function checkAnswers() {
+  const rows = Array.from(document.querySelectorAll(".grid-row"));
+  let allCompleted = true;
+
+  rows.forEach((row, rowIndex) => {
+    // Skip if row is already completed (shrunk)
+    if (row.dataset.completed === "true") return;
+
+    const inputs = Array.from(row.querySelectorAll("input"));
+    const correct = processedAnswers[rowIndex];
+
+    let userWord = "";
+    let rowCorrect = true;
+
+    inputs.forEach((input, i) => {
+      const val = input.value.toUpperCase();
+      userWord += val;
+      // Coloring
+      if (val === correct[i]) {
+        input.classList.add("correct");
+        input.classList.remove("incorrect");
+      } else if (val.length > 0) {
+        input.classList.remove("correct");
+        input.classList.add("incorrect");
+        rowCorrect = false;
+      } else {
+        input.classList.remove("correct", "incorrect");
+        rowCorrect = false;
+      }
+    });
+
+    // If this whole row is correct and not yet completed: shrink it!
+    if (rowCorrect && userWord.length === correct.length) {
+      row.innerHTML = "";
+      row.dataset.completed = "true";
+
+      // Centered box for final letter
+      for (let i = 0; i < 2; i++) {
+        const spacer = document.createElement("div");
+        spacer.style.flex = "1";
+        row.appendChild(spacer);
+      }
+
+      const input = document.createElement("input");
+      input.value = finalLetters[rowIndex];
+      input.readOnly = true;
+      input.classList.add("correct");
+      input.style.boxShadow = "0 2px 16px #d4006f11";
+      row.appendChild(input);
+
+      for (let i = 0; i < 2; i++) {
+        const spacer = document.createElement("div");
+        spacer.style.flex = "1";
+        row.appendChild(spacer);
+      }
+
+      // Fade in effect
+      row.style.opacity = 0;
+      setTimeout(() => { row.style.transition = "opacity 0.5s"; row.style.opacity = 1; }, 20);
+    } else {
+      allCompleted = false;
+    }
+  });
+
+  // After all 6 rows are shrunk, show Continue button and redirect after 5s
+  if (allCompleted && !document.getElementById("continue-btn")) {
+    // Optional info message
+    const msg = document.createElement("div");
+    msg.id = "auto-redirect-msg";
+    msg.textContent = "🎉 Bravo! Vei fi redirecționat în 5 secunde...";
+    msg.style.margin = "20px auto 0 auto";
+    msg.style.fontSize = "1.06rem";
+    msg.style.color = "#d4006f";
+    msg.style.fontWeight = "600";
+    msg.style.maxWidth = "400px";
+    msg.style.textAlign = "center";
+    grid.appendChild(msg);
+
+    const btn = document.createElement("button");
+    btn.id = "continue-btn";
+    btn.textContent = "Continuă";
+    btn.addEventListener("click", () => {
+      window.location.href = "surpriza.html";
+    });
+    grid.appendChild(btn);
+
+    // Scroll into view on mobile
+    setTimeout(() => {
+      btn.scrollIntoView({ behavior: "smooth", block: "center" });
+      btn.style.opacity = 0;
+      btn.style.transition = "opacity 0.5s";
+      setTimeout(() => btn.style.opacity = 1, 20);
+    }, 120);
+
+    // Auto-redirect after 5 seconds
+    setTimeout(() => {
+      window.location.href = "surpriza.html";
+    }, 5000);
+  }
+}
+
+// Autofocus on page load (mobile fix)
+window.onload = () => {
+  const first = document.querySelector(".grid-row input");
+  if (first) first.focus();
+};
