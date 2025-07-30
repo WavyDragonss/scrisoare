@@ -1,65 +1,110 @@
 body {
-  font-family: Arial, sans-serif;
+  font-family: 'Segoe UI', sans-serif;
   background-color: #fff0fa;
-  margin: 0;
   padding: 20px;
+  margin: 0;
+  text-align: center;
 }
 
 h1 {
-  text-align: center;
   color: #d4006f;
-  margin-bottom: 30px;
+  margin-bottom: 12px;
+}
+
+.rotate-hint {
+  color: #666;
+  font-size: 1rem;
+  margin-bottom: 22px;
+  font-style: italic;
+  display: block;
 }
 
 .questions {
   max-width: 600px;
-  margin: 0 auto 20px;
-  padding: 10px;
-  color: #333;
-  font-size: 1rem;
+  margin: 0 auto 26px;
+  text-align: left;
+  font-size: 1.08rem;
+  padding-left: 6px;
+}
+
+.questions p {
+  margin: 8px 0 2px 0;
+  font-weight: 500;
 }
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  max-width: 360px;
-  margin: 0 auto;
-  gap: 6px;
+  gap: 10px;
+  justify-content: center;
+}
+
+.grid-row {
+  display: grid;
+  gap: 8px;
+  grid-auto-flow: column;
 }
 
 .grid input {
-  width: 100%;
-  aspect-ratio: 1;
+  width: 44px;
+  height: 44px;
+  font-size: 1.45rem;
   text-align: center;
-  font-size: 1.5rem;
   text-transform: uppercase;
   border: 2px solid #DB87D4;
-  border-radius: 8px;
-  transition: background-color 0.3s, border-color 0.3s;
+  border-radius: 9px;
+  transition: all 0.3s;
+  background: #fff;
+  outline: none;
+  margin: 0;
 }
 
 input.correct {
   background-color: #d4edda;
   border-color: #28a745;
   color: #155724;
+  animation: pop-correct 0.25s;
 }
-
 input.incorrect {
   background-color: #f8d7da;
   border-color: #dc3545;
   color: #721c24;
+  animation: shake-wrong 0.22s;
+}
+
+@keyframes pop-correct {
+  0% { transform: scale(1); }
+  60% { transform: scale(1.12); }
+  100% { transform: scale(1); }
+}
+@keyframes shake-wrong {
+  0% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  50% { transform: translateX(4px); }
+  75% { transform: translateX(-4px); }
+  100% { transform: translateX(0); }
+}
+
+@media (max-width: 600px) {
+  .grid input {
+    width: 12vw;
+    min-width: 34px;
+    height: 12vw;
+    min-height: 34px;
+    font-size: 6vw;
+    max-width: 48px;
+    max-height: 48px;
+  }
 }
 
 @media screen and (orientation: landscape) {
   body {
-    font-size: 1.2rem;
+    font-size: 1.18rem;
   }
-
-  .grid {
-    max-width: 480px;
-  }
-
   .grid input {
     font-size: 2rem;
+    width: 56px;
+    height: 56px;
+    max-width: 68px;
+    max-height: 68px;
   }
 }
