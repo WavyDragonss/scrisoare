@@ -2,61 +2,15 @@
 <html lang="en">
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lotus Mobile Site</title>
-  <style>
-    html, body {
-      height: 100%;
-      margin: 0;
-      padding: 0;
-      width: 100%;
-      box-sizing: border-box;
-      font-family: sans-serif;
-      background: #ff69b4; /* Pink background */
-      overflow-x: hidden;
-      touch-action: manipulation;
-    }
-    .lotus-corner {
-      position: fixed;
-      left: 0;
-      bottom: 0;
-      width: 80vw;
-      height: 80vw;
-      overflow: hidden;
-      z-index: 0;
-      pointer-events: none;
-    }
-    .lotus-emoji {
-      position: absolute;
-      left: -60vw;
-      top: -60vw;
-      font-size: 80vw;
-      user-select: none;
-    }
-    .content {
-      position: relative;
-      z-index: 1;
-      text-align: center;
-      color: #fff;
-      padding: 3em 1em 1em 1em;
-    }
-    h1 {
-      font-size: 2rem;
-      font-weight: bold;
-      margin-bottom: 0.5em;
-    }
-    p {
-      font-size: 1.1rem;
-      margin-top: 0;
-    }
-  </style>
+  <title>Lotus Rain Mobile Site</title>
+  <link rel="stylesheet" href="lotus-rain.css">
 </head>
 <body>
-  <div class="lotus-corner">
-    <span class="lotus-emoji">🌸</span>
-  </div>
+  <div class="lotus-rain-bg"></div>
   <div class="content">
     <h1>Welcome to Lotus!</h1>
-    <p>A beautiful mobile website with a pink vibe and a lotus touch.</p>
+    <p>A beautiful mobile website with a pink vibe and a lotus rain touch.</p>
   </div>
+  <script src="lotus-rain.js"></script>
 </body>
 </html>
