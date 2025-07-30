@@ -1,11 +1,130 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="ro">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Mesaj pentru tine 💖</title>
   <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Open+Sans&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/l.css" />
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: url('lotus.jpg') no-repeat center center fixed;
+      background-size: cover;
+      font-family: 'Open Sans', sans-serif;
+      color: #fff;
+      overflow-x: hidden;
+      overflow: hidden;
+    }
+    .falling-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 0;
+    }
+    .heart {
+      position: absolute;
+      top: -50px;
+      color: pink;
+      font-size: 24px;
+      animation: fall linear forwards;
+      opacity: 0.8;
+      z-index: 0;
+    }
+    @keyframes fall {
+      to {
+        transform: translateY(100vh);
+        opacity: 0;
+      }
+    }
+    header {
+      text-align: center;
+      padding: 3rem 1rem 1rem;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 1;
+      position: relative;
+    }
+    header h1 {
+      font-family: 'Great Vibes', cursive;
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+    .countdown {
+      font-size: 1.3rem;
+      margin-top: 1rem;
+    }
+    .content {
+      max-width: 700px;
+      margin: 2rem auto;
+      background-color: rgba(0, 0, 0, 0.5);
+      padding: 2rem;
+      border-radius: 12px;
+      z-index: 1;
+      position: relative;
+    }
+    .message-box {
+      line-height: 1.6;
+      font-size: 1.1rem;
+    }
+    .continue-link {
+      display: inline-block;
+      margin-top: 1.5rem;
+      padding: 0.6rem 1.2rem;
+      background-color: pink;
+      color: #000;
+      font-weight: bold;
+      border-radius: 6px;
+      text-decoration: none;
+      transition: background-color 0.3s ease;
+    }
+    .continue-link:hover {
+      background-color: #ff69b4;
+      color: #fff;
+    }
+    .blurred {
+      filter: blur(6px);
+      pointer-events: none;
+      user-select: none;
+    }
+
+    .lockscreen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.85);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 10;
+    }
+    input {
+      padding: 0.5rem;
+      font-size: 1rem;
+      border-radius: 6px;
+      border: none;
+      margin-bottom: 1rem;
+    }
+    button {
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      background-color: pink;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    #hint {
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+      color: #ccc;
+    }
+  </style>
 </head>
 <body>
   <div class="falling-container" id="falling-container"></div>
@@ -25,8 +144,8 @@
   <div id="mainContent">
     <header>
       <div class="content">
-        <h1>Dragostea mea pentru tine</h1>
-        <div class="countdown" id="countdown"></div>
+      <h1>Dragostea mea pentru tine</h1>
+      <div class="countdown" id="countdown"></div>
       </div>
     </header>
   </div>
@@ -45,6 +164,131 @@
     <center><a class="continue-link" href="Lotus_love.html">Ai citit tot?</a></center>
   </div>
 
-  <script src="js/l.js"></script>
+  <script>
+    const countdownEl = document.getElementById("countdown");
+    const targetDate = new Date("2025-01-26T00:00:00");
+
+    function updateCountdown() {
+      const now = new Date();
+      const diff = targetDate - now;
+      if (diff > 0) {
+        const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const h = Math.floor((diff / (1000 * 60 * 60)) % 24);
+        const m = Math.floor((diff / (1000 * 60)) % 60);
+        const s = Math.floor((diff / 1000) % 60);
+        countdownEl.textContent = `Mai sunt ${d} zile, ${h} ore, ${m} minute și ${s} secunde de la prima zi`;
+      } else {
+        const passed = now - targetDate;
+        const d = Math.floor(passed / (1000 * 60 * 60 * 24));
+        const h = Math.floor((passed / (1000 * 60 * 60)) % 24);
+        const m = Math.floor((passed / (1000 * 60)) % 60);
+        const s = Math.floor((passed / 1000) % 60);
+        countdownEl.textContent = `Au trecut ${d} zile, ${h} ore, ${m} minute și ${s} secunde de la prima zi 💖`;
+      }
+    }
+    setInterval(updateCountdown, 1000);
+    updateCountdown();
+
+    function createFallingEmoji() {
+      const el = document.createElement('div');
+      el.classList.add('heart');
+      el.style.left = Math.random() * 100 + "vw";
+      el.style.fontSize = Math.random() * 10 + 20 + "px";
+      el.style.animationDuration = (Math.random() * 3 + 2) + "s";
+      el.innerText = Math.random() < 0.8 ? "❤️" : "🪷";
+      document.getElementById("falling-container").appendChild(el);
+      setTimeout(() => el.remove(), 5000);
+    }
+    setInterval(createFallingEmoji, 300);
+
+    // Întrebările, fiecare răspuns individual, cu hint separat
+    const questions = [
+      { question: "Băutura mea preferată?", answers: ["ciocolata calda"], pattern: "Cio_____a ____a", hint: "hot" },
+      { question: "Băutura mea preferată?", answers: ["babyccino"], pattern: "B____c____", hint: "Babyyyy" },
+      { question: "Băutura mea preferată?", answers: ["fanta"], pattern: "F____a", hint: "orange" },
+      { question: "Băutura mea preferată?", answers: ["fanta cu portocale"], pattern: "F____a cu _________", hint: "ORANGESSS" },
+      { question: "My favourite hang out place?", answers: ["your place"], pattern: "Y___ p___e", hint: "home" },
+      { question: "My favourite hang out place?", answers: ["cabana"], pattern: "C____a", hint: "balcon" },
+      { question: "My favourite hang out place?", answers: ["simos"], pattern: "S___s", hint: "mare sau mic" },
+      { question: "My favourite hang out place?", answers: ["penny"], pattern: "P____", hint: "NO HINT NEEDED" },
+      { question: "My favourite hang out place?", answers: ["mario"], pattern: "M___o", hint: "snitzel" },
+      { question: "DOAMNA ______ __ TELEVIZOR", answers: ["SUNTEM LA"], pattern: "DOAMNA ______ __ TELEVIZOR", hint: "Încearcă majuscule" },
+      { question: "Completează propoziția: 'Et si __ _'________ ___'", answers: ["tu n'existais pas"], pattern: "Et si __ _'________ ___", hint: "n'existais" }
+    ];
+
+    let usedIndexes = new Set();
+    let index = -1;
+
+    function pickNewQuestion() {
+      if (usedIndexes.size === questions.length) usedIndexes.clear();
+      do {
+        index = Math.floor(Math.random() * questions.length);
+      } while (usedIndexes.has(index));
+      usedIndexes.add(index);
+      setQuestion();
+      document.getElementById("password").value = "";
+      document.getElementById("hint").textContent = `Hint: ${questions[index].hint}`;
+    }
+
+    function setQuestion() {
+      const q = questions[index];
+      document.getElementById("questionText").textContent = q.question;
+      document.getElementById("patternText").textContent = q.pattern;
+      document.getElementById("hintText").textContent = ""; // resetăm la load
+    }
+
+    function checkPassword() {
+      const input = document.getElementById("password").value.trim();
+
+      if (input === "!") { // cheat code ca să deblocheze
+        unlockScreen();
+        return;
+      }
+
+      const q = questions[index];
+      const lowerInput = input.toLowerCase();
+
+      if (q.question.includes("DOAMNA")) {
+        if (input.toUpperCase() !== input) {
+          alert("Încearcă cu MAJUSCULE");
+          return;
+        }
+      }
+
+      if (q.answers.some(ans => ans.toLowerCase() === lowerInput)) {
+        unlockScreen();
+      } else {
+        alert("Hmm, nu chiar. Încearcă din nou sau apasă pe hint!");
+      }
+    }
+
+    function unlockScreen() {
+      document.getElementById("lockScreen").style.display = 'none';
+      document.body.style.overflow = 'auto';
+      document.getElementById("mainContent").classList.remove("blurred");
+    }
+
+    window.onload = () => {
+      pickNewQuestion();
+      document.getElementById("mainContent").classList.add("blurred");
+    };
+
+    const showHintBtn = document.getElementById('showHintBtn');
+    const hintText = document.getElementById('hintText');
+
+    showHintBtn.addEventListener('mousedown', () => {
+      hintText.textContent = "Hint: " + questions[index].hint;
+      hintText.style.display = 'inline';
+    });
+    showHintBtn.addEventListener('mouseup', () => hintText.style.display = 'none');
+    showHintBtn.addEventListener('mouseleave', () => hintText.style.display = 'none');
+
+    // Optional: suport pentru touch
+    showHintBtn.addEventListener('touchstart', () => {
+      hintText.textContent = "Hint: " + questions[index].hint;
+      hintText.style.display = 'inline';
+    });
+    showHintBtn.addEventListener('touchend', () => hintText.style.display = 'none');
+  </script>
 </body>
 </html>

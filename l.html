@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mesaj pentru tine 💖</title>
+  <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Open+Sans&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/l.css" />
+</head>
+<body>
+  <div class="falling-container" id="falling-container"></div>
+  <div class="lockscreen" id="lockScreen">
+    <h2 id="questionText">Întrebare...</h2>
+    <input type="text" id="password" placeholder="Răspunsul tău aici" />
+    <button onclick="checkPassword()" style="display: block; margin-bottom: 1px;">Verifică</button>
+    <button id="changeQuestionBtn" onclick="pickNewQuestion()">Schimba intrebarea</button>
+    <div style="margin-top: 0.5rem;">
+      <strong id="patternText" style="font-size: 1.1rem; display: block; color: #ffd;">&nbsp;</strong>
+    </div>
+    <!-- Hint Button + Hint Text -->
+    <button id="showHintBtn" style="margin-left: 10px;">Hint</button>
+    <span id="hintText" style="display:none; margin-left: 10px; color: #fff; font-style: italic;"></span>
+  </div>
+
+  <div id="mainContent">
+    <header>
+      <div class="content">
+        <h1>Dragostea mea pentru tine</h1>
+        <div class="countdown" id="countdown"></div>
+      </div>
+    </header>
+  </div>
+
+  <div class="content">
+    <p class="message-box">
+      <strong>Dragă Îngeraș,</strong><br><br>
+      Încep acest mesaj cu un <em>te iubesc</em> sincer. Sper din suflet că îți va plăcea ceea ce am pregătit pentru tine în partea ce urmează.<br><br>
+      Am evoluat foarte mult datorită ție și aș vrea să îți mulțumesc pentru tot ceea ce faci pentru mine, pentru toată răbdarea și iertarea pe care mi le-ai oferit. Mă bucur că îți sunt alături și că îmi ești alături.<br><br>
+      Ești o persoană, dar și un partener, unic și perfect.<br>
+      Lucrez la acest site web de ceva vreme și simt că este aproape gata. Sper să îți placă – am pus suflet în fiecare detaliu și îți dedic ție tot ce e mai frumos, draga mea. Te admir și te iubesc enorm.<br><br>
+      Voi continua să adaug lucruri, dar pentru moment cred că este într-un punct destul de <em>ok-ish</em> 😊 și aș aprecia mult dacă ai completa ce urmează. ❤️<br><br>
+      <strong>Cu drag,</strong><br>
+      <strong>Partenerul tău!</strong>
+    </p>
+    <center><a class="continue-link" href="Lotus_love.html">Ai citit tot?</a></center>
+  </div>
+
+  <script src="js/l.js"></script>
+</body>
+</html>
