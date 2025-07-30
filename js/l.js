@@ -122,3 +122,73 @@ showHintBtn.addEventListener('touchstart', () => {
   hintText.style.display = 'inline';
 });
 showHintBtn.addEventListener('touchend', () => hintText.style.display = 'none');
+
+<script>
+  const musicTracks = [
+    { src: 'music/lotus_ambient.mp3', title: 'I Wanna Be Yours' },
+    { src: 'music/preput.mp3', title: 'Preput' },
+    { src: 'music/animals.mp3', title: 'Animals' },
+    { src: 'music/shut.mp3', title: 'Shut Up And Dance With Me' },
+    { src: 'music/cant.mp3', title: "Can't Hold Us" },
+    { src: 'music/bones.mp3', title: 'Bones' }
+  ];
+
+  const audio = document.getElementById('background-music');
+  const toggleButton = document.getElementById('music-toggle');
+
+  let isPlaying = false;
+  let currentTrack = 0;
+
+  // Set volume (30%)
+  audio.volume = 0.3;
+
+  // Load first track
+  function loadTrack(index) {
+    audio.src = musicTracks[index].src;
+    audio.load();
+  }
+
+  loadTrack(currentTrack);
+
+  // Start music on first user interaction (mobile autoplay fix)
+  function startMusicOnce() {
+    if (!isPlaying) {
+      audio.play().then(() => {
+        isPlaying = true;
+        toggleButton.textContent = '🔊';
+      }).catch((e) => {
+        console.warn('Autoplay blocked:', e);
+        toggleButton.textContent = '🔇';
+      });
+    }
+    window.removeEventListener('touchstart', startMusicOnce);
+    window.removeEventListener('click', startMusicOnce);
+  }
+
+  // Attach user interaction listeners
+  window.addEventListener('touchstart', startMusicOnce, { once: true });
+  window.addEventListener('click', startMusicOnce, { once: true });
+
+  // Toggle music manually
+  toggleButton.addEventListener('click', (e) => {
+    e.stopPropagation(); // Prevent re-triggering
+    if (isPlaying) {
+      audio.pause();
+      toggleButton.textContent = '🔇';
+    } else {
+      audio.play().then(() => {
+        toggleButton.textContent = '🔊';
+      }).catch(() => {
+        toggleButton.textContent = '🔇';
+      });
+    }
+    isPlaying = !isPlaying;
+  });
+
+  // Autoplay next track when one ends
+  audio.addEventListener('ended', () => {
+    currentTrack = (currentTrack + 1) % musicTracks.length;
+    loadTrack(currentTrack);
+    audio.play();
+  });
+</script>
