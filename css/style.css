@@ -45,9 +45,9 @@ h1 {
 }
 
 .grid input {
-  width: 44px;
-  height: 44px;
-  font-size: 1.45rem;
+  width: 40px;
+  height: 40px;
+  font-size: 1.4rem;
   text-align: center;
   text-transform: uppercase;
   border: 2px solid #DB87D4;
@@ -84,31 +84,6 @@ input.incorrect {
   100% { transform: translateX(0); }
 }
 
-@media (max-width: 600px) {
-  .grid input {
-    width: 12vw;
-    min-width: 34px;
-    height: 12vw;
-    min-height: 34px;
-    font-size: 6vw;
-    max-width: 48px;
-    max-height: 48px;
-  }
-}
-
-@media screen and (orientation: landscape) {
-  body {
-    font-size: 1.18rem;
-  }
-  .grid input {
-    font-size: 2rem;
-    width: 56px;
-    height: 56px;
-    max-width: 68px;
-    max-height: 68px;
-  }
-}
-
 /* --- HINT STYLES --- */
 .question-item {
   display: flex;
@@ -143,25 +118,67 @@ input.incorrect {
   color: #222;
 }
 
-/* --- PROCEED BUTTON --- */
-.proceed-btn {
-  background: linear-gradient(90deg, #fd2e96 0%, #db87d4 100%);
-  color: white;
-  font-size: 1.4rem;
-  font-weight: 600;
-  border: none;
-  border-radius: 28px;
-  padding: 16px 44px;
-  box-shadow: 0 4px 20px #d4006f22;
-  margin-top: 32px;
-  cursor: pointer;
-  transition: background 0.2s, transform 0.15s;
-  outline: none;
-  letter-spacing: 1px;
+/* --- CONTINUE BUTTON --- */
+#continue-btn {
   display: block;
+  margin: 30px auto 10px;
+  padding: 15px 25px;
+  font-size: 1.2rem;
+  background-color: #d4006f;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  width: 80%;
+  max-width: 300px;
+  opacity: 1;
+  transition: background 0.3s, opacity 0.5s;
 }
 
-.proceed-btn:hover, .proceed-btn:focus {
-  background: linear-gradient(90deg, #e60073 0%, #b44eb6 100%);
-  transform: scale(1.04);
+#continue-btn:hover {
+  background-color: #a60056;
+}
+
+@media screen and (max-width: 480px) {
+  .grid input {
+    width: 36px;
+    height: 36px;
+    font-size: 1.2rem;
+  }
+
+  #continue-btn {
+    font-size: 1rem;
+    padding: 12px 20px;
+    width: 90%;
+  }
+
+  .hint-btn {
+    font-size: 0.85rem;
+    padding: 6px 10px;
+  }
+}
+
+@media (max-width: 600px) {
+  .grid input {
+    width: 12vw;
+    min-width: 32px;
+    height: 12vw;
+    min-height: 32px;
+    font-size: 6vw;
+    max-width: 44px;
+    max-height: 44px;
+  }
+}
+
+@media screen and (orientation: landscape) {
+  body {
+    font-size: 1.18rem;
+  }
+  .grid input {
+    font-size: 2rem;
+    width: 56px;
+    height: 56px;
+    max-width: 68px;
+    max-height: 68px;
+  }
 }

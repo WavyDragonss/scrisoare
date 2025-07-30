@@ -18,6 +18,9 @@ const hints = [
   "TE..."
 ];
 
+// FINAL LETTERS for completion
+const finalLetters = ['I', 'U', 'B', 'I', 'R', 'E'];
+
 // Preprocess answers: keep only letters uppercased, remove spaces
 const processedAnswers = questions.map(obj =>
   obj.a.toUpperCase().replace(/[^A-Z]/g, '')
@@ -107,12 +110,17 @@ function handleKeyDown(e) {
 // Main validation and win logic
 function checkAnswers() {
   const rows = Array.from(document.querySelectorAll(".grid-row"));
-  let middleWord = "";
+  let allCompleted = true;
 
   rows.forEach((row, rowIndex) => {
+    // Skip if row is already completed (shrunk)
+    if (row.dataset.completed === "true") return;
+
     const inputs = Array.from(row.querySelectorAll("input"));
     const correct = processedAnswers[rowIndex];
+
     let userWord = "";
+    let rowCorrect = true;
 
     inputs.forEach((input, i) => {
       const val = input.value.toUpperCase();
@@ -124,71 +132,63 @@ function checkAnswers() {
       } else if (val.length > 0) {
         input.classList.remove("correct");
         input.classList.add("incorrect");
+        rowCorrect = false;
       } else {
         input.classList.remove("correct", "incorrect");
+        rowCorrect = false;
       }
     });
 
-    // Collect the MIDDLE column letter for this row if exists
-    const midIdx = Math.floor(correct.length / 2);
-    middleWord += inputs[midIdx] ? (inputs[midIdx].value.toUpperCase() || " ") : " ";
+    // If this whole row is correct and not yet completed: shrink it!
+    if (rowCorrect && userWord.length === correct.length) {
+      row.innerHTML = "";
+      row.dataset.completed = "true";
+
+      // Centered box for final letter
+      for (let i = 0; i < 2; i++) {
+        const spacer = document.createElement("div");
+        spacer.style.flex = "1";
+        row.appendChild(spacer);
+      }
+
+      const input = document.createElement("input");
+      input.value = finalLetters[rowIndex];
+      input.readOnly = true;
+      input.classList.add("correct");
+      input.style.boxShadow = "0 2px 16px #d4006f11";
+      row.appendChild(input);
+
+      for (let i = 0; i < 2; i++) {
+        const spacer = document.createElement("div");
+        spacer.style.flex = "1";
+        row.appendChild(spacer);
+      }
+
+      // Fade in effect
+      row.style.opacity = 0;
+      setTimeout(() => { row.style.transition = "opacity 0.5s"; row.style.opacity = 1; }, 20);
+    } else {
+      allCompleted = false;
+    }
   });
 
-  // Check if all inputs are green (correct) and middle column spells IUBIRE
-  if (middleWord === "IUBIRE") {
-    const allInputs = document.querySelectorAll("input");
-    const allCorrect = Array.from(allInputs).every(inp => inp.classList.contains("correct"));
+  // After all 6 rows are shrunk, show Continue button
+  if (allCompleted && !document.getElementById("continue-btn")) {
+    const btn = document.createElement("button");
+    btn.id = "continue-btn";
+    btn.textContent = "Continuă";
+    btn.onclick = () => window.location.href = "surpriza.html";
 
-    if (allCorrect) {
-      setTimeout(() => {
-        transformToMiddleLetters();
-      }, 800);
-    }
+    grid.appendChild(btn);
+
+    // Scroll into view on mobile
+    setTimeout(() => {
+      btn.scrollIntoView({ behavior: "smooth", block: "center" });
+      btn.style.opacity = 0;
+      btn.style.transition = "opacity 0.5s";
+      setTimeout(() => btn.style.opacity = 1, 20);
+    }, 120);
   }
-}
-
-// Replace grid with IUBIRE in center column and add Proceed button
-function transformToMiddleLetters() {
-  const letters = ['I', 'U', 'B', 'I', 'R', 'E'];
-  grid.innerHTML = ''; // clear grid
-
-  letters.forEach(letter => {
-    const row = document.createElement("div");
-    row.classList.add("grid-row");
-    row.style.marginBottom = "10px";
-    // 5 columns: 2 spacers, 1 letter, 2 spacers for centering
-    for (let i = 0; i < 2; i++) {
-      const spacer = document.createElement("div");
-      spacer.style.flex = "1";
-      row.appendChild(spacer);
-    }
-
-    const input = document.createElement("input");
-    input.value = letter;
-    input.readOnly = true;
-    input.classList.add("correct");
-    input.style.boxShadow = "0 2px 16px #d4006f11";
-    row.appendChild(input);
-
-    for (let i = 0; i < 2; i++) {
-      const spacer = document.createElement("div");
-      spacer.style.flex = "1";
-      row.appendChild(spacer);
-    }
-
-    grid.appendChild(row);
-  });
-
-  // Add Proceed button
-  const proceedBtn = document.createElement("button");
-  proceedBtn.textContent = "Proceed...";
-  proceedBtn.className = "proceed-btn";
-  proceedBtn.addEventListener("click", () => {
-    window.location.href = "surpriza.html";
-  });
-  proceedBtn.style.margin = "32px auto 0 auto";
-  proceedBtn.style.display = "block";
-  grid.appendChild(proceedBtn);
 }
 
 // Autofocus on page load (mobile fix)
