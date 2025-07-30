@@ -35,6 +35,7 @@ popupMenu.innerHTML = `
 document.body.appendChild(popupBtn);
 document.body.appendChild(popupMenu);
 
+// --- Element References ---
 const audio = popupMenu.querySelector('#music-popup-audio');
 const title = popupMenu.querySelector('#music-popup-title');
 const playpauseBtn = popupMenu.querySelector('#music-popup-playpause');
@@ -49,14 +50,20 @@ let trackIndex = 0;
 let isPlaying = false;
 let dragging = false;
 let lastSeek = 0;
+let autoplayStarted = false;
 
 // --- Popup toggle logic ---
 popupBtn.addEventListener('click', () => {
   popupMenu.classList.toggle('show');
+
+  if (!autoplayStarted) {
+    audio.play();
+    autoplayStarted = true;
+  }
 });
 
 // Click outside closes menu
-document.addEventListener('click', function(e) {
+document.addEventListener('click', function (e) {
   if (
     popupMenu.classList.contains('show') &&
     !popupMenu.contains(e.target) &&
@@ -71,19 +78,15 @@ function setTrack(idx, autoplay = false) {
   trackIndex = idx;
   const track = musicTracks[idx];
   audio.src = track.src;
+  audio.volume = 0.3; // 30% volume
   title.textContent = track.title;
   progressBar.value = 0;
   progressBar.disabled = true;
   currentTime.textContent = "0:00";
   duration.textContent = "0:00";
+
   if (autoplay) {
     audio.play();
-    isPlaying = true;
-    playpauseIcon.innerHTML = "&#10073;&#10073;"; // pause
-  } else {
-    audio.pause();
-    isPlaying = false;
-    playpauseIcon.innerHTML = "&#9654;"; // play
   }
 }
 
@@ -94,22 +97,26 @@ nextBtn.addEventListener('click', () => {
   setTrack((trackIndex + 1) % musicTracks.length, isPlaying);
 });
 playpauseBtn.addEventListener('click', () => {
-  if (audio.paused) audio.play();
-  else audio.pause();
+  if (audio.paused) {
+    audio.play();
+  } else {
+    audio.pause();
+  }
 });
+
 audio.addEventListener('play', () => {
   isPlaying = true;
-  playpauseIcon.innerHTML = "&#10073;&#10073;";
+  playpauseIcon.innerHTML = "&#10073;&#10073;"; // pause icon
 });
 audio.addEventListener('pause', () => {
   isPlaying = false;
-  playpauseIcon.innerHTML = "&#9654;";
+  playpauseIcon.innerHTML = "&#9654;"; // play icon
 });
 audio.addEventListener('ended', () => {
   setTrack((trackIndex + 1) % musicTracks.length, true);
 });
 
-// --- Progress Bar Logic ---
+// --- Progress Bar ---
 audio.addEventListener('loadedmetadata', () => {
   duration.textContent = formatTime(audio.duration);
   currentTime.textContent = formatTime(audio.currentTime);

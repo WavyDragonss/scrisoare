@@ -122,4 +122,3 @@ showHintBtn.addEventListener('touchstart', () => {
   hintText.style.display = 'inline';
 });
 showHintBtn.addEventListener('touchend', () => hintText.style.display = 'none');
-
