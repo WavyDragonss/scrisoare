@@ -77,7 +77,7 @@ header h1 {
   color: #fff;
 }
 .blurred {
-  filter: blur(6px);
+  filter: blur(100px);
   pointer-events: none;
   user-select: none;
 }
