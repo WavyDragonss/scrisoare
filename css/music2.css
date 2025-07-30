@@ -1,0 +1,137 @@
+/* music2.css - second, independent music player popup system. */
+/* all class and file names are lowercase. */
+
+/* --- music2 player bubble --- */
+.music2-bubble {
+  position: fixed;
+  bottom: 90px; /* below original by default, adjust if needed */
+  right: 18px;
+  z-index: 51;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  pointer-events: none;
+}
+.music2-bubble *,
+.music2-bubble *:before,
+.music2-bubble *:after {
+  pointer-events: auto;
+}
+.music2-icon-btn {
+  background: rgba(255, 182, 213, 0.95);
+  color: #a70042;
+  border: none;
+  border-radius: 50%;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.1rem;
+  cursor: pointer;
+  box-shadow: 0 2px 12px 0 rgba(255, 182, 193, 0.18);
+  transition: box-shadow 0.22s, background 0.22s;
+  outline: none;
+  position: relative;
+  z-index: 2;
+}
+.music2-icon-btn:focus, .music2-icon-btn:hover {
+  background: #ffd6e7;
+  box-shadow: 0 0 18px 2px #ffb6d5, 0 2px 12px 0 rgba(255, 182, 193, 0.22);
+}
+.music2-controls {
+  background: rgba(255, 255, 255, 0.97);
+  border-radius: 22px;
+  box-shadow: 0 4px 16px 0 rgba(255,182,213,0.19);
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.38rem;
+  padding: 0.9rem 1.16rem 0.9rem 1.16rem;
+  margin-bottom: 0.4rem;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(14px) scale(0.98);
+  transition:
+    opacity 0.36s cubic-bezier(.4,0,.2,1),
+    transform 0.31s cubic-bezier(.4,0,.2,1);
+  min-width: 212px;
+  width: 265px;
+  max-width: 96vw;
+  box-sizing: border-box;
+  position: relative;
+  z-index: 3;
+}
+.music2-bubble.show-controls .music2-controls,
+.music2-bubble:hover .music2-controls {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0) scale(1.03);
+}
+.music2-controls-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.62rem;
+  margin: 0.2rem 0 0.2rem 0;
+}
+.music2-btn {
+  background: #ffb6d5;
+  border: none;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.18rem;
+  color: #a70042;
+  cursor: pointer;
+  transition: box-shadow 0.16s, background 0.16s, color 0.16s;
+  outline: none;
+}
+.music2-btn:hover, .music2-btn:focus {
+  background: #ffd6e7;
+  color: #ab005a;
+  box-shadow: 0 0 8px 0 #ffb6d5;
+}
+.music2-title {
+  text-align: center;
+  font-size: 1.07rem;
+  font-family: 'great vibes', cursive, 'open sans', sans-serif;
+  color: #d4006f;
+  margin-bottom: 0.41rem;
+  margin-top: -0.16rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  text-shadow: 0 1px 4px #ffd6e7a0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.music2-slider, .music2-seekbar {
+  accent-color: #ffb6d5;
+  background: transparent;
+  border-radius: 6px;
+  outline: none;
+  height: 5px;
+  cursor: pointer;
+  margin: 0 0.2rem;
+}
+.music2-slider { width: 78px; }
+.music2-seekbar { width: 120px; }
+.music2-time {
+  font-size: 0.89rem;
+  color: #a70042;
+  min-width: 34px;
+  text-align: center;
+  user-select: none;
+}
+@media (max-width: 768px), (hover: none) {
+  .music2-controls {
+    min-width: 150px;
+    width: 98vw;
+    max-width: 99vw;
+  }
+}
+audio.music2-audio { display: none; }
