@@ -1,23 +1,18 @@
-/* music2.css - Mobile-optimized music player bubble */
-
-/* --- music2 player bubble --- */
 .music2-bubble {
   position: fixed;
-  bottom: env(safe-area-inset-bottom, 24px); /* keeps above home bar */
-  right: 18px;
-  z-index: 51;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
   display: flex;
   flex-direction: column;
   align-items: flex-end;
   pointer-events: none;
 }
-
 .music2-bubble *,
 .music2-bubble *:before,
 .music2-bubble *:after {
   pointer-events: auto;
 }
-
 .music2-icon-btn {
   background: rgba(255, 182, 213, 0.95);
   color: #a70042;
@@ -36,7 +31,6 @@
   position: relative;
   z-index: 2;
 }
-
 .music2-controls {
   background: rgba(255, 255, 255, 0.97);
   border-radius: 22px;
@@ -60,14 +54,12 @@
   position: relative;
   z-index: 3;
 }
-
 .music2-bubble.show-controls .music2-controls,
 .music2-bubble:hover .music2-controls {
   opacity: 1;
   pointer-events: auto;
   transform: translateY(0) scale(1.03);
 }
-
 .music2-controls-row {
   display: flex;
   align-items: center;
@@ -75,7 +67,6 @@
   gap: 0.62rem;
   margin: 0.2rem 0 0.2rem 0;
 }
-
 .music2-btn {
   background: #ffb6d5;
   border: none;
@@ -92,13 +83,11 @@
   outline: none;
   touch-action: manipulation;
 }
-
 .music2-btn:hover, .music2-btn:focus {
   background: #ffd6e7;
   color: #ab005a;
   box-shadow: 0 0 8px 0 #ffb6d5;
 }
-
 .music2-title {
   text-align: center;
   font-size: 1.07rem;
@@ -113,7 +102,6 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
-
 .music2-slider, .music2-seekbar {
   accent-color: #ffb6d5;
   background: transparent;
@@ -123,10 +111,8 @@
   cursor: pointer;
   margin: 0 0.2rem;
 }
-
 .music2-slider { width: 78px; }
 .music2-seekbar { width: 120px; }
-
 .music2-time {
   font-size: 0.89rem;
   color: #a70042;
@@ -134,7 +120,6 @@
   text-align: center;
   user-select: none;
 }
-
 @media (max-width: 768px), (hover: none) {
   .music2-controls {
     min-width: 150px;
@@ -152,5 +137,4 @@
     font-size: 1.17rem;
   }
 }
-
 audio.music2-audio { display: none; }
