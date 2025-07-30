@@ -32,35 +32,7 @@ body {
     opacity: 0;
   }
 }
-#music-toggle {
-  position: fixed;
-  top: 12px;
-  right: 12px;
-  z-index: 999;
-  background: rgba(255, 255, 255, 0.92);
-  border: none;
-  border-radius: 50%;
-  font-size: 20px;
-  padding: 12px;
-  cursor: pointer;
-  box-shadow: 0 0 8px rgba(0, 0, 0, 0.15);
-  transition: background 0.2s ease;
-  line-height: 1;
-  touch-action: manipulation;
-}
 
-#music-toggle:hover {
-  background: #ffe0f4;
-}
-
-@media (max-width: 500px) {
-  #music-toggle {
-    font-size: 18px;
-    padding: 10px;
-    top: 10px;
-    right: 10px;
-  }
-}
 
 header {
   text-align: center;
