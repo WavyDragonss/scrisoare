@@ -1,5 +1,5 @@
 body {
-  background: #ff69b4; /* pink background */
+  background: #ff69b4;
   margin: 0;
   min-height: 100vh;
   font-family: 'Segoe UI', Arial, sans-serif;
@@ -7,31 +7,36 @@ body {
 
 /* Bonnet (banner) styles */
 .bonnet {
-  width: 100vw;
-  background: #fff;
-  border-radius: 0 0 36px 36px;
+  width: calc(100vw - 32px);    /* 16px spacing on each side */
+  height: 160px;                /* Square shape, adjust as needed */
+  margin: 16px auto 0 auto;     /* Top margin 16px, centers horizontally */
+  background: rgba(255,255,255,0.90); /* Opacity, change 0.90 as needed */
+  border-radius: 24px;
   box-shadow: 0 8px 24px #d4006f22;
-  padding: 2.2em 0 1.2em 0;
-  margin: 0 auto;
   font-weight: bold;
   font-size: 2.4rem;
   color: #d4006f;
   text-align: center;
   letter-spacing: 0.02em;
-  transition: box-shadow 0.2s;
+  padding: 24px;                /* Space inside box for text */
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 @media (max-width: 500px) {
   .bonnet {
-    font-size: 1.55rem;
-    padding: 1.4em 0 0.9em 0;
-    border-radius: 0 0 18px 18px;
+    width: calc(100vw - 12px);
+    height: 90px;
+    font-size: 1.5rem;
+    border-radius: 12px;
+    padding: 10px;
   }
 }
 
 /* Main rectangle styles */
 .center-rectangle {
-  background: #fff;
+  background: rgba(255,255,255,0.88); /* Opacity, change 0.88 as needed */
   border-radius: 32px;
   box-shadow: 0 6px 32px #d4006f22;
   max-width: 480px;
@@ -49,5 +54,6 @@ body {
     max-width: 96vw;
     padding: 1.2em 0.7em;
     border-radius: 18px;
+    background: rgba(255,255,255,0.92); /* Opacity for mobile */
   }
 }
