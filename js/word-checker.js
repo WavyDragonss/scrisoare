@@ -8,6 +8,16 @@ const questions = [
   { q: "6. I❤️U.", a: "Iubesc" }
 ];
 
+// HINTS ARRAY
+const hints = [
+  "Prietenul meu pufos!",
+  "O facem mereu împreună și doar împreună",
+  "Când spun ceva funny, începe cu B și se termină în h",
+  "O facem împreună uneori începe cu G",
+  "No hint!!!",
+  "TE..."
+];
+
 // Preprocess answers: keep only letters uppercased, remove spaces
 const processedAnswers = questions.map(obj =>
   obj.a.toUpperCase().replace(/[^A-Z]/g, '')
@@ -18,10 +28,39 @@ const questionDiv = document.getElementById("questions");
 
 // Render questions and grid
 questions.forEach((item, rowIndex) => {
-  // Add question text
+  // Create question container
+  const container = document.createElement("div");
+  container.classList.add("question-item");
+
+  // Question text
   const qEl = document.createElement("p");
   qEl.textContent = item.q;
-  questionDiv.appendChild(qEl);
+
+  // Hint button
+  const hintBtn = document.createElement("button");
+  hintBtn.textContent = "Hint";
+  hintBtn.className = "hint-btn";
+  hintBtn.addEventListener("click", () => {
+    hintBtn.disabled = true;
+    hintBtn.textContent = hints[rowIndex];
+    hintBtn.classList.add("active");
+
+    // Hide hint after 5 seconds
+    setTimeout(() => {
+      hintBtn.textContent = "Wait...";
+      hintBtn.classList.remove("active");
+    }, 5000);
+
+    // Re-enable button after 10 more seconds (total 15)
+    setTimeout(() => {
+      hintBtn.textContent = "Hint";
+      hintBtn.disabled = false;
+    }, 15000);
+  });
+
+  container.appendChild(qEl);
+  container.appendChild(hintBtn);
+  questionDiv.appendChild(container);
 
   // Create row for answer
   const word = processedAnswers[rowIndex];
@@ -95,19 +134,61 @@ function checkAnswers() {
     middleWord += inputs[midIdx] ? (inputs[midIdx].value.toUpperCase() || " ") : " ";
   });
 
-  // Check if all answers correct
-  const allCorrect = rows.every((row, idx) => {
-    const inputs = Array.from(row.querySelectorAll("input"));
-    const correct = processedAnswers[idx];
-    return inputs.map(i => i.value.toUpperCase()).join('') === correct;
+  // Check if all inputs are green (correct) and middle column spells IUBIRE
+  if (middleWord === "IUBIRE") {
+    const allInputs = document.querySelectorAll("input");
+    const allCorrect = Array.from(allInputs).every(inp => inp.classList.contains("correct"));
+
+    if (allCorrect) {
+      setTimeout(() => {
+        transformToMiddleLetters();
+      }, 800);
+    }
+  }
+}
+
+// Replace grid with IUBIRE in center column and add Proceed button
+function transformToMiddleLetters() {
+  const letters = ['I', 'U', 'B', 'I', 'R', 'E'];
+  grid.innerHTML = ''; // clear grid
+
+  letters.forEach(letter => {
+    const row = document.createElement("div");
+    row.classList.add("grid-row");
+    row.style.marginBottom = "10px";
+    // 5 columns: 2 spacers, 1 letter, 2 spacers for centering
+    for (let i = 0; i < 2; i++) {
+      const spacer = document.createElement("div");
+      spacer.style.flex = "1";
+      row.appendChild(spacer);
+    }
+
+    const input = document.createElement("input");
+    input.value = letter;
+    input.readOnly = true;
+    input.classList.add("correct");
+    input.style.boxShadow = "0 2px 16px #d4006f11";
+    row.appendChild(input);
+
+    for (let i = 0; i < 2; i++) {
+      const spacer = document.createElement("div");
+      spacer.style.flex = "1";
+      row.appendChild(spacer);
+    }
+
+    grid.appendChild(row);
   });
 
-  // Must match "IUBIRE" in the middle column
-  if (allCorrect && middleWord.replace(/\s/g,'') === "IUBIRE") {
-    setTimeout(() => {
-      window.location.href = "surpriza.html";
-    }, 700);
-  }
+  // Add Proceed button
+  const proceedBtn = document.createElement("button");
+  proceedBtn.textContent = "Proceed...";
+  proceedBtn.className = "proceed-btn";
+  proceedBtn.addEventListener("click", () => {
+    window.location.href = "surpriza.html";
+  });
+  proceedBtn.style.margin = "32px auto 0 auto";
+  proceedBtn.style.display = "block";
+  grid.appendChild(proceedBtn);
 }
 
 // Autofocus on page load (mobile fix)
