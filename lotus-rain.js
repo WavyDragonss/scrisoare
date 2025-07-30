@@ -1,26 +1,31 @@
-// Lotus rain system
-const NUM_LOTUS = 30; // Adjust the number of lotus flowers here
 const lotusRainBg = document.querySelector('.lotus-rain-bg');
-const lotusEmojis = [];
 const screenW = window.innerWidth;
 const screenH = window.innerHeight;
+
+// Read parameters from data attributes with defaults
+const NUM_LOTUS = parseInt(lotusRainBg.dataset.count) || 30;
+const SPEED_MULT = parseFloat(lotusRainBg.dataset.speed) || 1.0;
+const MAX_OPACITY = parseFloat(lotusRainBg.dataset.opacity) || 1.0;
+
+const lotusEmojis = [];
 
 // Utility to create a lotus flower
 function createLotus(index) {
   const lotus = document.createElement('span');
   lotus.textContent = '🌸';
   lotus.className = 'lotus-flower';
-  // Random horizontal position
   lotus.style.position = 'absolute';
   lotus.style.left = `${Math.random() * (screenW - 32)}px`;
-  // Start position above the viewport
   lotus.style.top = `${-Math.random() * 80}px`;
-  // Random size for natural look
   const size = 22 + Math.random() * 18;
   lotus.style.fontSize = `${size}px`;
-  lotus.style.opacity = '1';
+  lotus.style.opacity = MAX_OPACITY;
   lotusRainBg.appendChild(lotus);
-  lotusEmojis.push({ el: lotus, speed: 1.2 + Math.random() * 1.5, fadeStart: screenH * 0.7 });
+  lotusEmojis.push({ 
+    el: lotus, 
+    speed: (1.2 + Math.random() * 1.5) * SPEED_MULT, 
+    fadeStart: screenH * 0.7 
+  });
 }
 
 // Initial lotus creation
@@ -38,19 +43,19 @@ function animateLotusRain() {
 
     // Fade out near the bottom
     if (top > lotus.fadeStart) {
-      const fade = Math.max(0, 1 - (top - lotus.fadeStart) / (screenH * 0.3));
+      const fade = Math.max(0, MAX_OPACITY - (top - lotus.fadeStart) / (screenH * 0.3) * MAX_OPACITY);
       el.style.opacity = `${fade}`;
     } else {
-      el.style.opacity = '1';
+      el.style.opacity = MAX_OPACITY;
     }
 
     // Reset when out of view
     if (top > screenH) {
-      el.style.left = `${Math.random() * (screenW - 32)}px`;
+      el.style.left = `${Math.random() * (window.innerWidth - 32)}px`;
       el.style.top = `${-Math.random() * 80}px`;
       const size = 22 + Math.random() * 18;
       el.style.fontSize = `${size}px`;
-      lotus.speed = 1.2 + Math.random() * 1.5;
+      lotus.speed = (1.2 + Math.random() * 1.5) * SPEED_MULT;
     }
   }
   requestAnimationFrame(animateLotusRain);
