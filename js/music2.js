@@ -1,178 +1,153 @@
-// music2.js - floating music player bubble for lotus site
+// Mobile music player popup for lotus site
 
-const music2_tracks = [
+const musicTracks = [
   { src: 'music/lotus_ambient.mp3', title: 'I Wanna Be Yours' },
   { src: 'music/preput.mp3', title: 'Preput' },
   { src: 'music/animals.mp3', title: 'Animals' },
   { src: 'music/shut.mp3', title: 'Shut Up And Dance With Me' },
   { src: 'music/cant.mp3', title: "Can't Hold Us" },
   { src: 'music/bones.mp3', title: 'Bones' }
-]
+];
 
-// --- dom construction ---
-const music2bubble = document.createElement('div');
-music2bubble.className = 'music2-bubble';
-music2bubble.innerHTML = `
-  <div class="music2-controls" id="music2-controls">
-    <div class="music2-title" id="music2-title"></div>
-    <div class="music2-controls-row">
-      <button class="music2-btn" id="music2-prev" title="anterior">&#9198;</button>
-      <button class="music2-btn" id="music2-playpause" title="play/pause">
-        <span id="music2-playpause-icon">&#9654;</span>
-      </button>
-      <button class="music2-btn" id="music2-next" title="următor">&#9197;</button>
-    </div>
-    <div class="music2-controls-row">
-      <span class="music2-time" id="music2-current-time">0:00</span>
-      <input class="music2-seekbar" id="music2-seekbar" type="range" min="0" max="1000" value="0" step="1" disabled>
-      <span class="music2-time" id="music2-duration">0:00</span>
-    </div>
-    <div class="music2-controls-row">
-      <span style="font-size:1.1rem;color:#a70042;">🔊</span>
-      <input class="music2-slider" id="music2-volume" type="range" min="0" max="1" step="0.01" value="0.3" title="volum">
-    </div>
+// --- DOM Construction ---
+const popupBtn = document.createElement('button');
+popupBtn.className = 'music-popup-btn';
+popupBtn.innerHTML = '𝄞'; // Musical key icon
+
+const popupMenu = document.createElement('div');
+popupMenu.className = 'music-popup-menu';
+popupMenu.innerHTML = `
+  <div class="music-popup-title" id="music-popup-title"></div>
+  <div class="music-popup-row">
+    <button class="music-popup-btn-control" id="music-popup-prev" title="Previous">&#9198;</button>
+    <button class="music-popup-btn-control" id="music-popup-playpause" title="Play/Pause">
+      <span id="music-popup-playpause-icon">&#9654;</span>
+    </button>
+    <button class="music-popup-btn-control" id="music-popup-next" title="Next">&#9197;</button>
   </div>
-  <button class="music2-icon-btn" id="music2-icon-btn" aria-label="control muzică" tabindex="0">
-    <span style="pointer-events:auto;">&#119070;</span>
-  </button>
-  <audio class="music2-audio" id="music2-audio"></audio>
+  <div class="music-popup-row" style="gap:0.4em;">
+    <span class="music-popup-time" id="music-popup-current-time">0:00</span>
+    <input class="music-popup-progress" id="music-popup-progress" type="range" min="0" max="1000" value="0" step="1">
+    <span class="music-popup-time" id="music-popup-duration">0:00</span>
+  </div>
+  <audio class="music-popup-audio" id="music-popup-audio"></audio>
 `;
-document.body.appendChild(music2bubble);
+document.body.appendChild(popupBtn);
+document.body.appendChild(popupMenu);
 
-const music2audio = music2bubble.querySelector('#music2-audio');
-const music2title = music2bubble.querySelector('#music2-title');
-const music2playpausebtn = music2bubble.querySelector('#music2-playpause');
-const music2playpauseicon = music2bubble.querySelector('#music2-playpause-icon');
-const music2prevbtn = music2bubble.querySelector('#music2-prev');
-const music2nextbtn = music2bubble.querySelector('#music2-next');
-const music2seekbar = music2bubble.querySelector('#music2-seekbar');
-const music2currenttime = music2bubble.querySelector('#music2-current-time');
-const music2duration = music2bubble.querySelector('#music2-duration');
-const music2volume = music2bubble.querySelector('#music2-volume');
-const music2iconbtn = music2bubble.querySelector('#music2-icon-btn');
+const audio = popupMenu.querySelector('#music-popup-audio');
+const title = popupMenu.querySelector('#music-popup-title');
+const playpauseBtn = popupMenu.querySelector('#music-popup-playpause');
+const playpauseIcon = popupMenu.querySelector('#music-popup-playpause-icon');
+const prevBtn = popupMenu.querySelector('#music-popup-prev');
+const nextBtn = popupMenu.querySelector('#music-popup-next');
+const progressBar = popupMenu.querySelector('#music-popup-progress');
+const currentTime = popupMenu.querySelector('#music-popup-current-time');
+const duration = popupMenu.querySelector('#music-popup-duration');
 
-let music2index = 0;
-let music2isplaying = false;
-let music2seekbardragging = false;
-let music2lastseek = 0;
+let trackIndex = 0;
+let isPlaying = false;
+let dragging = false;
+let lastSeek = 0;
 
-// Icon toggles controls (click OR hover)
-function showControls() {
-  music2bubble.classList.add('show-controls');
-}
-function hideControls() {
-  music2bubble.classList.remove('show-controls');
-}
-music2iconbtn.addEventListener('click', (e) => {
-  e.stopPropagation();
-  if (music2bubble.classList.contains('show-controls')) {
-    hideControls();
-  } else {
-    showControls();
-  }
+// --- Popup toggle logic ---
+popupBtn.addEventListener('click', () => {
+  popupMenu.classList.toggle('show');
 });
-music2iconbtn.addEventListener('mouseenter', showControls);
-music2bubble.addEventListener('mouseleave', hideControls);
 
-document.addEventListener("click", function (e) {
+// Click outside closes menu
+document.addEventListener('click', function(e) {
   if (
-    music2bubble.classList.contains("show-controls") &&
-    !music2bubble.contains(e.target)
+    popupMenu.classList.contains('show') &&
+    !popupMenu.contains(e.target) &&
+    e.target !== popupBtn
   ) {
-    hideControls();
+    popupMenu.classList.remove('show');
   }
 });
 
 // --- Track Controls ---
-function music2settrack(idx, autoplay = false) {
-  music2index = idx;
-  const track = music2_tracks[idx];
-  music2audio.src = track.src;
-  music2title.textContent = track.title;
-  music2seekbar.value = 0;
-  music2seekbar.disabled = true;
-  music2currenttime.textContent = "0:00";
-  music2duration.textContent = "0:00";
+function setTrack(idx, autoplay = false) {
+  trackIndex = idx;
+  const track = musicTracks[idx];
+  audio.src = track.src;
+  title.textContent = track.title;
+  progressBar.value = 0;
+  progressBar.disabled = true;
+  currentTime.textContent = "0:00";
+  duration.textContent = "0:00";
   if (autoplay) {
-    music2audio.play();
-    music2isplaying = true;
-    music2playpauseicon.innerHTML = "&#10073;&#10073;";
+    audio.play();
+    isPlaying = true;
+    playpauseIcon.innerHTML = "&#10073;&#10073;"; // pause
   } else {
-    music2audio.pause();
-    music2isplaying = false;
-    music2playpauseicon.innerHTML = "&#9654;";
+    audio.pause();
+    isPlaying = false;
+    playpauseIcon.innerHTML = "&#9654;"; // play
   }
 }
-music2prevbtn.addEventListener('click', () => {
-  music2settrack((music2index-1+music2_tracks.length)%music2_tracks.length, music2isplaying);
+
+prevBtn.addEventListener('click', () => {
+  setTrack((trackIndex - 1 + musicTracks.length) % musicTracks.length, isPlaying);
 });
-music2nextbtn.addEventListener('click', () => {
-  music2settrack((music2index+1)%music2_tracks.length, music2isplaying);
+nextBtn.addEventListener('click', () => {
+  setTrack((trackIndex + 1) % musicTracks.length, isPlaying);
 });
-music2playpausebtn.addEventListener('click', () => {
-  if (music2audio.paused) {
-    music2audio.play();
-  } else {
-    music2audio.pause();
-  }
+playpauseBtn.addEventListener('click', () => {
+  if (audio.paused) audio.play();
+  else audio.pause();
 });
-music2audio.addEventListener('play', () => {
-  music2isplaying = true;
-  music2playpauseicon.innerHTML = "&#10073;&#10073;";
+audio.addEventListener('play', () => {
+  isPlaying = true;
+  playpauseIcon.innerHTML = "&#10073;&#10073;";
 });
-music2audio.addEventListener('pause', () => {
-  music2isplaying = false;
-  music2playpauseicon.innerHTML = "&#9654;";
+audio.addEventListener('pause', () => {
+  isPlaying = false;
+  playpauseIcon.innerHTML = "&#9654;";
 });
-music2audio.addEventListener('ended', () => {
-  music2settrack((music2index+1)%music2_tracks.length, true);
+audio.addEventListener('ended', () => {
+  setTrack((trackIndex + 1) % musicTracks.length, true);
 });
 
-// --- Volume Control ---
-music2volume.addEventListener('input', () => {
-  music2audio.volume = music2volume.value;
+// --- Progress Bar Logic ---
+audio.addEventListener('loadedmetadata', () => {
+  duration.textContent = formatTime(audio.duration);
+  currentTime.textContent = formatTime(audio.currentTime);
+  progressBar.disabled = false;
+  progressBar.value = audio.duration ? Math.round((audio.currentTime / audio.duration) * 1000) : 0;
 });
-music2audio.volume = music2volume.value;
-
-// --- Time Slider Logic ---
-music2audio.addEventListener('loadedmetadata', () => {
-  music2duration.textContent = formattime(music2audio.duration);
-  music2currenttime.textContent = formattime(music2audio.currentTime);
-  music2seekbar.disabled = false;
-  music2seekbar.value = music2audio.duration ? Math.round((music2audio.currentTime / music2audio.duration) * 1000) : 0;
-});
-music2audio.addEventListener('timeupdate', () => {
-  if (!music2seekbardragging && music2audio.duration) {
-    music2seekbar.value = Math.round((music2audio.currentTime / music2audio.duration) * 1000);
-    music2currenttime.textContent = formattime(music2audio.currentTime);
+audio.addEventListener('timeupdate', () => {
+  if (!dragging && audio.duration) {
+    progressBar.value = Math.round((audio.currentTime / audio.duration) * 1000);
+    currentTime.textContent = formatTime(audio.currentTime);
   }
 });
-music2seekbar.addEventListener('input', () => {
-  if (music2audio.duration) {
-    music2seekbardragging = true;
-    const seekto = (music2seekbar.value / 1000) * music2audio.duration;
-    music2currenttime.textContent = formattime(seekto);
-    music2lastseek = seekto;
+progressBar.addEventListener('input', () => {
+  if (audio.duration) {
+    dragging = true;
+    const seekTo = (progressBar.value / 1000) * audio.duration;
+    currentTime.textContent = formatTime(seekTo);
+    lastSeek = seekTo;
   }
 });
 ['mousedown', 'touchstart'].forEach(evt =>
-  music2seekbar.addEventListener(evt, () => music2seekbardragging = true)
+  progressBar.addEventListener(evt, () => dragging = true)
 );
 ['mouseup', 'touchend', 'change'].forEach(evt =>
-  music2seekbar.addEventListener(evt, () => {
-    if (music2audio.duration && music2seekbardragging) {
-      music2audio.currentTime = music2lastseek;
-      music2currenttime.textContent = formattime(music2audio.currentTime);
+  progressBar.addEventListener(evt, () => {
+    if (audio.duration && dragging) {
+      audio.currentTime = lastSeek;
+      currentTime.textContent = formatTime(audio.currentTime);
     }
-    music2seekbardragging = false;
+    dragging = false;
   })
 );
 
-function formattime(time) {
+function formatTime(time) {
   time = Math.floor(time || 0);
   const m = Math.floor(time / 60);
   const s = time % 60;
   return `${m}:${s < 10 ? '0' : ''}${s}`;
 }
 
-music2settrack(0);
+setTrack(0);
