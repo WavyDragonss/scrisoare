@@ -1,0 +1,53 @@
+body {
+  background: #ff69b4; /* pink background */
+  margin: 0;
+  min-height: 100vh;
+  font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+/* Bonnet (banner) styles */
+.bonnet {
+  width: 100vw;
+  background: #fff;
+  border-radius: 0 0 36px 36px;
+  box-shadow: 0 8px 24px #d4006f22;
+  padding: 2.2em 0 1.2em 0;
+  margin: 0 auto;
+  font-weight: bold;
+  font-size: 2.4rem;
+  color: #d4006f;
+  text-align: center;
+  letter-spacing: 0.02em;
+  transition: box-shadow 0.2s;
+}
+
+@media (max-width: 500px) {
+  .bonnet {
+    font-size: 1.55rem;
+    padding: 1.4em 0 0.9em 0;
+    border-radius: 0 0 18px 18px;
+  }
+}
+
+/* Main rectangle styles */
+.center-rectangle {
+  background: #fff;
+  border-radius: 32px;
+  box-shadow: 0 6px 32px #d4006f22;
+  max-width: 480px;
+  margin: 3em auto;
+  padding: 2.3em 2em;
+  text-align: center;
+  min-height: 180px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+@media (max-width: 500px) {
+  .center-rectangle {
+    max-width: 96vw;
+    padding: 1.2em 0.7em;
+    border-radius: 18px;
+  }
+}

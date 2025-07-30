@@ -2,22 +2,33 @@
 <html lang="en">
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lotus Rain Mobile Site</title>
-  <link rel="stylesheet" href="css/lotus-rain.css">
-  <link rel="stylesheet" href="music2.css">
+  <title>Lotus Main Content</title>
+  <link rel="stylesheet" href="lotus-rain.css">
+  <link rel="stylesheet" href="main-style.css">
 </head>
 <body>
+  <!-- Lotus rain background, adjustable with data attributes -->
   <div 
     class="lotus-rain-bg"
-    data-count="40"         
-    data-speed="1.5"        
-    data-opacity="0.2"      
+    data-count="40"
+    data-speed="1.5"
+    data-opacity="0.2"
   ></div>
-  <div class="content">
-    <h1>Welcome to Lotus!</h1>
-    <p>A beautiful mobile website with a pink vibe and a lotus rain touch.</p>
+
+  <!-- Bonnet/banner at the top -->
+  <div class="bonnet">
+    <!-- Change this text to your desired bold banner! -->
+    Welcome to Lotus!
   </div>
-  <script src="js/lotus-rain.js"></script>
-  <script src="js/music2.js"></script>
+
+  <!-- Centered main rectangle for content -->
+  <div class="center-rectangle">
+    <p>
+      This is your main content area.<br>
+      Put anything you want here!
+    </p>
+  </div>
+  
+  <script src="lotus-rain.js"></script>
 </body>
 </html>
