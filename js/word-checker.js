@@ -279,7 +279,7 @@ function checkAnswers() {
     btn.id = "continue-btn";
     btn.textContent = "Continuă";
     btn.addEventListener("click", () => {
-      window.location.href = "surpriza.html";
+      window.location.href = "memory.html";
     });
     grid.appendChild(btn);
 
