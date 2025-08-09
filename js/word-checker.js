@@ -266,7 +266,7 @@ function checkAnswers() {
     // Optional info message
     const msg = document.createElement("div");
     msg.id = "auto-redirect-msg";
-    msg.textContent = "🎉 Bravo! Vei fi redirecționat în 5 secunde...";
+    msg.textContent = "FELICITARII AAHHH IN 5 SECUNDE VEI TRECE LA URMATORUL PAS!!!";
     msg.style.margin = "20px auto 0 auto";
     msg.style.fontSize = "1.06rem";
     msg.style.color = "#d4006f";
