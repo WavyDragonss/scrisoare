@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>INCA PUTIN</title>
+  <link rel="stylesheet" href="css/memory-style.css" />
+  <script src="js/memory.js" defer></script>
+</head>
+<body>
+
+  <header class="site-header">
+    <h1>Memory — 5×5</h1>
+    <p class="rotate-hint">🔄 Rotate for best experience</p>
+  </header>
+
+  <main>
+    <!-- Board container -->
+    <section id="game-area" class="game-area" aria-label="Memory game">
+      <div id="board" class="board" role="grid">
+        <!-- 25 card elements for GUI preview: -->
+        <!-- JS will replace numbers and logic, but this shows the structure and design -->
+        <!-- You can replace numbers with JS later -->
+        <!-- Each uses data-slot for future JS mapping -->
+        <!-- Cards numbered 1-25 for visual demo -->
+        <!-- All show '?' on front, number on back -->
+        <!-- .flipped not set, so all show backs only when JS toggles -->
+        <!-- Preview only: -->
+        <div class="card" role="button" tabindex="0" data-slot="0" aria-pressed="false">
+          <div class="card-inner">
+            <div class="card-face card-front">?</div>
+            <div class="card-face card-back"><span class="num">1</span></div>
+          </div>
+        </div>
+        <div class="card" role="button" tabindex="0" data-slot="1" aria-pressed="false">
+          <div class="card-inner">
+            <div class="card-face card-front">?</div>
+            <div class="card-face card-back"><span class="num">2</span></div>
+          </div>
+        </div>
+        <div class="card" role="button" tabindex="0" data-slot="2" aria-pressed="false">
+          <div class="card-inner">
+            <div class="card-face card-front">?</div>
+            <div class="card-face card-back"><span class="num">3</span></div>
+          </div>
+        </div>
+        <div class="card" role="button" tabindex="0" data-slot="3" aria-pressed="false">
+          <div class="card-inner">
+            <div class="card-face card-front">?</div>
+            <div class="card-face card-back"><span class="num">4</span></div>
+          </div>
+        </div>
+        <div class="card" role="button" tabindex="0" data-slot="4" aria-pressed="false">
+          <div class="card-inner">
+            <div class="card-face card-front">?</div>
+            <div class="card-face card-back"><span class="num">5</span></div>
+          </div>
+        </div>
+        <div class="card" role="button" tabindex="0" data-slot="5" aria-pressed="false">
+          <div class="card-inner">
+            <div class="card-face card-front">?</div>
+            <div class="card-face card-back"><span class="num">6</span></div>
+          </div>
+        </div>
+        <div class="card" role="button" tabindex="0" data-slot="6" aria-pressed="false">
+          <div class="card-inner">
+            <div class="card-face card-front">?</div>
+            <div class="card-face card-back"><span class="num">7</span></div>
+          </div>
+        </div>
+        <div class="card" role="button" tabindex="0" data-slot="7" aria-pressed="false">
+          <div class="card-inner">
+            <div class="card-face card-front">?</div>
+            <div class="card-face card-back"><span class="num">8</span></div>
+          </div>
+        </div>
+        <div class="card" role="button" tabindex="0" data-slot="8" aria-pressed="false">
+          <div class="card-inner">
+            <div class="card-face card-front">?</div>
+            <div class="card-face card-back"><span class="num">9</span></div>
+          </div>
+        </div>
+        <div class="card" role="button" tabindex="0" data-slot="9" aria-pressed="false">
+          <div class="card-inner">
+            <div class="card-face card-front">?</div>
+            <div class="card-face card-back"><span class="num">10</span></div>
+          </div>
+        </div>
+        <div class="card" role="button" tabindex="0" data-slot="10" aria-pressed="false">
+          <div class="card-inner">
+            <div class="card-face card-front">?</div>
+            <div class="card-face card-back"><span class="num">11</span></div>
+          </div>
+        </div>
+        <div class="card" role="button" tabindex="0" data-slot="11" aria-pressed="false">
+          <div class="card-inner">
+            <div class="card-face card-front">?</div>
+            <div class="card-face card-back"><span class="num">12</span></div>
+          </div>
+        </div>
+        <div class="card" role="button" tabindex="0" data-slot="12" aria-pressed="false">
+          <div class="card-inner">
+            <div class="card-face card-front">?</div>
+            <div class="card-face card-back"><span class="num">13</span></div>
+          </div>
+        </div>
+        <div class="card" role="button" tabindex="0" data-slot="13" aria-pressed="false">
+          <div class="card-inner">
+            <div class="card-face card-front">?</div>
+            <div class="card-face card-back"><span class="num">14</span></div>
+          </div>
+        </div>
+        <div class="card" role="button" tabindex="0" data-slot="14" aria-pressed="false">
+          <div class="card-inner">
+            <div class="card-face card-front">?</div>
+            <div class="card-face card-back"><span class="num">15</span></div>
+          </div>
+        </div>
+        <div class="card" role="button" tabindex="0" data-slot="15" aria-pressed="false">
+          <div class="card-inner">
+            <div class="card-face card-front">?</div>
+            <div class="card-face card-back"><span class="num">16</span></div>
+          </div>
+        </div>
+        <div class="card" role="button" tabindex="0" data-slot="16" aria-pressed="false">
+          <div class="card-inner">
+            <div class="card-face card-front">?</div>
+            <div class="card-face card-back"><span class="num">17</span></div>
+          </div>
+        </div>
+        <div class="card" role="button" tabindex="0" data-slot="17" aria-pressed="false">
+          <div class="card-inner">
+            <div class="card-face card-front">?</div>
+            <div class="card-face card-back"><span class="num">18</span></div>
+          </div>
+        </div>
+        <div class="card" role="button" tabindex="0" data-slot="18" aria-pressed="false">
+          <div class="card-inner">
+            <div class="card-face card-front">?</div>
+            <div class="card-face card-back"><span class="num">19</span></div>
+          </div>
+        </div>
+        <div class="card" role="button" tabindex="0" data-slot="19" aria-pressed="false">
+          <div class="card-inner">
+            <div class="card-face card-front">?</div>
+            <div class="card-face card-back"><span class="num">20</span></div>
+          </div>
+        </div>
+        <div class="card" role="button" tabindex="0" data-slot="20" aria-pressed="false">
+          <div class="card-inner">
+            <div class="card-face card-front">?</div>
+            <div class="card-face card-back"><span class="num">21</span></div>
+          </div>
+        </div>
+        <div class="card" role="button" tabindex="0" data-slot="21" aria-pressed="false">
+          <div class="card-inner">
+            <div class="card-face card-front">?</div>
+            <div class="card-face card-back"><span class="num">22</span></div>
+          </div>
+        </div>
+        <div class="card" role="button" tabindex="0" data-slot="22" aria-pressed="false">
+          <div class="card-inner">
+            <div class="card-face card-front">?</div>
+            <div class="card-face card-back"><span class="num">23</span></div>
+          </div>
+        </div>
+        <div class="card" role="button" tabindex="0" data-slot="23" aria-pressed="false">
+          <div class="card-inner">
+            <div class="card-face card-front">?</div>
+            <div class="card-face card-back"><span class="num">24</span></div>
+          </div>
+        </div>
+        <div class="card" role="button" tabindex="0" data-slot="24" aria-pressed="false">
+          <div class="card-inner">
+            <div class="card-face card-front">?</div>
+            <div class="card-face card-back"><span class="num">25</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Surprise button (hidden until game end) -->
+    <div class="end-controls">
+      <button id="surprise-btn" class="surprise-btn" type="button" aria-hidden="true">
+        See the Surprise
+      </button>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <small>Tap a card to reveal. Match pairs to remove them.</small>
+  </footer>
+
+</body>
+</html>

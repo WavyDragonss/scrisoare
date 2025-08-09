@@ -1,0 +1,122 @@
+:root{
+  --bg: #fff7fb;
+  --accent: #d4006f;
+  --accent-2: #ffb3e6;
+  --card-back: #ffffff;
+  --card-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  --gap: 8px;
+}
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html,body { height:100%; margin:0; padding:0; background:var(--bg); font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial; color:#222; -webkit-font-smoothing:antialiased; }
+
+.site-header { padding:18px 16px 6px; text-align:center; }
+.site-header h1 { margin:0; font-size:1.2rem; color:var(--accent); }
+.rotate-hint { margin:6px 0 0; font-size:.86rem; color:#666; }
+
+/* Game area / board */
+.game-area { padding: 6px 14px 28px; max-width:640px; margin: 0 auto; }
+.board {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr); /* 5 columns */
+  gap: var(--gap);
+  width: 100%;
+  max-width: 520px;
+  margin: 6px auto 0;
+  touch-action: manipulation; /* improves mobile taps */
+}
+
+/* Card wrapper: responsive square via aspect-ratio */
+.card {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1; /* keep square */
+  perspective: 900px;
+  cursor: pointer;
+  border-radius: 10px;
+  -webkit-user-select: none;
+  user-select: none;
+  display: block;
+}
+
+/* Inner 3D container */
+.card-inner {
+  position: absolute;
+  inset: 0;
+  transition: transform 360ms ease;
+  transform-style: preserve-3d;
+}
+
+/* flipped state on card element will rotate inner */
+.card.flipped .card-inner { transform: rotateY(180deg); }
+
+/* Card faces */
+.card-face {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backface-visibility: hidden;
+  border-radius: 10px;
+  box-shadow: var(--card-shadow);
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+
+/* Front (face-down) design */
+.card-front {
+  background: linear-gradient(135deg, var(--accent), var(--accent-2));
+  color: white;
+  transform: rotateY(0deg);
+}
+
+/* Back (face-up) with number */
+.card-back {
+  background: var(--card-back);
+  color: #222;
+  transform: rotateY(180deg);
+  border: 2px solid rgba(0,0,0,0.06);
+}
+
+/* Number style on back */
+.card-back .num {
+  font-size: 1.2rem;
+  letter-spacing: 0.5px;
+}
+
+/* Hidden / removed cards */
+.card.hidden { visibility: hidden; opacity: 0; transform: scale(0.9); transition: visibility .3s, opacity .3s, transform .3s; }
+
+/* Surprise button (hidden initially) */
+.end-controls { text-align:center; margin-top:22px; }
+.surprise-btn {
+  display: none;
+  background: #ffd166;
+  color: #222;
+  border: none;
+  padding: 14px 18px;
+  font-size: 1.05rem;
+  border-radius: 12px;
+  width: calc(100% - 60px);
+  max-width: 360px;
+  box-shadow: 0 8px 18px rgba(0,0,0,0.12);
+}
+
+/* Accessibility focus style */
+.card:focus { outline: 3px solid rgba(212,0,111,0.18); outline-offset: 3px; }
+
+/* Mobile tweaks */
+@media (max-width:480px) {
+  :root { --gap: 6px; }
+  .site-header h1 { font-size: 1.1rem; }
+  .card-face { font-size: 1rem; }
+  .card-back .num { font-size: 1rem; }
+  .surprise-btn { padding: 12px 14px; width: calc(100% - 40px); }
+}
+
+/* Landscape hint: larger tiles */
+@media (orientation: landscape) and (max-height: 420px) {
+  .board { gap: 6px; max-width: 720px; }
+  .card-face { font-size: 1.25rem; }
+}

@@ -11,7 +11,7 @@ const questions = [
 // HINTS ARRAY
 const hints = [
   "Prietenul meu pufos!",
-  "O facem mereu împreună și doar împreună",
+  "O facem mereu împreună și doar împreună...incepe cu C",
   "Când spun ceva funny, începe cu B și se termină în h",
   "O facem împreună uneori începe cu G",
   "No hint!!!",
@@ -293,7 +293,7 @@ function checkAnswers() {
 
     // Auto-redirect after 5 seconds
     setTimeout(() => {
-      window.location.href = "surpriza.html";
+      window.location.href = "memory.html";
     }, 5000);
   }
 }
