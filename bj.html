@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Blackjack</title>
+    <title>Ultimul pas...</title>
     <link rel="stylesheet" href="css/bj-style.css">
     <script src="js/bj.js" defer></script>
 </head>
@@ -18,27 +18,28 @@
         <div id="help-modal" class="help-modal">
             <div class="help-modal-content">
                 <button id="help-close" class="help-close" aria-label="Close help">&times;</button>
-                <h2>Blackjack Game Rules</h2>
+                <h2>Reguli Blackjack</h2>
                 <div class="help-scroll">
                 <p>
-                    You play classic Blackjack against the dealer.<br><br>
-                    <strong>Objective:</strong> Try to get a hand value as close to 21 as possible without going over.<br><br>
-                    <strong>Card Values:</strong><br>
-                    - Number cards are worth their face value.<br>
-                    - Face cards (J, Q, K) are worth 10 points.<br>
-                    - Aces can count as 1 or 11 points, whichever benefits your hand most.<br><br>
-                    <strong>Your Turn:</strong><br>
-                    - <strong>Hit:</strong> Draw a card.<br>
-                    - <strong>Stand:</strong> Keep your current hand and end your turn.<br>
-                    After you stand, the dealer plays automatically, drawing cards until reaching at least 17 points.<br><br>
-                    <strong>Busting:</strong> If your hand value exceeds 21, you bust and lose the round.<br>
-                    If the dealer busts, you win the round.<br>
-                    If neither busts, the higher hand wins.<br><br>
-                    <strong>Progress:</strong><br>
-                    - Winning 5 rounds unlocks the next step (you will be redirected).<br>
-                    - Losing 3 rounds resets the game and your progress.<br><br>
-                    Try to beat the dealer and advance to the surprise!<br>
-                    <strong>Good luck!</strong>
+                    Joci Blackjack clasic împotriva dealer-ului.<br><br>
+                <strong>Obiectiv:</strong> Încearcă să obții o mână cu valoarea cât mai aproape de 21 fără să depășești.<br><br>
+                <strong>Valoarea cărților:</strong><br>
+                - Cărțile numerice valorează cât valoarea lor.<br>
+                - Cărțile cu figuri (J, Q, K) valorează 10 puncte.<br>
+                - Asul poate valora 1 sau 11 puncte, după ce îți avantajează mâna cel mai mult.<br><br>
+                <strong>Tura ta:</strong><br>
+                - <strong>Hit:</strong> Tragi o carte.<br>
+                - <strong>Stand:</strong> Păstrezi mâna curentă și închei tura.<br>
+                După ce alegi Stand, dealer-ul joacă automat, trăgând cărți până ajunge cel puțin la 17 puncte.<br><br>
+                <strong>Depășire (Bust):</strong> Dacă valoarea mâinii tale depășește 21, faci bust și pierzi runda.<br>
+                Dacă dealer-ul face bust, tu câștigi runda.<br>
+                Dacă niciunul nu face bust, câștigă mâna cu valoarea mai mare.<br><br>
+                <strong>Progres:</strong><br>
+                - Câștigând 5 runde deblochezi pasul următor (vei fi redirecționat).<br>
+                - Pierzând 3 runde, jocul și progresul se resetează.<br><br>
+                Încearcă să-l învingi pe dealer și să avansezi spre surpriză!<br>
+                <strong>Mult noroc!</strong>
+
                 </p>
                 </div>
             </div>
@@ -47,13 +48,13 @@
         <div id="dealer">
             <h2>Dealer</h2>
             <div id="dealer-cards"></div>
-            <div id="dealer-points" class="points-label">Points: <span>?</span></div>
+            <div id="dealer-points" class="points-label">Puncte: <span>?</span></div>
         </div>
 
         <div id="player">
-            <h2>You</h2>
+            <h2>TU</h2>
             <div id="player-cards"></div>
-            <div id="player-points" class="points-label">Points: <span>?</span></div>
+            <div id="player-points" class="points-label">Puncte: <span>?</span></div>
         </div>
 
         <div id="controls">
@@ -63,12 +64,12 @@
         </div>
 
         <div id="score">
-            Wins: <span id="wins">0</span> | Losses: <span id="losses">0</span> | Draws: <span id="draws">0</span>
+            Castiguri: <span id="wins">0</span> | Pierderi: <span id="losses">0</span> | Egalitate: <span id="draws">0</span>
         </div>
 
         <div id="game-msg" class="game-msg"></div>
 
-        <button id="btn-surprise" style="display:none;">Proceed to Surprise</button>
+        <button id="btn-surprise" style="display:none;">Avanseaza...</button>
     </div>
 </body>
 </html>

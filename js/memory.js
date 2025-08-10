@@ -40,7 +40,7 @@
     // attach surprise button behaviour (if not already)
     if (!surpriseBtn.dataset.bound) {
       surpriseBtn.addEventListener('click', () => {
-        window.location.href = 'surpriza.html';
+        window.location.href = 'bj.html';
       });
       surpriseBtn.dataset.bound = 'true';
     }

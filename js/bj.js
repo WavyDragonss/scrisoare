@@ -1,4 +1,4 @@
-// bj.js -- Blackjack logic w/ point calculator, win/lose message, help modal, surprise unlock
+// bj.js -- Blackjack logic w/ point calculator, win/lose message, help modal, surprise unlock, improved restart logic
 
 let deck = [];
 let playerHand = [];
@@ -6,6 +6,7 @@ let dealerHand = [];
 let wins = 0, losses = 0, draws = 0;
 let playerTurn = true;
 let gameActive = false;
+let roundEnded = false;
 
 const suits = ['♠','♥','♦','♣'];
 const ranks = ['A','2','3','4','5','6','7','8','9','10','J','Q','K'];
@@ -26,6 +27,8 @@ const gameMsg = document.getElementById('game-msg');
 const helpBtn = document.getElementById('help-btn');
 const helpModal = document.getElementById('help-modal');
 const helpClose = document.getElementById('help-close');
+
+let autoRestartTimeout = null;
 
 // --- Helpers ---
 function createDeck() {
@@ -72,12 +75,15 @@ function startGame() {
     dealerHand = [deck.pop(), deck.pop()];
     playerTurn = true;
     gameActive = true;
+    roundEnded = false;
     renderHand(playerCardsDiv, playerHand);
     renderHand(dealerCardsDiv, dealerHand, true);
     updatePoints();
     btnHit.disabled = false;
     btnStand.disabled = false;
+    btnRestart.disabled = true;
     gameMsg.textContent = '';
+    clearAutoRestart();
 }
 
 function updatePoints() {
@@ -102,6 +108,8 @@ function endGame(result) {
     btnHit.disabled = true;
     btnStand.disabled = true;
     gameActive = false;
+    roundEnded = true;
+    btnRestart.disabled = false;
     renderHand(dealerCardsDiv, dealerHand, false);
     updatePoints();
 
@@ -128,9 +136,30 @@ function endGame(result) {
         setTimeout(() => {
             wins = 0; losses = 0; draws = 0;
             updateScore();
-            showMessage("Game reset after 5 losses.", false);
-            startGame();
+            showMessage("Jocul se va reseta dupa 5 pierderi.", false);
+            doRestart();
         }, 1700);
+        return;
+    }
+
+    // If user doesn't press Restart, auto-restart after 2s
+    autoRestartTimeout = setTimeout(() => {
+        if (roundEnded) {
+            doRestart();
+        }
+    }, 2000);
+}
+
+function doRestart() {
+    roundEnded = false;
+    btnRestart.disabled = true;
+    startGame();
+}
+
+function clearAutoRestart() {
+    if (autoRestartTimeout) {
+        clearTimeout(autoRestartTimeout);
+        autoRestartTimeout = null;
     }
 }
 
@@ -158,7 +187,9 @@ btnStand.onclick = function() {
     else endGame('draw');
 };
 btnRestart.onclick = function() {
-    startGame();
+    if (!roundEnded) return; // Only allow restart after round ends
+    clearAutoRestart();
+    doRestart();
 };
 
 btnSurprise.onclick = function() {
@@ -179,7 +210,7 @@ helpClose.onclick = function() {
     helpModal.classList.remove('active');
     document.body.style.overflow = '';
     setTimeout(() => {
-        showMessage("Check the rules above if you need help!", null);
+        showMessage("Citeste regulile daca ai nevoie de ajutor!", null);
     }, 280);
 };
 // Close modal on backdrop click
@@ -188,7 +219,7 @@ helpModal.addEventListener('click', function(e){
         helpModal.classList.remove('active');
         document.body.style.overflow = '';
         setTimeout(() => {
-            showMessage("Check the rules above if you need help!", null);
+            showMessage("Citeste regulile daca ai nevoie de ajutor!", null);
         }, 280);
     }
 });
