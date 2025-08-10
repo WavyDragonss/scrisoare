@@ -1,0 +1,238 @@
+body {
+    font-family: 'Segoe UI', Arial, sans-serif;
+    background: linear-gradient(180deg, #fff7fb 0%, #fff0fa 100%);
+    text-align: center;
+    color: #d4006f;
+    margin: 0;
+    min-height: 100vh;
+}
+
+#game-container {
+    max-width: 400px;
+    margin: 0 auto;
+    background: rgba(255,240,250,0.92);
+    border-radius: 18px;
+    box-shadow: 0 12px 32px #fd2e9622;
+    padding: 24px 12px 32px 12px;
+    position: relative;
+}
+
+h1 {
+    font-size: 2rem;
+    color: #d4006f;
+    margin-bottom: 16px;
+    letter-spacing: 2px;
+    font-weight: 700;
+}
+
+#dealer, #player {
+    margin: 16px 0 20px 0;
+}
+
+#dealer-cards, #player-cards {
+    min-height: 64px;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.card {
+    width: 52px;
+    height: 74px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #fd2e96 50%, #db87d4 100%);
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    box-shadow: 0 6px 18px #d4006f22;
+    font-size: 1.16rem;
+    border: 2px solid #fff7fb;
+    transition: transform 0.18s, box-shadow 0.18s;
+}
+.card:not(:empty):hover, .card:not(:empty):focus {
+    box-shadow: 0 8px 26px #fd2e9633;
+    transform: scale(1.07);
+    outline: none;
+}
+
+#controls {
+    margin: 18px 0;
+}
+
+button {
+    background: linear-gradient(90deg, #fd2e96 0%, #db87d4 100%);
+    color: #fff;
+    padding: 12px 24px;
+    margin: 6px;
+    border: none;
+    border-radius: 14px;
+    font-size: 1.07rem;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 6px 14px #d4006f33;
+    transition: background .18s, transform .13s;
+}
+button:hover, button:focus {
+    background: linear-gradient(90deg,#e60073,#b44eb6);
+    transform: scale(1.04);
+    color: #fff;
+}
+
+#btn-surprise {
+    display: none;
+    background: linear-gradient(90deg, #fd2e96 0%, #db87d4 100%);
+    color: #fff;
+    border: none;
+    border-radius: 16px;
+    padding: 14px 24px;
+    font-size: 1.16rem;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 20px #d4006f22;
+    margin-top: 24px;
+    letter-spacing: 1px;
+}
+
+#score {
+    margin-top: 16px;
+    font-size: 1.07rem;
+    color: #d4006f;
+    background: #fff7fb;
+    border-radius: 10px;
+    display: inline-block;
+    padding: 7px 16px;
+    font-weight: 500;
+    box-shadow: 0 2px 10px #d4006f11;
+}
+
+.points-label {
+    margin-top: 8px;
+    font-size: 1.07rem;
+    color: #fd2e96;
+    font-weight: 600;
+    background: #fff0fa;
+    border-radius: 7px;
+    display: inline-block;
+    padding: 2px 10px;
+    box-shadow: 0 1px 6px #d4006f17;
+}
+
+.game-msg {
+    margin-top: 18px;
+    font-size: 1.03rem;
+    font-weight: 600;
+    min-height: 22px;
+    color: #d4006f;
+}
+
+/* Help floating button */
+.help-btn {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: #fd2e96;
+    color: #fff;
+    border: none;
+    font-size: 1.4rem;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 2px 8px #d4006f44;
+    z-index: 10;
+    transition: background 0.2s;
+}
+.help-btn:hover, .help-btn:focus {
+    background: #d4006f;
+}
+
+/* Help Modal */
+.help-modal {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(253, 46, 150, 0.16);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+.help-modal.active {
+    display: flex;
+}
+.help-modal-content {
+    background: #fff0fa;
+    color: #d4006f;
+    border-radius: 18px;
+    max-width: 92vw;
+    width: 360px;
+    max-height: 80vh;
+    padding: 28px 22px 24px 22px;
+    position: relative;
+    box-shadow: 0 10px 32px #fd2e9633;
+    display: flex;
+    flex-direction: column;
+}
+.help-close {
+    position: absolute;
+    top: 10px;
+    right: 14px;
+    background: #d4006f;
+    color: #fff;
+    border: none;
+    border-radius: 50%;
+    width: 34px;
+    height: 34px;
+    font-size: 1.7rem;
+    font-weight: bold;
+    cursor: pointer;
+    z-index: 10;
+    transition: background 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.help-close:hover, .help-close:focus {
+    background: #fd2e96;
+}
+
+.help-scroll {
+    overflow-y: auto;
+    max-height: 50vh;
+    padding-right: 7px;
+    font-size: 1.05rem;
+    color: #222;
+    margin-bottom: 8px;
+}
+
+.help-modal-content h2 {
+    margin-top: 0;
+    color: #d4006f;
+    font-size: 1.18rem;
+    text-align: center;
+    margin-bottom: 15px;
+    font-weight: 700;
+}
+
+/* Mobile adjustments */
+@media (max-width: 700px) {
+    #game-container {
+        max-width: 96vw;
+        padding: 10vw 2vw 16vw 2vw;
+    }
+    .card {
+        width: 40px;
+        height: 54px;
+        font-size: 1rem;
+    }
+    button, #btn-surprise {
+        padding: 10px 12px;
+        font-size: .95rem;
+    }
+    .help-modal-content {
+        width: 94vw;
+        padding: 18px 7vw 18px 7vw;
+    }
+}
