@@ -1,4 +1,4 @@
-// Mobile music player popup for lotus site
+// Mobile music player popup for lotus site — improved for mobile autoplay policies
 
 const musicTracks = [
   { src: 'music/lotus_ambient.mp3', title: 'I Wanna Be Yours' },
@@ -50,15 +50,35 @@ let trackIndex = 0;
 let isPlaying = false;
 let dragging = false;
 let lastSeek = 0;
-let autoplayStarted = false;
+let audioPrimed = false; // user gesture detected and OK to play
+let firstPopup = true;
+
+// --- Track Controls ---
+function setTrack(idx, autoplay = false) {
+  trackIndex = idx;
+  const track = musicTracks[trackIndex];
+  audio.src = track.src;
+  audio.load(); // always reload after src change
+  audio.volume = 0.3;
+  title.textContent = track.title;
+  progressBar.value = 0;
+  progressBar.disabled = true;
+  currentTime.textContent = "0:00";
+  duration.textContent = "0:00";
+  if (autoplay) {
+    // Try to play, but handle promise in case browser blocks it
+    audio.play().catch(() => {});
+  }
+}
 
 // --- Popup toggle logic ---
 popupBtn.addEventListener('click', () => {
   popupMenu.classList.toggle('show');
-
-  if (!autoplayStarted) {
-    audio.play();
-    autoplayStarted = true;
+  // On first open, always set the current track and prime audio for mobile
+  if (firstPopup) {
+    setTrack(trackIndex, true); // set and autoplay
+    audioPrimed = true;
+    firstPopup = false;
   }
 });
 
@@ -73,32 +93,25 @@ document.addEventListener('click', function (e) {
   }
 });
 
-// --- Track Controls ---
-function setTrack(idx, autoplay = false) {
-  trackIndex = idx;
-  const track = musicTracks[idx];
-  audio.src = track.src;
-  audio.volume = 0.3; // 30% volume
-  title.textContent = track.title;
-  progressBar.value = 0;
-  progressBar.disabled = true;
-  currentTime.textContent = "0:00";
-  duration.textContent = "0:00";
-
-  if (autoplay) {
-    audio.play();
-  }
-}
-
-prevBtn.addEventListener('click', () => {
+// --- Play/pause/track events ---
+prevBtn.addEventListener('click', e => {
+  e.stopPropagation();
   setTrack((trackIndex - 1 + musicTracks.length) % musicTracks.length, isPlaying);
 });
-nextBtn.addEventListener('click', () => {
+nextBtn.addEventListener('click', e => {
+  e.stopPropagation();
   setTrack((trackIndex + 1) % musicTracks.length, isPlaying);
 });
-playpauseBtn.addEventListener('click', () => {
+playpauseBtn.addEventListener('click', e => {
+  e.stopPropagation();
+  // On first gesture, always try to play (for mobile)
+  if (!audioPrimed) {
+    setTrack(trackIndex, true);
+    audioPrimed = true;
+    return;
+  }
   if (audio.paused) {
-    audio.play();
+    audio.play().catch(() => {});
   } else {
     audio.pause();
   }
@@ -157,4 +170,5 @@ function formatTime(time) {
   return `${m}:${s < 10 ? '0' : ''}${s}`;
 }
 
-setTrack(0);
+// Always set the track initially (but don't autoplay yet)
+setTrack(0, false);
