@@ -98,7 +98,14 @@ body {
     line-height: 1.7;
   }
 }
-
+.dear-left {
+  text-align: left;
+  margin-left: 0.5em;
+  margin-top: 0.7em;
+  margin-bottom: 0.7em;
+  font-weight: 500;
+  color: #ffd6f7;
+}
 /* Make sure paragraphs are spaced nicely */
 .center-rectangle p + p {
   margin-top: 0.8em;
