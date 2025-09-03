@@ -42,8 +42,8 @@ function fadeInElem(elem, text = null, extraClass = null) {
   }, 350);
 }
 
-// Initial state: "Tap to start"
-message.textContent = 'Apasă pentru a incepe';
+// Initial state: "Apasă pentru a începe"
+message.textContent = 'Apasă pentru a începe';
 showElem(message);
 hideElem(turnImage);
 
@@ -84,15 +84,11 @@ function startMessageSequence() {
     });
 }
 
-
-// After your “Tap to continue”:
-loadCountdownTexts().then(startCountdown);
-
-
 // Show message with animated transition, auto-advance every 4s
 function showMessage(idx) {
   hideElem(turnImage);
   clearTimeout(autoAdvanceTimer);
+
   // Animate out old message if visible
   if (message.classList.contains('visible')) {
     fadeOutElem(message, 'slide-left');
@@ -102,12 +98,13 @@ function showMessage(idx) {
   } else {
     fadeInElem(message, messages[idx], 'slide-left');
   }
+
   // Auto-advance after 4s
   if (idx < messages.length - 1) {
     autoAdvanceTimer = setTimeout(() => {
       messageIndex++;
       showMessage(messageIndex);
-    }, 6000);
+    }, 4000);
   }
 }
 
