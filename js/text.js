@@ -3,6 +3,7 @@ let continueReady = false;
 let messageIndex = 0;
 let messages = [];
 let autoAdvanceTimer = null;
+let lastInputTime = 0; // For debounce
 
 const splash = document.getElementById('splash');
 const message = splash.querySelector('.message');
@@ -20,30 +21,42 @@ function hideElem(elem, extraClass = null) {
   if (extraClass) elem.classList.remove(extraClass);
   elem.style.visibility = 'hidden';
 }
-function fadeOutElem(elem, extraClass = null, after = 320) {
-  elem.classList.add('fading');
-  setTimeout(() => hideElem(elem, extraClass), after);
+function fadeOutElem(elem, extraClass = null, after = 350) {
+  elem.classList.add('fade-out');
+  if (extraClass) elem.classList.add(extraClass);
+  setTimeout(() => {
+    elem.classList.remove('fade-out');
+    if (extraClass) elem.classList.remove(extraClass);
+    hideElem(elem);
+  }, after);
+}
+function fadeInElem(elem, text = null, extraClass = null) {
+  if (text !== null) elem.textContent = text;
+  elem.style.visibility = 'visible';
+  elem.classList.add('fade-in');
+  if (extraClass) elem.classList.add(extraClass);
+  setTimeout(() => {
+    elem.classList.remove('fade-in');
+    if (extraClass) elem.classList.remove(extraClass);
+    elem.classList.add('visible');
+  }, 350);
 }
 
 // Initial state: "Tap to start"
 message.textContent = 'Tap to start';
 showElem(message);
-// Hide image initially
 hideElem(turnImage);
 
 // Splash phase 1: Tap to start
 function onFirstTap() {
-  if (started) return;
-  started = true;
   hideElem(message);
-  // Wait 1s
+  started = true;
   setTimeout(() => {
-    // Show rotation instruction
     showElem(message, 'Întoarce telefonul');
     showElem(turnImage);
-    // Keep for 2s
     setTimeout(() => {
-      fadeOutElem(turnImage);
+      turnImage.classList.add('fading');
+      setTimeout(() => hideElem(turnImage, 'fading'), 320);
       showElem(message, 'Apasă pentru a continua', 'pulse');
       continueReady = true;
     }, 2000);
@@ -52,16 +65,13 @@ function onFirstTap() {
 
 // Splash phase 2: Tap to continue
 function onContinueTap() {
-  if (!continueReady) return;
-  continueReady = false;
   hideElem(message, 'pulse');
-  // Start Romanian message sequence
+  continueReady = false;
   startMessageSequence();
 }
 
-// Phase 3: Romanian Message Sequence
+// Fetch messages from text.txt (Romanian)
 function startMessageSequence() {
-  // Fetch messages from misc/text.txt
   fetch('misc/text.txt')
     .then(resp => resp.ok ? resp.text() : '')
     .then(text => {
@@ -70,30 +80,40 @@ function startMessageSequence() {
         messages = ['(No messages found in misc/text.txt)'];
       }
       messageIndex = 0;
-      showMessage(messageIndex);
+      showMessage(messageIndex, 'fade-in', null);
     });
 }
 
-function showMessage(idx) {
+// Show message with transition
+function showMessage(idx, transition = 'fade-in', dir = null) {
   hideElem(turnImage);
-  message.textContent = messages[idx];
-  showElem(message);
-  message.classList.remove('pulse');
-  // Set up auto-advance after 3s
   clearTimeout(autoAdvanceTimer);
+  // Animate out old message if visible
+  if (message.classList.contains('visible')) {
+    let slideClass = dir === 'left' ? 'slide-left' : dir === 'right' ? 'slide-right' : '';
+    fadeOutElem(message, slideClass);
+    setTimeout(() => {
+      fadeInElem(message, messages[idx], transition);
+    }, 350);
+  } else {
+    fadeInElem(message, messages[idx], transition);
+  }
+  // Auto-advance after 3s
   autoAdvanceTimer = setTimeout(() => {
     advanceMessage(1);
   }, 3000);
 }
 
+// Advance/back with animated transition
 function advanceMessage(dir) {
   clearTimeout(autoAdvanceTimer);
   let nextIdx = messageIndex + dir;
   if (nextIdx < 0) nextIdx = 0;
   if (nextIdx >= messages.length) nextIdx = messages.length - 1;
   if (nextIdx !== messageIndex) {
+    let slideDir = dir === 1 ? 'left' : 'right';
     messageIndex = nextIdx;
-    showMessage(messageIndex);
+    showMessage(messageIndex, 'fade-in', slideDir);
   }
 }
 
@@ -116,8 +136,12 @@ function onMessageTap(evt) {
   }
 }
 
-// Event listeners
-window.addEventListener('pointerdown', function(evt) {
+// Debounced input handler
+function handleInput(evt) {
+  const now = Date.now();
+  if (now - lastInputTime < 400) return;
+  lastInputTime = now;
+
   if (!started) {
     onFirstTap();
   } else if (continueReady) {
@@ -125,25 +149,10 @@ window.addEventListener('pointerdown', function(evt) {
   } else if (messages.length > 0) {
     onMessageTap(evt);
   }
-});
-window.addEventListener('touchstart', function(evt) {
-  if (!started) {
-    onFirstTap();
-  } else if (continueReady) {
-    onContinueTap();
-  } else if (messages.length > 0) {
-    onMessageTap(evt);
-  }
-});
-window.addEventListener('click', function(evt) {
-  if (!started) {
-    onFirstTap();
-  } else if (continueReady) {
-    onContinueTap();
-  } else if (messages.length > 0) {
-    onMessageTap(evt);
-  }
-});
+}
+
+// Only one event listener is needed!
+window.addEventListener('pointerdown', handleInput);
 
 // Prevent scroll during splash
 document.body.style.overflow = 'hidden';
