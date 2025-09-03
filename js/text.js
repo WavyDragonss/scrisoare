@@ -1,72 +1,149 @@
-// Splash sequence script
 let started = false;
+let continueReady = false;
+let messageIndex = 0;
+let messages = [];
+let autoAdvanceTimer = null;
+
 const splash = document.getElementById('splash');
 const message = splash.querySelector('.message');
 const turnImage = document.getElementById('turnImage');
 
-// Preload image fallback (in case <link rel="preload"> doesn't work)
-const preloadImg = new window.Image();
-preloadImg.src = 'img/turn.jpg';
-
-// Hide image/message initially
-message.textContent = '';
-message.classList.remove('visible', 'pulse');
-turnImage.classList.remove('visible', 'fading');
-turnImage.style.visibility = 'hidden';
-
-// Utility: show and animate an element
+// Helper functions
 function showElem(elem, text = null, extraClass = null) {
   if (text !== null) elem.textContent = text;
   elem.classList.add('visible');
   if (extraClass) elem.classList.add(extraClass);
   elem.style.visibility = 'visible';
 }
-
-// Utility: hide an element (with fade)
 function hideElem(elem, extraClass = null) {
   elem.classList.remove('visible');
   if (extraClass) elem.classList.remove(extraClass);
   elem.style.visibility = 'hidden';
 }
+function fadeOutElem(elem, extraClass = null, after = 320) {
+  elem.classList.add('fading');
+  setTimeout(() => hideElem(elem, extraClass), after);
+}
 
-// Listen for first pointer interaction
-function onFirstInteraction() {
+// Initial state: "Tap to start"
+message.textContent = 'Tap to start';
+showElem(message);
+// Hide image initially
+hideElem(turnImage);
+
+// Splash phase 1: Tap to start
+function onFirstTap() {
   if (started) return;
   started = true;
-
-  // Prevent scroll, lock interaction to splash
-  document.body.style.overflow = 'hidden';
-
-  // Step 1: Wait 1s
+  hideElem(message);
+  // Wait 1s
   setTimeout(() => {
-    // Step 2: Show "Turn your phone" + image (fade/scale in)
-    showElem(message, 'Turn your phone');
+    // Show rotation instruction
+    showElem(message, 'Întoarce telefonul');
     showElem(turnImage);
-    // Step 3: Keep visible for 2s
+    // Keep for 2s
     setTimeout(() => {
-      // Step 4: Fade out image, change message to "Tap to continue" with pulse
-      turnImage.classList.add('fading');
-      setTimeout(() => {
-        hideElem(turnImage, 'fading');
-      }, 320); // Fade duration (matches CSS)
-      showElem(message, 'Tap to continue', 'pulse');
-      // At this point, splash sequence is done.
-      // Optionally: wait for next tap to proceed (out of scope per instructions)
-    }, 2000); // 2s image duration
-  }, 1000); // 1s initial delay
+      fadeOutElem(turnImage);
+      showElem(message, 'Apasă pentru a continua', 'pulse');
+      continueReady = true;
+    }, 2000);
+  }, 1000);
 }
 
-// Listen for pointerdown, fallback to touchstart/click if needed
-window.addEventListener('pointerdown', onFirstInteraction, { once: true });
-window.addEventListener('touchstart', onFirstInteraction, { once: true });
-window.addEventListener('click', onFirstInteraction, { once: true });
-
-/* Accessibility: If user prefers reduced motion, show instantly */
-if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-  showElem(message, 'Turn your phone');
-  showElem(turnImage);
-  setTimeout(() => {
-    hideElem(turnImage);
-    showElem(message, 'Tap to continue', 'pulse');
-  }, 1000); // Shorter sequence for reduced motion
+// Splash phase 2: Tap to continue
+function onContinueTap() {
+  if (!continueReady) return;
+  continueReady = false;
+  hideElem(message, 'pulse');
+  // Start Romanian message sequence
+  startMessageSequence();
 }
+
+// Phase 3: Romanian Message Sequence
+function startMessageSequence() {
+  // Fetch messages from misc/text.txt
+  fetch('misc/text.txt')
+    .then(resp => resp.ok ? resp.text() : '')
+    .then(text => {
+      messages = text.split('\n').map(line => line.trim()).filter(Boolean);
+      if (messages.length === 0) {
+        messages = ['(No messages found in misc/text.txt)'];
+      }
+      messageIndex = 0;
+      showMessage(messageIndex);
+    });
+}
+
+function showMessage(idx) {
+  hideElem(turnImage);
+  message.textContent = messages[idx];
+  showElem(message);
+  message.classList.remove('pulse');
+  // Set up auto-advance after 3s
+  clearTimeout(autoAdvanceTimer);
+  autoAdvanceTimer = setTimeout(() => {
+    advanceMessage(1);
+  }, 3000);
+}
+
+function advanceMessage(dir) {
+  clearTimeout(autoAdvanceTimer);
+  let nextIdx = messageIndex + dir;
+  if (nextIdx < 0) nextIdx = 0;
+  if (nextIdx >= messages.length) nextIdx = messages.length - 1;
+  if (nextIdx !== messageIndex) {
+    messageIndex = nextIdx;
+    showMessage(messageIndex);
+  }
+}
+
+// Touch/click handlers for advancing/back
+function onMessageTap(evt) {
+  // If message sequence not started, ignore
+  if (messages.length === 0) return;
+  // Get tap position: right side = advance, left side = back
+  let x = 0;
+  if (evt.touches && evt.touches.length) {
+    x = evt.touches[0].clientX;
+  } else {
+    x = evt.clientX;
+  }
+  const screenW = window.innerWidth || document.documentElement.clientWidth;
+  if (x > screenW * 0.5) {
+    advanceMessage(1);
+  } else {
+    advanceMessage(-1);
+  }
+}
+
+// Event listeners
+window.addEventListener('pointerdown', function(evt) {
+  if (!started) {
+    onFirstTap();
+  } else if (continueReady) {
+    onContinueTap();
+  } else if (messages.length > 0) {
+    onMessageTap(evt);
+  }
+});
+window.addEventListener('touchstart', function(evt) {
+  if (!started) {
+    onFirstTap();
+  } else if (continueReady) {
+    onContinueTap();
+  } else if (messages.length > 0) {
+    onMessageTap(evt);
+  }
+});
+window.addEventListener('click', function(evt) {
+  if (!started) {
+    onFirstTap();
+  } else if (continueReady) {
+    onContinueTap();
+  } else if (messages.length > 0) {
+    onMessageTap(evt);
+  }
+});
+
+// Prevent scroll during splash
+document.body.style.overflow = 'hidden';
