@@ -37,7 +37,7 @@ body {
   text-align: center;
   opacity: 0;
   visibility: hidden;
-  transition: opacity 300ms, transform 300ms;
+  transition: opacity 350ms, transform 350ms;
   transform: scale(0.96);
   will-change: opacity, transform;
   margin-bottom: 2vh;
@@ -55,6 +55,29 @@ body {
   0%, 100% { transform: scale(1); opacity: 1; }
   50% { transform: scale(1.07); opacity: 0.85; }
 }
+
+/* Fade out for message transitions */
+.message.fade-out {
+  opacity: 0 !important;
+  transform: scale(0.96) translateX(var(--slide-dir, 0));
+  transition: opacity 350ms, transform 350ms;
+}
+
+/* Fade in with slide for message transitions */
+.message.fade-in {
+  opacity: 1 !important;
+  transform: scale(1) translateX(0);
+  transition: opacity 350ms, transform 350ms;
+}
+
+/* Slide left/right for next/prev message */
+.message.slide-left {
+  --slide-dir: -50px;
+}
+.message.slide-right {
+  --slide-dir: 50px;
+}
+
 #turnImage {
   display: block;
   max-width: 95vw;
