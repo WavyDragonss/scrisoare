@@ -1,0 +1,100 @@
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  min-height: 100dvh;
+  overflow: hidden; /* Prevent scrolling while splash is active */
+}
+
+.splash {
+  position: fixed;
+  inset: 0;
+  background: #000;
+  z-index: 9999;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100vw;
+  min-height: 100dvh;
+  overflow: hidden;
+  touch-action: manipulation;
+}
+
+.splash-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 100vw;
+  max-width: 100vw;
+}
+
+.message {
+  color: #fff;
+  font-size: clamp(24px, 5vw, 40px);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-align: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 300ms, transform 300ms;
+  transform: scale(0.96);
+  will-change: opacity, transform;
+  margin-bottom: 2vh;
+}
+
+/* When visible, fade/scale in */
+.message.visible {
+  opacity: 1;
+  visibility: visible;
+  transform: scale(1);
+}
+
+/* Pulse animation for "Tap to continue" prompt */
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.07); opacity: 0.85; }
+}
+
+.message.pulse {
+  animation: pulse 1.2s infinite;
+}
+
+#turnImage {
+  display: block;
+  max-width: 95vw;
+  max-height: 90vh;
+  object-fit: contain;
+  margin: 0 auto;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 300ms, transform 300ms;
+  transform: scale(0.96);
+  will-change: opacity, transform;
+}
+
+/* When visible, fade/scale in */
+#turnImage.visible {
+  opacity: 1;
+  visibility: visible;
+  transform: scale(1);
+}
+
+/* When fading out */
+#turnImage.fading {
+  opacity: 0;
+  visibility: hidden;
+  transform: scale(0.95);
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .message, #turnImage {
+    transition: none !important;
+    animation: none !important;
+  }
+}
