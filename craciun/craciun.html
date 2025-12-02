@@ -2,22 +2,33 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Christmas Greeting</title>
+    <title>Christmas Scene</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="css/craciun.css">
 </head>
 <body>
     <div class="scene">
-        <!-- Falling snowflakes -->
+        <!-- Falling snowflakes background -->
         <div id="falling-elements"></div>
-        <!-- Santa with sleigh animation -->
+        <!-- Dark blurred overlay for start screen -->
+        <div id="start-overlay" class="visible">
+            <div class="overlay-blur"></div>
+            <div class="overlay-content">
+                <img src="../img/turn.gif" alt="Rotate phone" class="turn-graphic"/>
+                <div class="turn-tip">Rotate your phone for the best experience</div>
+                <div class="start-msg">Tap anywhere to begin</div>
+            </div>
+        </div>
+        <!-- Santa + sleigh animation -->
         <div id="santa-container" class="hide">
             <img id="santa-img" src="../img/santa.png" alt="Santa with Sleigh" />
         </div>
-        <!-- Emoji explosion effect (centered) -->
-        <div id="emoji-explosion"></div>
+        <!-- Multiple emoji explosions -->
+        <div id="emoji-explosions"></div>
         <!-- Rotating festive messages -->
         <div id="festive-message" class="hide"></div>
+        <!-- Final "Continue" button -->
+        <button id="continue-btn" class="hide">Continue</button>
     </div>
     <script src="js/craciun.js"></script>
     <script src="js/scene-sequence.js"></script>

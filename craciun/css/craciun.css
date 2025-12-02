@@ -10,6 +10,7 @@ body, html {
     position: relative;
     background: linear-gradient(to bottom, #121936 0%, #325277 100%);
 }
+/* SNOWFLAKES */
 #falling-elements {
     position: absolute;
     top: 0; left: 0;
@@ -23,44 +24,101 @@ body, html {
     opacity: 0.7;
     font-size: 1.2em;
     pointer-events: none;
-    will-change: transform;
     filter: drop-shadow(0 0 3px #fff);
+}
+/* DARK BLUR OVERLAY */
+#start-overlay {
+    position: absolute;
+    z-index: 100;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: auto;
+    transition: opacity 0.5s;
+}
+#start-overlay.hidden {
+    pointer-events: none;
+    opacity: 0;
+}
+.overlay-blur {
+    position: absolute;
+    top: 0; left: 0; width: 100vw; height: 100vh;
+    background: rgba(22,22,44,0.82);
+    backdrop-filter: blur(7px);
+    z-index: 101;
+}
+.overlay-content {
+    position: relative;
+    z-index: 102;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+.turn-graphic {
+    width: 110px;
+    height: 110px;
+    margin-bottom: 1.3em;
+}
+.turn-tip {
+    font-size: 1.4em;
+    color: #fafafc;
+    margin-bottom: 1.1em;
+    text-shadow: 0 0 14px #2c5086;
+    font-family: 'Segoe UI', sans-serif;
+}
+.start-msg {
+    font-size: 1.06em;
+    color: #e8e8e8;
+    background: rgba(40,68,120,0.22);
+    border-radius: 11px;
+    padding: 0.6em 2em;
+    margin-top: 0.6em;
+    font-family: 'Segoe UI', sans-serif;
+    box-shadow: 0 0 25px #274a840f;
 }
 #santa-container {
     position: absolute;
-    top: 25vh; /* Adjust for image size */
-    left: -730px;
-    width: 760px;
+    top: 24vh;
+    left: -620px;
+    width: 640px;
     height: auto;
-    z-index: 5;
+    z-index: 10;
     pointer-events: none;
     transition: left 1000ms cubic-bezier(.56,.05,.65,.88);
 }
 #santa-container.hide { display: none; }
 #santa-img {
-    width: 760px;
+    width: 640px;
     height: auto;
     display: block;
     filter: drop-shadow(0 21px 51px #8a104196);
 }
-#emoji-explosion {
+/* EMOJI EXPLOSIONS */
+#emoji-explosions {
     position: absolute;
-    top: 50%; left: 50%;
-    width: 0; height: 0;
+    top: 0; left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 16;
     pointer-events: none;
-    z-index: 20;
 }
 .emoji-burst {
     position: absolute;
-    font-size: 3.2rem;
-    opacity: 1;
-    transition: opacity 0.5s, transform 0.6s;
-    will-change: transform, opacity;
+    font-size: 2.2rem;
     pointer-events: none;
+    opacity: 1;
+    transition:
+      opacity 0.55s cubic-bezier(.81,.24,.44,1),
+      transform 0.73s cubic-bezier(.33,.01,.99,.91);
+    will-change: transform, opacity;
 }
+/* FESTIVE MESSAGE */
 #festive-message {
     position: absolute;
-    top: 60%;
+    top: 52%;
     left: 50%;
     transform: translate(-50%, -50%);
     font-size: clamp(2.1rem, 6vw, 4.2rem);
@@ -75,15 +133,40 @@ body, html {
     opacity: 0;
     filter: blur(16px);
     transition: opacity 900ms cubic-bezier(.73,.01,.42,1), filter 430ms;
-    z-index: 6;
+    z-index: 20;
 }
 #festive-message.visible { opacity: 1; filter: blur(0);}
-#festive-message.hide { opacity: 0; filter: blur(16px); }
+#festive-message.hide { opacity: 0; filter: blur(16px);}
+#continue-btn {
+    position: absolute;
+    left: 50%;
+    top: 68%;
+    transform: translate(-50%,-50%);
+    padding: 1em 3em;
+    font-size: 2.0em;
+    background: linear-gradient(90deg,#f8d749 65%, #ffc369 100%);
+    border: none;
+    border-radius: 25px;
+    color: #211103;
+    font-family: 'Segoe Script','Comic Sans MS', cursive;
+    font-weight: 600;
+    box-shadow: 0 2px 36px #ed524819;
+    opacity: 0;
+    transition: opacity 0.65s cubic-bezier(.74,.07,.42,1);
+    z-index: 25;
+    cursor: pointer;
+    outline: none;
+}
+#continue-btn.visible { opacity: 1; }
+.hide {
+  display: none !important;
+}
 @media (max-width: 800px) {
-    #santa-container, #santa-img { width: 410px; }
-    .emoji-burst { font-size: 2.0rem; }
+    #santa-container, #santa-img { width: 350px; }
+    .emoji-burst { font-size: 1.3rem; }
 }
 @media (max-width: 480px) {
-    #santa-container, #santa-img { width: 220px; top: 30vh;}
+    #santa-container, #santa-img { width: 160px; top: 27vh;}
     #festive-message { font-size: 1.1rem; padding: 0.4em 0.9em;}
+    #continue-btn { font-size: 1.2em; padding: 0.7em 2em;}
 }
