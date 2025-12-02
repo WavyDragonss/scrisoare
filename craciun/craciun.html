@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Christmas Greeting</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/craciun.css">
+</head>
+<body>
+    <div class="scene">
+        <!-- Falling snowflakes container -->
+        <div id="falling-elements"></div>
+        <!-- Santa animation; initially hidden/off-screen -->
+        <div id="santa-container" class="hide">
+            <img id="santa-img" src="../img/santa.png" alt="Santa with Sleigh" />
+        </div>
+        <!-- Rotating festive messages -->
+        <div id="festive-message" class="hide"></div>
+        <audio id="hoho-audio" src="../music/hoho.mp3" preload="auto"></audio>
+    </div>
+    <script src="js/craciun.js"></script>
+    <script src="js/scene-sequence.js"></script>
+</body>
+</html>

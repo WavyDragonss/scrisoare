@@ -1,0 +1,73 @@
+body, html {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+}
+.scene {
+    width: 100vw;
+    height: 100vh;
+    position: relative;
+    background: linear-gradient(to bottom, #121936 0%, #325277 100%);
+}
+#falling-elements {
+    position: absolute;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    pointer-events: none; z-index: 1;
+}
+.snowflake {
+    position: absolute;
+    top: 0;
+    color: #fff;
+    opacity: 0.7;
+    font-size: 1.2em;
+    pointer-events: none;
+    will-change: transform;
+    filter: drop-shadow(0 0 3px #fff);
+}
+#santa-container {
+    position: absolute;
+    top: 25vh; /* Centered vertically */
+    left: -730px; /* Well offscreen initially; adjust for image size */
+    width: 760px; /* Large Santa image; adjust for your PNG */
+    height: auto;
+    z-index: 5;
+    pointer-events: none;
+    transition: left 1000ms cubic-bezier(.56,.05,.65,.88);
+}
+#santa-container.hide { display: none; }
+#santa-img {
+    width: 760px;
+    height: auto;
+    display: block;
+    filter: drop-shadow(0 21px 51px #8a104196);
+}
+#festive-message {
+    position: absolute;
+    top: 60%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: clamp(2.1rem, 6vw, 4.2rem);
+    color: #fff;
+    font-family: 'Segoe Script','Comic Sans MS', cursive;
+    text-align: center;
+    min-width: 220px;
+    max-width: 82vw;
+    padding: 0.7em 2em;
+    border-radius: 25px;
+    text-shadow: 0 2px 28px #246492c8;
+    opacity: 0;
+    filter: blur(16px);
+    transition: opacity 900ms cubic-bezier(.73,.01,.42,1), filter 430ms;
+    z-index: 6;
+}
+#festive-message.visible { opacity: 1; filter: blur(0);}
+#festive-message.hide { opacity: 0; filter: blur(16px); }
+@media (max-width: 800px) {
+    #santa-container, #santa-img { width: 410px; }
+}
+@media (max-width: 480px) {
+    #santa-container, #santa-img { width: 220px; top: 30vh;}
+    #festive-message { font-size: 1.1rem; padding: 0.4em 0.9em;}
+}
