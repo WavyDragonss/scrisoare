@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>INCA PUTIN - Memory Game</title>
+  <link rel="stylesheet" href="css/card_game.css" />
+  <script src="js/card_game.js" defer></script>
+</head>
+<body>
+
+  <header class="site-header">
+    <h1>COMPLETEAZĂ PENTRU O SURPRIZĂ!!!</h1>
+    <p class="rotate-hint">🔄 Roteste pentru cea mai buna experienta</p>
+  </header>
+
+  <main>
+    <section id="game-area" class="game-area" aria-label="Memory game">
+      <div id="board" class="board" role="grid">
+        <!-- Cards rendered by JS -->
+      </div>
+    </section>
+
+    <div class="end-controls">
+      <button id="surprise-btn" class="surprise-btn" type="button" aria-hidden="true">
+        URMATORUL PAS....
+      </button>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    <small>Stiu ca am mai repetat asta dar trust the process....</small>
+  </footer>
+  <audio id="tada-sound" src="../misc/tada.mp3" preload="auto"></audio>
+</body>
+</html>

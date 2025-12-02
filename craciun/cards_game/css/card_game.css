@@ -1,0 +1,107 @@
+:root{
+  --bg: #fff7fb;
+  --accent: #be2334;
+  --accent-2: #51bd62;
+  --card-back: #fffdfa;
+  --card-shadow: 0 6px 18px #eacc44bb;
+  --gap: 9px;
+}
+
+* { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+html,body { height:100%; margin:0; padding:0; background:linear-gradient(110deg, var(--accent) 0%, var(--bg) 100%, var(--accent-2) 120%); font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial; color:#222; -webkit-font-smoothing:antialiased; }
+
+.site-header { padding:18px 16px 6px; text-align:center; }
+.site-header h1 { margin:0; font-size:1.24rem; color:var(--accent-2); font-weight:700; }
+.rotate-hint { margin:6px 0 0; font-size:.96rem; color:#666; }
+
+.game-area { padding: 10px 14px 28px; max-width:700px; margin: 0 auto; }
+.board {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: var(--gap);
+  width: 100%;
+  max-width: 540px;
+  margin: 6px auto 0;
+  touch-action: manipulation;
+}
+
+.card {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  perspective: 900px;
+  cursor: pointer;
+  border-radius: 14px;
+  user-select: none;
+  display: block;
+}
+
+.card-inner {
+  position: absolute; inset: 0;
+  transition: transform 390ms cubic-bezier(.7,-0.31,.41,1.41);
+  transform-style: preserve-3d;
+}
+
+.card.flipped .card-inner { transform: rotateY(180deg); }
+
+.card-face {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backface-visibility: hidden;
+  border-radius: 12px;
+  box-shadow: var(--card-shadow), 0 2px 10px #e9cc230f;
+  font-size: 1.65em;
+  font-weight: 900;
+}
+
+/* Front (face-down) design */
+.card-front {
+  background: linear-gradient(135deg, var(--accent) 70%, var(--accent-2) 100%);
+  color: white;
+  transform: rotateY(0deg);
+  text-shadow: 0 4px 12px #be233483;
+}
+
+/* Back (face-up) with emoji */
+.card-back {
+  background: var(--card-back);
+  color: #d80c30;
+  transform: rotateY(180deg);
+  border: 2px solid #eacc44;
+  text-shadow: 0 0 14px #eacc44bb, 0 0 3px #fff4;
+}
+
+/* Hidden / removed cards */
+.card.hidden { visibility: hidden; opacity: 0; transform: scale(0.9); transition: visibility .3s, opacity .3s, transform .3s; }
+
+/.end-controls { text-align:center; margin-top:22px; }
+.surprise-btn {
+  display: none;
+  background: linear-gradient(90deg,#ffd166 50%,#fae579 100%);
+  color: #303;
+  border: none;
+  padding: 16px 28px;
+  font-size: 1.13em;
+  border-radius: 12px;
+  width: calc(100% - 60px);
+  max-width: 330px;
+  box-shadow: 0 8px 18px #bea51425;
+  font-weight: 700;
+  letter-spacing: 1px;
+  transition: background .16s;
+}
+
+.card:focus { outline: 4px solid #eacc44; outline-offset: 5px; }
+@media (max-width:480px) {
+  :root { --gap: 6px; }
+  .site-header h1 { font-size: 1.08rem; }
+  .card-face { font-size: 1.2em;}
+  .surprise-btn { font-size: 1em; padding: 12px 14px; width: calc(100% - 40px);}
+}
+@media (orientation: landscape) and (max-height: 420px) {
+  .board { gap: 6px; max-width: 700px; }
+  .card-face { font-size: 1.13em; }
+}

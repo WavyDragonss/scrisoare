@@ -113,11 +113,10 @@ function showContinueButton() {
     continueBtn.classList.remove('hide');
     setTimeout(() => continueBtn.classList.add('visible'), 50);
 }
-// CONTINUE LOGIC - You decide!
 continueBtn.addEventListener('click', () => {
-    // Example: just hide button, or redirect, or animate to next scene
     continueBtn.classList.remove('visible');
     setTimeout(() => continueBtn.classList.add('hide'), 600);
-    // Add your own next-page, next-animation code here
+    // Redirect to the card game page:
+    window.location.href = "cards_game/card_game.html";
 });
 function rand(min, max) { return Math.random() * (max - min) + min; }
