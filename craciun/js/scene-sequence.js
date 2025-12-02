@@ -73,11 +73,17 @@ function triggerCluster(cx, cy, count, maxRadius) {
 
 // 3. MESSAGES SEQUENCE + FINAL BUTTON
 const festiveMessages = [
-    "Merry Christmas and lots of light!",
-    "Magical holidays with your loved ones.",
-    "A joyful winter season!",
-    "Warm days and unforgettable moments!"
+    "Craciun fericit iubire...",
+    "Sper ca ti-a placut la unghii",
+    "Si ca totul a fost bine",
+    "Va urma o serie de jocuri...",
+    "Daca ai analizat cadoul meu,",
+    "Sunt sigur ca ai observat natura neobisnuita..",
+    "Pentru a iti „debloca” cadoul,",
+    "Va trebuii sa completezi toate jocuietzele :D",
+    "MULT NOROC SI TE IUHESC ❤️❤️❤️❤️✨✨✨✨"
 ];
+
 const FADE_IN = 900, SHOW = 2500, FADE_OUT = 700, SWITCH_DELAY = 350;
 let current = 0;
 
