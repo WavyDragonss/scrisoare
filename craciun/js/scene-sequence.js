@@ -1,8 +1,8 @@
 const santaContainer = document.getElementById('santa-container');
-const hohoAudio = document.getElementById('hoho-audio');
 const messageElement = document.getElementById('festive-message');
+const emojiExplosion = document.getElementById('emoji-explosion');
 
-// Easily extend or customize this list
+// Editable festive messages!
 const festiveMessages = [
     "Merry Christmas and lots of light!",
     "Magical holidays with your loved ones.",
@@ -12,33 +12,56 @@ const festiveMessages = [
 const FADE_IN = 900, SHOW = 2500, FADE_OUT = 700, SWITCH_DELAY = 350;
 let current = 0;
 
+// EMOJI EXPLOSION FUNCTION
+function triggerEmojiExplosion() {
+    const emojis = ["🎄","✨","🎁","❄️","⛄"];
+    const burstCount = 18; // Number of emoji particles
+    const burstRadius = Math.min(window.innerWidth, window.innerHeight) / 2.8; // Spread radius
+    emojiExplosion.innerHTML = ""; // Clean previous
+    for (let i = 0; i < burstCount; i++) {
+        const angle = Math.random()*2*Math.PI; // Spread all directions
+        const dist = rand(burstRadius*0.3, burstRadius*0.98);
+        const emoji = emojis[i % emojis.length];
+        const el = document.createElement("span");
+        el.className = "emoji-burst";
+        el.textContent = emoji;
+        el.style.left = "0px";
+        el.style.top = "0px";
+        el.style.opacity = "1";
+        // Animate outward
+        setTimeout(() => {
+            el.style.transform = `translate(${Math.cos(angle)*dist}px, ${Math.sin(angle)*dist}px) scale(1.15)`;
+            el.style.opacity = "0";
+        }, 30);
+        emojiExplosion.appendChild(el);
+        // Remove after effect
+        setTimeout(() => { el.remove(); }, 800);
+    }
+}
+
+// SANTA + EXPLOSION + MESSAGES SEQUENCE
 window.addEventListener('DOMContentLoaded', () => {
-    // Santa starts offscreen and is made visible at load
     santaContainer.style.left = '-730px';
     santaContainer.classList.remove('hide');
-
-    // Sequence: Santa enters from left in 1s
+    // Santa enters (1s)
     setTimeout(() => {
         santaContainer.style.transition = 'left 1000ms cubic-bezier(.56,.05,.65,.88)';
-        santaContainer.style.left = '10vw'; // Fully visible onscreen
-
-        // At second 1: Play hoho.mp3 (2 seconds)
+        santaContainer.style.left = '10vw';
+        // 2s on screen - at exactly 3s, emoji burst
         setTimeout(() => {
-            hohoAudio.currentTime = 0;
-            hohoAudio.play();
-
-            // At second 3: Santa leaves to the right slowly (1s)
+            triggerEmojiExplosion();
+            // Santa leaves (1s)
             setTimeout(() => {
                 santaContainer.style.transition = 'left 1000ms cubic-bezier(.56,.05,.65,.88)';
                 santaContainer.style.left = (window.innerWidth + 60) + "px";
-                // After second 4: Hide Santa and start messages
+                // After 1s more, hide Santa and start messages
                 setTimeout(() => {
                     santaContainer.classList.add('hide');
                     startMessageSequence();
-                }, 1000); // 1s leave time
-            }, 2000); // 2s hoho duration
-        }, 1000); // 1s onscreen before audio
-    }, 120); // slight initial delay for visual smoothness
+                }, 1000);
+            }, 600); // Emoji effect duration (~0.6s)
+        }, 2000);
+    }, 120);
 });
 
 function showMessage(text) {
@@ -64,3 +87,4 @@ function startMessageSequence() {
     hideMessage();
     setTimeout(cycleMessages, 500);
 }
+function rand(min, max) { return Math.random() * (max - min) + min; }

@@ -28,9 +28,9 @@ body, html {
 }
 #santa-container {
     position: absolute;
-    top: 25vh; /* Centered vertically */
-    left: -730px; /* Well offscreen initially; adjust for image size */
-    width: 760px; /* Large Santa image; adjust for your PNG */
+    top: 25vh; /* Adjust for image size */
+    left: -730px;
+    width: 760px;
     height: auto;
     z-index: 5;
     pointer-events: none;
@@ -42,6 +42,21 @@ body, html {
     height: auto;
     display: block;
     filter: drop-shadow(0 21px 51px #8a104196);
+}
+#emoji-explosion {
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 0; height: 0;
+    pointer-events: none;
+    z-index: 20;
+}
+.emoji-burst {
+    position: absolute;
+    font-size: 3.2rem;
+    opacity: 1;
+    transition: opacity 0.5s, transform 0.6s;
+    will-change: transform, opacity;
+    pointer-events: none;
 }
 #festive-message {
     position: absolute;
@@ -66,6 +81,7 @@ body, html {
 #festive-message.hide { opacity: 0; filter: blur(16px); }
 @media (max-width: 800px) {
     #santa-container, #santa-img { width: 410px; }
+    .emoji-burst { font-size: 2.0rem; }
 }
 @media (max-width: 480px) {
     #santa-container, #santa-img { width: 220px; top: 30vh;}
