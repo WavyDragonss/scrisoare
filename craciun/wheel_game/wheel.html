@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Spin the Wheel - Crăciun</title>
+  <link rel="stylesheet" href="css/wheel.css" />
+</head>
+<body>
+  <div class="scene">
+    <!-- subtle falling background (reused engine) -->
+    <div id="falling-elements-wheel" class="falling-bg" aria-hidden="true"></div>
+
+    <!-- start overlay (rotate / start) -->
+    <div id="start-overlay" class="start-overlay visible" aria-hidden="false">
+      <div class="overlay-blur"></div>
+      <div class="overlay-content">
+        <img src="img/turn.gif" alt="Rotate phone" class="turn-graphic" />
+        <div class="turn-tip">Roteste telefonul pentru o experiență mai bună</div>
+        <div class="start-msg">Apasă oriunde pentru a începe</div>
+      </div>
+    </div>
+
+    <header class="wheel-header">
+      <h1>Roata Crăciunului</h1>
+      <p class="hint">Apasă SPIN și îndeplinește provocarea — totul e sigur și distractiv!</p>
+    </header>
+
+    <main class="wheel-main" role="main">
+      <div class="wheel-wrap">
+        <div class="pointer-wrap" aria-hidden="true">
+          <img src="img/pointer.png" alt="" class="pointer" />
+        </div>
+
+        <!-- wheel container: canvas drawn dynamically -->
+        <div id="wheel-container" class="wheel-container" role="img" aria-label="Roata cu provocari">
+          <canvas id="wheel-canvas"></canvas>
+        </div>
+      </div>
+
+      <div class="controls">
+        <button id="spin-btn" class="spin-btn" aria-label="Spin the wheel" disabled>SPIN</button>
+      </div>
+
+      <div id="result-popup" class="result-popup hide" role="dialog" aria-modal="true" aria-hidden="true">
+        <div class="popup-inner">
+          <div id="result-text" class="result-text">...</div>
+          <div class="popup-actions">
+            <button id="again-btn" class="secondary">Spin Again</button>
+            <button id="to-next-btn" class="primary">Continue</button>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer class="wheel-footer">
+      <small>Provocările sunt amuzante și sigure — dai spin și te distrezi!</small>
+    </footer>
+
+    <!-- Audio -->
+    <audio id="bell-audio" src="../misc/bell.mp3" preload="auto"></audio>
+    <audio id="spin-audio" src="../misc/spin.wav" preload="auto"></audio>
+  </div>
+
+  <script src="js/wheel.js" defer></script>
+</body>
+</html>
