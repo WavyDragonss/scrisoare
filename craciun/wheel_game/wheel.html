@@ -4,23 +4,14 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Spin the Wheel - Crăciun</title>
-  <link rel="stylesheet" href="css/wheel.css" />
+  <link rel="stylesheet" href="css/wheel.css">
 </head>
 <body>
   <div class="scene">
-    <!-- subtle falling background (reused engine) -->
+    <!-- Subtle falling background (reused engine) -->
     <div id="falling-elements-wheel" class="falling-bg" aria-hidden="true"></div>
 
-    <!-- start overlay (rotate / start) -->
-    <div id="start-overlay" class="start-overlay visible" aria-hidden="false">
-      <div class="overlay-blur"></div>
-      <div class="overlay-content">
-        <img src="img/turn.gif" alt="Rotate phone" class="turn-graphic" />
-        <div class="turn-tip">Roteste telefonul pentru o experiență mai bună</div>
-        <div class="start-msg">Apasă oriunde pentru a începe</div>
-      </div>
-    </div>
-
+    <!-- Header -->
     <header class="wheel-header">
       <h1>Roata Crăciunului</h1>
       <p class="hint">Apasă SPIN și îndeplinește provocarea — totul e sigur și distractiv!</p>
@@ -29,7 +20,7 @@
     <main class="wheel-main" role="main">
       <div class="wheel-wrap">
         <div class="pointer-wrap" aria-hidden="true">
-          <img src="img/pointer.png" alt="" class="pointer" />
+          <img src="../img/pointer.png" alt="" class="pointer" />
         </div>
 
         <!-- wheel container: canvas drawn dynamically -->
