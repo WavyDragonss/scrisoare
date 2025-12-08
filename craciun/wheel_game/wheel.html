@@ -20,6 +20,9 @@
 
     <main class="wheel-main" role="main">
       <div class="wheel-wrap">
+        <!-- Pointer at top -->
+        <div class="pointer-top" aria-hidden="true">▼</div>
+
         <div class="pointer-wrap" aria-hidden="true">
           <img src="../img/pointer.png" alt="" class="pointer" />
         </div>
@@ -32,6 +35,8 @@
 
       <div class="controls">
         <button id="spin-btn" class="spin-btn" aria-label="Spin the wheel" disabled>SPIN</button>
+        <!-- Hidden Continue button that appears when all tasks complete -->
+        <button id="continue-btn" class="spin-btn" style="display:none; margin-left:12px;">Continue</button>
       </div>
 
       <div id="result-popup" class="result-popup hide" role="dialog" aria-modal="true" aria-hidden="true">
@@ -39,7 +44,7 @@
           <div id="result-text" class="result-text">...</div>
           <div class="popup-actions">
             <button id="again-btn" class="secondary">Spin Again</button>
-            <button id="to-next-btn" class="primary">Continue</button>
+            <button id="to-next-btn" class="primary">Skip</button>
           </div>
         </div>
       </div>
@@ -54,19 +59,23 @@
     <audio id="spin-audio" src="../misc/spin.wav" preload="none"></audio>
   </div>
 
-  <!-- Debug/Admin Menu (temporary) -->
-  <button id="debug-btn" class="debug-btn" aria-label="Debug menu">404</button>
-
-  <div id="password-modal" class="password-modal hidden" role="dialog" aria-modal="true" aria-hidden="true">
-    <div class="password-inner">
-      <button id="close-password-btn" class="close-btn" aria-label="Close">✕</button>
-      <h2>Debug Access</h2>
-      <label for="password-input">Password:</label>
-      <input id="password-input" type="password" placeholder="Enter password" />
+  <!-- Password Popup Modal -->
+  <div id="password-modal" class="password-modal hidden" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="modal-title">
+    <div class="modal-backdrop"></div>
+    <div class="modal-content">
+      <button id="close-modal-btn" class="close-btn" aria-label="Close">✕</button>
+      <h2 id="modal-title">Debug Access</h2>
+      <div class="form-group">
+        <label for="password-input">Password:</label>
+        <input id="password-input" type="password" placeholder="Enter code" />
+      </div>
       <button id="submit-password-btn" class="submit-btn">Enter</button>
-      <p id="password-error" class="error hidden"></p>
+      <p id="password-error" class="error-msg hidden"></p>
     </div>
   </div>
+
+  <!-- Debug Button -->
+  <button id="debug-btn" class="debug-btn" aria-label="Debug access">404</button>
 
   <!-- snow.js must be loaded before wheel.js -->
   <script src="js/snow.js" defer></script>

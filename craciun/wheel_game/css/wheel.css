@@ -60,31 +60,40 @@ body{
 /* falling bg container (light snow) */
 .falling-bg{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:0.5}
 
-/* Debug Button (Top Right Corner) */
+/* 404 Debug Button - Top Right Corner */
 .debug-btn {
   position: fixed;
   top: env(safe-area-inset-top, 12px);
-  right: 12px;
+  right: env(safe-area-inset-right, 12px);
   z-index: 100;
-  width: 32px;
-  height: 32px;
+
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
-  border: 1px solid rgba(255, 107, 107, 0.6);
-  background: rgba(255, 107, 107, 0.15);
+  border: 2px solid rgba(255, 107, 107, 0.7);
+  background: rgba(255, 107, 107, 0.1);
   color: #ff6b6b;
+
   font-size: 10px;
   font-weight: bold;
   cursor: pointer;
-  transition: all 0.2s ease;
+
+  transition: all 0.25s ease;
 }
 
 .debug-btn:hover {
-  background: rgba(255, 107, 107, 0.3);
-  border-color: rgba(255, 107, 107, 0.9);
+  background: rgba(255, 107, 107, 0.2);
+  border-color: rgba(255, 107, 107, 0.95);
+  box-shadow: 0 0 12px rgba(255, 107, 107, 0.3);
 }
 
 .debug-btn:active {
-  transform: scale(0.95);
+  transform: scale(0.9);
+}
+
+.debug-btn:focus-visible {
+  outline: 2px solid #ff6b6b;
+  outline-offset: 2px;
 }
 
 /* Password Modal */
@@ -94,8 +103,6 @@ body{
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(0, 0, 0, 0.6);
-  backdrop-filter: blur(4px);
   z-index: 200;
   opacity: 1;
   pointer-events: auto;
@@ -107,51 +114,75 @@ body{
   pointer-events: none;
 }
 
-.password-inner {
+.modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(5px);
+}
+
+.modal-content {
   position: relative;
-  background: linear-gradient(135deg, #1a1a2e, #16213e);
-  border: 2px solid rgba(255, 107, 107, 0.5);
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  border: 2px solid rgba(31, 191, 107, 0.5);
   border-radius: 12px;
   padding: 28px;
   max-width: 320px;
-  width: 90vw;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+  width: 85vw;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+  animation: slideUp 0.3s ease;
 }
 
-.password-inner h2 {
-  margin: 0 0 16px 0;
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.modal-content h2 {
+  margin: 0 0 20px 0;
   font-size: 18px;
-  color: #ff6b6b;
+  color: #1fbf6b;
   text-align: center;
 }
 
-.password-inner label {
-  display: block;
-  margin-bottom: 8px;
-  font-size: 14px;
-  color: #ddd;
+.form-group {
+  margin-bottom: 16px;
 }
 
-.password-inner input {
+.form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 13px;
+  color: #ddd;
+  font-weight: 500;
+}
+
+.form-group input {
   width: 100%;
   padding: 10px 12px;
-  margin-bottom: 16px;
-  border: 1px solid rgba(255, 107, 107, 0.4);
+  border: 1px solid rgba(31, 191, 107, 0.4);
   border-radius: 6px;
   background: rgba(0, 0, 0, 0.3);
   color: #fff;
   font-size: 14px;
-  transition: border-color 0.2s ease;
+  transition: all 0.2s ease;
 }
 
-.password-inner input:focus {
+.form-group input:focus {
   outline: none;
-  border-color: #ff6b6b;
-  box-shadow: 0 0 8px rgba(255, 107, 107, 0.3);
+  border-color: #1fbf6b;
+  box-shadow: 0 0 8px rgba(31, 191, 107, 0.3);
+  background: rgba(31, 191, 107, 0.05);
 }
 
-.password-inner input::placeholder {
-  color: rgba(255, 255, 255, 0.4);
+.form-group input::placeholder {
+  color: rgba(255, 255, 255, 0.35);
 }
 
 .submit-btn {
@@ -159,51 +190,54 @@ body{
   padding: 10px;
   border: none;
   border-radius: 6px;
-  background: linear-gradient(135deg, #ff6b6b, #ff8888);
-  color: #fff;
+  background: linear-gradient(135deg, #1fbf6b, #34d07d);
+  color: #000;
   font-weight: bold;
   font-size: 14px;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.25s ease;
 }
 
 .submit-btn:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(255, 107, 107, 0.4);
+  box-shadow: 0 6px 16px rgba(31, 191, 107, 0.4);
 }
 
 .submit-btn:active {
   transform: translateY(0);
 }
 
-.error {
-  color: #ff6b6b;
-  font-size: 12px;
-  margin-top: 8px;
-  text-align: center;
-}
-
-.error.hidden {
-  display: none;
-}
-
 .close-btn {
   position: absolute;
-  top: 8px;
-  right: 8px;
+  top: 10px;
+  right: 10px;
   width: 28px;
   height: 28px;
   border: none;
-  background: rgba(255, 107, 107, 0.2);
+  background: rgba(255, 107, 107, 0.1);
   color: #ff6b6b;
-  font-size: 18px;
+  font-size: 20px;
   border-radius: 50%;
   cursor: pointer;
   transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .close-btn:hover {
-  background: rgba(255, 107, 107, 0.4);
+  background: rgba(255, 107, 107, 0.2);
+}
+
+.error-msg {
+  color: #ff6b6b;
+  font-size: 12px;
+  text-align: center;
+  margin-top: 12px;
+}
+
+.error-msg.hidden {
+  display: none;
 }
 
 /* responsive */
@@ -213,3 +247,28 @@ body{
   .wheel-wrap{width:92vw;height:92vw}
   .result-popup{min-width:210px}
 }
+
+/* (existing styles above... added pointer styles and modal styles already present) */
+
+/* Pointer at top center of wheel */
+.pointer-top {
+  position: absolute;
+  top: 6%;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 28px;
+  color: #1fbf6b;
+  z-index: 5;
+  text-shadow: 0 0 8px rgba(31, 191, 107, 0.6);
+  pointer-events: none;
+}
+
+.wheel-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+}
+
+/* (rest of your wheel.css remains unchanged) */

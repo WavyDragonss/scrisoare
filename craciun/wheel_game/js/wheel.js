@@ -20,6 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const canvas = document.getElementById('wheel-canvas');
   const container = document.getElementById('wheel-container');
   const spinBtn = document.getElementById('spin-btn');
+  const continueBtn = document.getElementById('continue-btn');
   const popup = document.getElementById('result-popup');
   const resultText = document.getElementById('result-text');
   const againBtn = document.getElementById('again-btn');
@@ -39,14 +40,11 @@ document.addEventListener('DOMContentLoaded', () => {
   let currentRotation = 0;
   let spinning = false;
   const numSlices = challenges.length;
-  const sliceAngle = 360 / numSlices;
 
   // Challenge tracking
   const completedChallenges = new Set();
   let activeChallenges = [...Array(numSlices).keys()]; // [0..numSlices-1]
-
   function getRemainingCount() { return activeChallenges.length; }
-
   function removeChallenge(index) {
     const pos = activeChallenges.indexOf(index);
     if (pos > -1) {
@@ -73,7 +71,8 @@ document.addEventListener('DOMContentLoaded', () => {
     audioReady = true;
   }
 
-  // ---------- Canvas sizing & drawing ----------
+  // Canvas & draw helpers (assume drawWheelOptimized and drawSliceText exist elsewhere in file)
+  let ctxInitialized = false;
   function resizeCanvas() {
     if (!container || !canvas) return;
     const rect = container.getBoundingClientRect();
@@ -88,11 +87,13 @@ document.addEventListener('DOMContentLoaded', () => {
     radius = (size / 2) * 0.92;
     drawWheelOptimized(activeChallenges.length);
     container.style.transform = `rotate(${currentRotation}deg)`;
+    ctxInitialized = true;
   }
 
   const sliceColors = ['#D33','#2EA32E','#EFBF2D','#ffffff','#c72b2b','#2c8a2c'];
 
   function drawSliceText(index, start, end) {
+    if (!ctx) return;
     const mid = (start + end) / 2;
     const text = challenges[index];
     const maxWidth = radius * 0.62;
@@ -117,9 +118,13 @@ document.addEventListener('DOMContentLoaded', () => {
     ctx.restore();
   }
 
-  // Optimized draw using activeChallenges order
   function drawWheelOptimized(numActive) {
     if (!ctx) return;
+    if (numActive <= 0) {
+      ctx.clearRect(0, 0, size, size);
+      return;
+    }
+
     ctx.clearRect(0, 0, size, size);
 
     const activeSliceAngle = 360 / numActive;
@@ -168,17 +173,19 @@ document.addEventListener('DOMContentLoaded', () => {
     ctx.stroke();
   }
 
-  // ---------- Spin mechanics (updated for activeChallenges) ----------
-  function setContainerRotation(deg) {
-    container.style.transform = `rotate(${deg}deg)`;
-  }
-
+  // ---------- compute landing based on currentRotation and active count ----------
   function computeLandingIndexFromRotation(rotationDeg, numActive = activeChallenges.length) {
+    if (numActive <= 0) return 0;
     const activeSliceAngle = 360 / numActive;
     const normalized = ((-rotationDeg % 360) + 360) % 360;
     const adjusted = (normalized + (activeSliceAngle / 2)) % 360;
     const idx = Math.floor(adjusted / activeSliceAngle);
     return (idx + numActive) % numActive;
+  }
+
+  // ---------- Smooth spinToIndex (requestAnimationFrame) ----------
+  function setContainerRotation(deg) {
+    container.style.transform = `rotate(${deg}deg)`;
   }
 
   function spinToIndex(index) {
@@ -190,14 +197,10 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!audioReady) loadAudio();
     try { if (spinAudio) { spinAudio.currentTime = 0; spinAudio.play(); } } catch(e){ console.log('Spin audio failed:', e); }
 
+    // Find position in activeChallenges
     const posInActive = activeChallenges.indexOf(index);
     if (posInActive === -1) {
-      // already removed - pick random remaining
-      if (activeChallenges.length === 0) {
-        spinning = false;
-        spinBtn.disabled = false;
-        return;
-      }
+      if (activeChallenges.length === 0) { spinning = false; spinBtn.disabled = false; return; }
       const randomPos = Math.floor(Math.random() * activeChallenges.length);
       spinToIndex(activeChallenges[randomPos]);
       return;
@@ -208,77 +211,133 @@ document.addEventListener('DOMContentLoaded', () => {
     const spins = 4 + Math.floor(Math.random() * 4); // 4..7
 
     const targetRelative = posInActive * activeSliceAngle + (activeSliceAngle / 2);
-    const target = (spins * 360) + targetRelative;
-    const finalRotation = currentRotation - target;
+    const targetRotation = (spins * 360) + targetRelative;
 
-    container.style.transition = `transform 4200ms cubic-bezier(.08,.75,.22,1)`;
-    setContainerRotation(finalRotation);
+    const spinDuration = 4200;
+    const startTime = performance.now();
+    const startRotation = currentRotation;
 
-    const onEnd = () => {
-      container.removeEventListener('transitionend', onEnd);
-      currentRotation = ((finalRotation % 360) + 360) % 360;
-      container.style.transition = '';
+    function animateSpin(now) {
+      const elapsed = now - startTime;
+      const progress = Math.min(elapsed / spinDuration, 1);
+      const easeProgress = 1 - Math.pow(1 - progress, 3);
+      currentRotation = startRotation + (targetRotation - startRotation) * easeProgress;
+      setContainerRotation(currentRotation);
+      if (progress < 1) {
+        requestAnimationFrame(animateSpin);
+      } else {
+        currentRotation = ((targetRotation % 360) + 360) % 360;
+        setContainerRotation(currentRotation);
+        setTimeout(() => {
+          try { if (bell) { bell.currentTime = 0; bell.play(); } } catch(e){ console.log('Bell audio failed:', e); }
+          const landedIndex = computeLandingIndexFromRotation(currentRotation, numActive);
+          const actualChallengeIndex = activeChallenges[landedIndex];
+          showResult(actualChallengeIndex);
+          spinning = false;
+          spinBtn.disabled = false;
+        }, 220);
+      }
+    }
 
-      setTimeout(() => {
-        try { if (bell) { bell.currentTime = 0; bell.play(); } } catch(e) { console.log('Bell audio failed:', e); }
-        const landedIndex = computeLandingIndexFromRotation(currentRotation, numActive);
-        const actualChallengeIndex = activeChallenges[landedIndex];
-        showResult(actualChallengeIndex);
-        spinning = false;
-        spinBtn.disabled = false;
-      }, 220);
-    };
-
-    container.addEventListener('transitionend', onEnd);
+    requestAnimationFrame(animateSpin);
   }
 
-  // ---------- UI ----------
+  // ---------- showResult with task removal & button wiring ----------
   function showResult(actualIndex) {
     resultText.textContent = challenges[actualIndex];
     popup.classList.remove('hide');
     popup.setAttribute('aria-hidden', 'false');
     triggerSparkles();
 
-    // Set action for "Spin Again" (remove this challenge, shrink wheel, redraw, then spin a new one)
-    againBtn.onclick = () => {
+    const remaining = getRemainingCount();
+    const isLastTask = remaining === 1;
+
+    // Clone buttons to remove previous listeners
+    const newAgainBtn = againBtn.cloneNode(true);
+    againBtn.parentNode.replaceChild(newAgainBtn, againBtn);
+    const newToNextBtn = toNextBtn.cloneNode(true);
+    toNextBtn.parentNode.replaceChild(newToNextBtn, toNextBtn);
+
+    const currentAgainBtn = newAgainBtn;
+    const currentToNextBtn = newToNextBtn;
+
+    if (isLastTask) {
+      currentAgainBtn.textContent = 'Completed ✓';
+      currentAgainBtn.disabled = true;
+      currentAgainBtn.style.opacity = '0.6';
+      currentAgainBtn.style.cursor = 'default';
+      currentToNextBtn.textContent = 'Continue';
+    } else {
+      currentAgainBtn.textContent = 'Spin Again';
+      currentAgainBtn.disabled = false;
+      currentAgainBtn.style.opacity = '1';
+      currentAgainBtn.style.cursor = 'pointer';
+      currentToNextBtn.textContent = 'Skip';
+    }
+
+    currentAgainBtn.addEventListener('click', () => {
       hideResult();
       removeChallenge(actualIndex);
 
-      const remaining = getRemainingCount();
-      if (remaining === 0) {
-        // all done — show final continue interface
-        popup.classList.remove('hide');
-        resultText.textContent = "All challenges completed! 🎉";
-        againBtn.style.display = 'none';
-        toNextBtn.style.display = 'inline-block';
-        spinBtn.style.display = 'none';
+      const newRemaining = getRemainingCount();
+
+      if (newRemaining === 0) {
+        popup.classList.add('hide');
+        if (continueBtn) {
+          continueBtn.classList.add('shown');
+          continueBtn.style.display = 'inline-block';
+          spinBtn.style.display = 'none';
+        }
         return;
       }
 
-      // Shrink wheel proportionally
-      const shrinkFactor = Math.max(0.36, remaining / numSlices); // prevent too tiny
+      const shrinkFactor = Math.max(0.36, newRemaining / numSlices);
       container.style.transition = 'transform 0.5s ease';
       container.style.transform = `scale(${shrinkFactor}) rotate(${currentRotation}deg)`;
 
-      // Redraw with fewer slices
-      setTimeout(() => {
-        drawWheelOptimized(remaining);
-      }, 520);
+      setTimeout(() => { drawWheelOptimized(newRemaining); }, 520);
 
-      // Spin a new random remaining challenge after short delay
       setTimeout(() => {
-        const randomIdx = Math.floor(Math.random() * activeChallenges.length);
-        spinToIndex(activeChallenges[randomIdx]);
+        const nextIdx = Math.floor(Math.random() * activeChallenges.length);
+        spinToIndex(activeChallenges[nextIdx]);
       }, 700);
-    };
+    });
+
+    currentToNextBtn.addEventListener('click', () => {
+      if (isLastTask) {
+        window.location.href = '../final_message/finish.html';
+      } else {
+        hideResult();
+        removeChallenge(actualIndex);
+
+        const newRemaining = getRemainingCount();
+        if (newRemaining === 0) {
+          popup.classList.add('hide');
+          if (continueBtn) {
+            continueBtn.classList.add('shown');
+            continueBtn.style.display = 'inline-block';
+            spinBtn.style.display = 'none';
+          }
+          return;
+        }
+
+        const shrinkFactor = Math.max(0.36, newRemaining / numSlices);
+        container.style.transition = 'transform 0.5s ease';
+        container.style.transform = `scale(${shrinkFactor}) rotate(${currentRotation}deg)`;
+
+        setTimeout(() => { drawWheelOptimized(newRemaining); }, 320);
+
+        setTimeout(() => {
+          const nextIdx = Math.floor(Math.random() * activeChallenges.length);
+          spinToIndex(activeChallenges[nextIdx]);
+        }, 600);
+      }
+    });
   }
 
   function hideResult() {
     popup.classList.add('hide');
     popup.setAttribute('aria-hidden', 'true');
-    // restore default popup buttons visibility
-    againBtn.style.display = '';
-    toNextBtn.style.display = '';
   }
 
   function triggerSparkles() {
@@ -296,10 +355,7 @@ document.addEventListener('DOMContentLoaded', () => {
       el.style.pointerEvents = 'none';
       el.style.transition = 'transform 900ms ease-out, opacity 900ms ease-out';
       document.body.appendChild(el);
-      setTimeout(()=> {
-        el.style.opacity = '0';
-        el.style.transform = `translateY(-40px) rotate(${(Math.random()-0.5)*90}deg) scale(0.7)`;
-      }, 30);
+      setTimeout(()=> { el.style.opacity = '0'; el.style.transform = `translateY(-40px) rotate(${(Math.random()-0.5)*90}deg) scale(0.7)`; }, 30);
       setTimeout(()=> el.remove(), 980);
     }
   }
@@ -320,7 +376,7 @@ document.addEventListener('DOMContentLoaded', () => {
     resizeTimer = setTimeout(onResize, 220);
   }, { passive: true });
 
-  // spin button: pick random from activeChallenges
+  // spin button
   spinBtn.addEventListener('click', (ev) => {
     if (!audioReady) loadAudio();
     hideResult();
@@ -329,79 +385,13 @@ document.addEventListener('DOMContentLoaded', () => {
     spinToIndex(choice);
   }, { passive: true });
 
-  againBtn.addEventListener('click', () => {
-    hideResult();
-    setTimeout(() => {
-      if (activeChallenges.length === 0) return;
-      const choice = activeChallenges[Math.floor(Math.random() * activeChallenges.length)];
-      spinToIndex(choice);
-    }, 220);
-  }, { passive: true });
+  // again handler (kept for fallback)
+  // toNextBtn handler intentionally not set here; wired dynamically in showResult()
 
-  toNextBtn.addEventListener('click', () => {
-    window.location.href = '/craciun/index.html';
-  }, { passive: true });
-
-  spinBtn.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      spinBtn.click();
-    }
-  });
-
-  // ---------- Debug/Admin Password Menu ----------
-  const debugBtn = document.getElementById('debug-btn');
-  const passwordModal = document.getElementById('password-modal');
-  const closePasswordBtn = document.getElementById('close-password-btn');
-  const passwordInput = document.getElementById('password-input');
-  const submitPasswordBtn = document.getElementById('submit-password-btn');
-  const passwordError = document.getElementById('password-error');
-
-  const DEBUG_PASSWORD = '0000';
-  const FINAL_URL = '../final_message/final.html';
-
-  if (debugBtn) {
-    debugBtn.addEventListener('click', () => {
-      passwordModal.classList.remove('hidden');
-      passwordModal.setAttribute('aria-hidden', 'false');
-      passwordInput.focus();
-    });
-  }
-  if (closePasswordBtn) closePasswordBtn.addEventListener('click', closePasswordModal);
-
-  function closePasswordModal() {
-    passwordModal.classList.add('hidden');
-    passwordModal.setAttribute('aria-hidden', 'true');
-    if (passwordInput) passwordInput.value = '';
-    if (passwordError) passwordError.classList.add('hidden');
-  }
-
-  if (submitPasswordBtn) {
-    submitPasswordBtn.addEventListener('click', () => {
-      const entered = passwordInput.value;
-      if (entered === DEBUG_PASSWORD) {
-        window.location.href = FINAL_URL;
-      } else {
-        passwordError.textContent = 'Incorrect password';
-        passwordError.classList.remove('hidden');
-        passwordInput.value = '';
-        passwordInput.focus();
-      }
-    });
-  }
-
-  if (passwordInput) {
-    passwordInput.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') {
-        e.preventDefault();
-        submitPasswordBtn.click();
-      }
-    });
-  }
-
-  if (passwordModal) {
-    passwordModal.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') closePasswordModal();
+  // continue button behavior
+  if (continueBtn) {
+    continueBtn.addEventListener('click', () => {
+      window.location.href = '../final_message/finish.html';
     });
   }
 
@@ -415,12 +405,44 @@ document.addEventListener('DOMContentLoaded', () => {
     resizeCanvas();
   });
 
-  // Start snow and enable button shortly after load
   setTimeout(() => {
-    if (falling) {
-      initLightSnow(falling, 30);
-      console.log('Snow initialized');
-    }
+    if (falling) initLightSnow(falling, 30);
     spinBtn.disabled = false;
   }, 100);
+
+  // ---------- Debug/Admin Password Modal ----------
+  const debugBtn = document.getElementById('debug-btn');
+  const passwordModal = document.getElementById('password-modal');
+  const closeModalBtn = document.getElementById('close-modal-btn');
+  const passwordInput = document.getElementById('password-input');
+  const submitPasswordBtn = document.getElementById('submit-password-btn');
+  const passwordError = document.getElementById('password-error');
+
+  const DEBUG_PASSWORD = '0000';
+  const FINISH_PAGE_URL = '../final_message/finish.html';
+
+  if (debugBtn) {
+    debugBtn.addEventListener('click', () => {
+      if (passwordModal) { passwordModal.classList.remove('hidden'); passwordModal.setAttribute('aria-hidden','false'); if (passwordInput) passwordInput.focus(); }
+    });
+  }
+
+  function closeModal() {
+    if (!passwordModal) return;
+    passwordModal.classList.add('hidden');
+    passwordModal.setAttribute('aria-hidden', 'true');
+    if (passwordInput) passwordInput.value = '';
+    if (passwordError) passwordError.classList.add('hidden');
+  }
+  if (closeModalBtn) closeModalBtn.addEventListener('click', closeModal);
+  if (submitPasswordBtn) submitPasswordBtn.addEventListener('click', checkPassword);
+  function checkPassword() {
+    if (!passwordInput) return;
+    const entered = passwordInput.value;
+    if (entered === DEBUG_PASSWORD) window.location.href = FINISH_PAGE_URL;
+    else { if (passwordError) { passwordError.textContent = 'Incorrect password'; passwordError.classList.remove('hidden'); } passwordInput.value = ''; passwordInput.focus(); }
+  }
+  if (passwordInput) passwordInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); checkPassword(); } });
+  if (passwordModal) passwordModal.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+
 });
