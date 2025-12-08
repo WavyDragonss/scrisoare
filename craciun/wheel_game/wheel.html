@@ -4,11 +4,12 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Spin the Wheel - Crăciun</title>
-  <link rel="stylesheet" href="css/wheel.css">
+  <link rel="stylesheet" href="css/base.css" />
+  <link rel="stylesheet" href="css/wheel.css" />
 </head>
 <body>
   <div class="scene">
-    <!-- Subtle falling background (reused engine) -->
+    <!-- Subtle falling background -->
     <div id="falling-elements-wheel" class="falling-bg" aria-hidden="true"></div>
 
     <!-- Header -->
@@ -48,11 +49,13 @@
       <small>Provocările sunt amuzante și sigure — dai spin și te distrezi!</small>
     </footer>
 
-    <!-- Audio -->
-    <audio id="bell-audio" src="../misc/bell.mp3" preload="auto"></audio>
-    <audio id="spin-audio" src="../misc/spin.wav" preload="auto"></audio>
+    <!-- Audio (lazy-loaded by JS) -->
+    <audio id="bell-audio" src="../misc/bell.mp3" preload="none"></audio>
+    <audio id="spin-audio" src="../misc/spin.wav" preload="none"></audio>
   </div>
 
+  <!-- snow.js must be loaded before wheel.js -->
+  <script src="js/snow.js" defer></script>
   <script src="js/wheel.js" defer></script>
 </body>
 </html>

@@ -1,5 +1,4 @@
-// Canvas-based dynamic spin wheel (mobile optimized)
-// Folder: /craciun/wheel_game/js/wheel.js
+// craciun/wheel_game/js/wheel.js
 document.addEventListener('DOMContentLoaded', () => {
   // ---------- Configuration ----------
   const challenges = [
@@ -16,9 +15,6 @@ document.addEventListener('DOMContentLoaded', () => {
     "Quick cozy self‑hug motion",
     "Sing a few notes of a Christmas jingle"
   ];
-  // Audio (optional)
-  const bellAudioSrc = '../misc/bell.mp3';
-  const spinAudioSrc = '../misc/spin.wav';
 
   // DOM
   const canvas = document.getElementById('wheel-canvas');
@@ -30,29 +26,43 @@ document.addEventListener('DOMContentLoaded', () => {
   const toNextBtn = document.getElementById('to-next-btn');
   const falling = document.getElementById('falling-elements-wheel');
 
-  // state
+  // Debug logs for missing elements
+  console.log('Canvas element:', canvas);
+  console.log('Container element:', container);
+  console.log('Falling snow element:', falling);
+  console.log('Spin button element:', spinBtn);
+
+  // state & drawing
   let ctx, DPR = Math.max(1, window.devicePixelRatio || 1);
   let size = 0;
   let center = { x: 0, y: 0 }, radius = 0;
-  let currentRotation = 0; // degrees
+  let currentRotation = 0;
   let spinning = false;
   const numSlices = challenges.length;
   const sliceAngle = 360 / numSlices;
 
-  // preload audio
-  const bell = new Audio(bellAudioSrc);
-  const spinAudio = new Audio(spinAudioSrc);
-  bell.volume = 0.6;
-  spinAudio.volume = 0.5;
-
-  // snow nodes holder
-  let snowNodes = [];
+  // Lazy-loaded audio placeholders
+  let bell = null;
+  let spinAudio = null;
+  let audioReady = false;
+  function loadAudio() {
+    if (audioReady) return;
+    try {
+      bell = new Audio('../misc/bell.mp3');
+      spinAudio = new Audio('../misc/spin.wav');
+      bell.volume = 0.6;
+      spinAudio.volume = 0.5;
+    } catch (e) {
+      console.warn('Audio load failed', e);
+    }
+    audioReady = true;
+  }
 
   // ---------- Canvas sizing & drawing ----------
   function resizeCanvas() {
+    if (!container || !canvas) return;
     const rect = container.getBoundingClientRect();
     size = Math.min(rect.width, rect.height);
-    // ensure square sizing and center
     canvas.width = Math.floor(size * DPR);
     canvas.height = Math.floor(size * DPR);
     canvas.style.width = `${size}px`;
@@ -60,13 +70,11 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!ctx) ctx = canvas.getContext('2d');
     ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
     center = { x: size / 2, y: size / 2 };
-    radius = (size / 2) * 0.92; // leave padding
+    radius = (size / 2) * 0.92;
     drawWheel();
-    // keep container transform consistent with rotation state
     container.style.transform = `rotate(${currentRotation}deg)`;
   }
 
-  // drawing helpers...
   const sliceColors = ['#D33','#2EA32E','#EFBF2D','#ffffff','#c72b2b','#2c8a2c'];
   function drawWheel() {
     if (!ctx) return;
@@ -101,6 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
     ctx.strokeStyle = 'rgba(250,230,150,0.18)';
     ctx.stroke();
   }
+
   function drawSliceText(index, start, end) {
     const mid = (start + end) / 2;
     const text = challenges[index];
@@ -130,13 +139,17 @@ document.addEventListener('DOMContentLoaded', () => {
   function setContainerRotation(deg) {
     container.style.transform = `rotate(${deg}deg)`;
   }
-  function pickRandomIndex() { return Math.floor(Math.random() * numSlices); }
+
+  function pickRandomIndex() {
+    return Math.floor(Math.random() * numSlices);
+  }
+
   function spinToIndex(index) {
     if (spinning) return;
     spinning = true;
     spinBtn.disabled = true;
-    try { spinAudio.currentTime = 0; spinAudio.play(); } catch(e){}
-    const spins = 4 + Math.floor(Math.random() * 4); // 4..7
+    try { if (spinAudio) { spinAudio.currentTime = 0; spinAudio.play(); } } catch(e){}
+    const spins = 4 + Math.floor(Math.random() * 4);
     const targetRelative = index * sliceAngle + (sliceAngle / 2);
     const target = (spins * 360) + targetRelative;
     const finalRotation = currentRotation - target;
@@ -147,7 +160,7 @@ document.addEventListener('DOMContentLoaded', () => {
       currentRotation = ((finalRotation % 360) + 360) % 360;
       container.style.transition = '';
       setTimeout(() => {
-        try { bell.currentTime = 0; bell.play(); } catch(e){}
+        try { if (bell) { bell.currentTime = 0; bell.play(); } } catch(e){}
         const landedIndex = computeLandingIndexFromRotation(currentRotation);
         showResult(landedIndex);
         spinning = false;
@@ -156,6 +169,7 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     container.addEventListener('transitionend', onEnd);
   }
+
   function computeLandingIndexFromRotation(rotationDeg) {
     const normalized = ((-rotationDeg % 360) + 360) % 360;
     const adjusted = (normalized + (sliceAngle / 2)) % 360;
@@ -163,7 +177,7 @@ document.addEventListener('DOMContentLoaded', () => {
     return (idx + numSlices) % numSlices;
   }
 
-  // ---------- UI & effects ----------
+  // ---------- UI ----------
   function showResult(index) {
     resultText.textContent = challenges[index];
     popup.classList.remove('hide');
@@ -197,88 +211,40 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // ---------- Optimized initLightSnow (full-screen, transform-based) ----------
+  // ---------- Snow helpers (clear/regenerate) ----------
   function clearLightSnow() {
     snowNodes.forEach(n => n.remove());
     snowNodes = [];
     if (falling) falling.innerHTML = '';
   }
 
-  function initLightSnow(container, count = 30) {
-    if (!container) return;
-    clearLightSnow();
-
-    const viewportW = window.innerWidth;
-    const viewportH = window.innerHeight;
-
-    for (let i = 0; i < count; i++) {
-      const s = document.createElement('span');
-      s.className = 'light-snow';
-      s.textContent = Math.random() < 0.8 ? '❄️' : '✧';
-      s.style.position = 'fixed';
-      s.style.left = (Math.random() * viewportW) + 'px';
-      s.style.top = (-20 - Math.random() * viewportH * 0.4) + 'px';
-      s.style.fontSize = (8 + Math.random() * 16) + 'px';
-      s.style.opacity = (0.15 + Math.random() * 0.4);
-      s.style.pointerEvents = 'none';
-      s.style.zIndex = '0';
-      s.style.willChange = 'transform';
-      s.dataset.speed = (0.15 + Math.random() * 0.5);
-      s.dataset.drift = (-0.3 + Math.random() * 0.6);
-      container.appendChild(s);
-      snowNodes.push(s);
-    }
-
-    let animId;
-    function tick() {
-      const viewportW = window.innerWidth;
-      const viewportH = window.innerHeight;
-      snowNodes.forEach(n => {
-        let top = parseFloat(n.style.top);
-        let left = parseFloat(n.style.left);
-        const speed = parseFloat(n.dataset.speed);
-        const drift = parseFloat(n.dataset.drift);
-
-        top += speed;
-        left += drift;
-
-        if (top > viewportH + 20) {
-          top = -30;
-          left = Math.random() * viewportW;
-        }
-        if (left < -10) {
-          left = viewportW + 10;
-        }
-        if (left > viewportW + 10) {
-          left = -10;
-        }
-
-        n.style.transform = `translate3d(${left}px, ${top}px, 0)`;
-      });
-      animId = requestAnimationFrame(tick);
-    }
-
-    animId = requestAnimationFrame(tick);
-
-    window.addEventListener('pagehide', () => {
-      cancelAnimationFrame(animId);
-    }, { passive: true });
-
-    window.addEventListener('visibilitychange', () => {
-      if (document.hidden) {
-        cancelAnimationFrame(animId);
-      } else {
-        animId = requestAnimationFrame(tick);
+  // initLightSnow is provided by js/snow.js (already loaded). If not present, provide a fallback.
+  if (typeof initLightSnow !== 'function') {
+    console.warn('initLightSnow not found (snow.js not loaded). Using fallback simple snow generator.');
+    function initLightSnow(container, count = 30) {
+      if (!container) return;
+      // very small fallback (non-optimized)
+      container.innerHTML = '';
+      for (let i=0;i<count;i++){
+        const s = document.createElement('span');
+        s.className='light-snow';
+        s.textContent='❄️';
+        s.style.position='fixed';
+        s.style.left=(Math.random()*100)+'vw';
+        s.style.top=(-10-Math.random()*50)+'vh';
+        s.style.fontSize=(8+Math.random()*12)+'px';
+        s.style.opacity=0.2+Math.random()*0.4;
+        s.style.pointerEvents='none';
+        container.appendChild(s);
       }
-    }, { passive: true });
+    }
   }
 
-  // ---------- Event wiring & accessibility ----------
+  // ---------- Event wiring ----------
   let resizeTimer = null;
   function onResize() {
     DPR = Math.max(1, window.devicePixelRatio || 1);
     resizeCanvas();
-    // regenerate full-screen snow to adapt to new viewport
     initLightSnow(falling, 30);
   }
   window.addEventListener('resize', () => {
@@ -290,8 +256,9 @@ document.addEventListener('DOMContentLoaded', () => {
     resizeTimer = setTimeout(onResize, 220);
   }, { passive: true });
 
-  // spin actions
-  spinBtn.addEventListener('click', () => {
+  // spin button: lazy load audio then spin
+  spinBtn.addEventListener('click', (ev) => {
+    if (!audioReady) loadAudio();
     hideResult();
     const idx = Math.floor(Math.random() * numSlices);
     spinToIndex(idx);
@@ -316,11 +283,23 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // ---------- Init drawing & start (overlay removed) ----------
+  // ---------- Init drawing & start ----------
+  console.log('Initializing wheel...');
   resizeCanvas();
-  initLightSnow(falling, 30);  // Start snow right away, 30 flakes for mobile
-  spinBtn.disabled = false;    // Enable spin button immediately for testing
+  console.log('Canvas resized, size:', size);
 
-  // expose debug redraw
-  window.__spinWheelRedraw = () => drawWheel();
+  // Ensure resize handler is active (already wired above)
+  window.addEventListener('resize', () => {
+    DPR = Math.max(1, window.devicePixelRatio || 1);
+    resizeCanvas();
+  });
+
+  // Start snow and enable button shortly after load
+  setTimeout(() => {
+    if (falling) {
+      initLightSnow(falling, 30);
+      console.log('Snow initialized');
+    }
+    spinBtn.disabled = false;
+  }, 100);
 });

@@ -1,0 +1,28 @@
+/* craciun/wheel_game/css/base.css */
+
+/* Ensure full viewport snow layer */
+#falling-elements-wheel {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 0;
+  overflow: hidden;
+}
+
+.light-snow {
+  position: fixed;
+  will-change: transform;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+/* Scene container */
+.scene {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  background: linear-gradient(to bottom, #02091a, #04324a);
+}

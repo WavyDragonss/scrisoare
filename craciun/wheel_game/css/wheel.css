@@ -19,42 +19,11 @@ body{
   -webkit-tap-highlight-color: transparent;
 }
 
-/* Ensure snow container fills entire viewport */
-#falling-elements-wheel {
-  position: fixed;
-  inset: 0;
-  width: 100vw;
-  height: 100vh;
-  pointer-events: none;
-  z-index: 0;
-  overflow: hidden;
-}
-
-/* Snowflake styling */
-.light-snow {
-  position: fixed;
-  will-change: transform;
-  backface-visibility: hidden;
-  -webkit-backface-visibility: hidden;
-}
-
-/* When overlay existed we used to disable interactions beneath it.
-   Overlay removed — left here commented for reference. */
-/* body.overlay-active .wheel-main,
-   body.overlay-active .wheel-header,
-   body.overlay-active .wheel-footer {
-     pointer-events: none;
-     touch-action: none;
-} */
-
 /* Scene layout */
-.scene{
-  position: relative;
-  width: 100vw;
-  height: 100vh;
-  overflow: hidden;
-  background: linear-gradient(to bottom, #02091a, #04324a);
-}
+.scene{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:18px 12px}
+.wheel-header{text-align:center;margin-bottom:6px}
+.wheel-header h1{margin:0;font-size:1.5rem;letter-spacing:0.6px}
+.wheel-header .hint{opacity:0.95;margin-top:6px;font-size:0.95rem;color:#d9e9d9}
 
 /* Wheel area */
 .wheel-main{position:relative; z-index:2; width:100%;max-width:760px;margin:8px auto 30px;display:flex;flex-direction:column;align-items:center;gap:18px}
@@ -63,11 +32,7 @@ body{
 #wheel-canvas{width:100%;height:100%;display:block}
 
 /* Pointer always on top */
-.pointer-wrap {
-  position: relative;
-  z-index: 3;
-  pointer-events: none;
-}
+.pointer-wrap { position: relative; z-index: 3; pointer-events: none; }
 .pointer{width:92px;max-width:12vw;display:block;filter:drop-shadow(0 6px 24px rgba(0,0,0,0.55))}
 
 /* controls */
@@ -91,8 +56,6 @@ body{
 .popup-actions{display:flex;gap:10px;justify-content:center}
 .primary{background:#1a6b2b;color:#fff;padding:10px 14px;border-radius:10px;border:none}
 .secondary{background:transparent;color:#1a1a1a;border:1px solid #ccc;padding:10px 14px;border-radius:10px}
-
-/* start-overlay removed from HTML — related styles are deleted above */
 
 /* responsive */
 @media (max-width:520px){
