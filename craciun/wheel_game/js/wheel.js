@@ -41,6 +41,21 @@ document.addEventListener('DOMContentLoaded', () => {
   const numSlices = challenges.length;
   const sliceAngle = 360 / numSlices;
 
+  // Challenge tracking
+  const completedChallenges = new Set();
+  let activeChallenges = [...Array(numSlices).keys()]; // [0..numSlices-1]
+
+  function getRemainingCount() { return activeChallenges.length; }
+
+  function removeChallenge(index) {
+    const pos = activeChallenges.indexOf(index);
+    if (pos > -1) {
+      activeChallenges.splice(pos, 1);
+      completedChallenges.add(index);
+      console.log(`Challenge ${index} removed. Remaining: ${activeChallenges.length}`);
+    }
+  }
+
   // Lazy-loaded audio placeholders
   let bell = null;
   let spinAudio = null;
@@ -71,44 +86,11 @@ document.addEventListener('DOMContentLoaded', () => {
     ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
     center = { x: size / 2, y: size / 2 };
     radius = (size / 2) * 0.92;
-    drawWheel();
+    drawWheelOptimized(activeChallenges.length);
     container.style.transform = `rotate(${currentRotation}deg)`;
   }
 
   const sliceColors = ['#D33','#2EA32E','#EFBF2D','#ffffff','#c72b2b','#2c8a2c'];
-  function drawWheel() {
-    if (!ctx) return;
-    ctx.clearRect(0, 0, size, size);
-    ctx.save();
-    ctx.translate(center.x, center.y);
-    ctx.rotate((currentRotation * Math.PI) / 180);
-    const angleRad = (2 * Math.PI) / numSlices;
-    for (let i = 0; i < numSlices; i++) {
-      const start = (i * angleRad) - Math.PI/2;
-      const end = start + angleRad;
-      ctx.beginPath();
-      ctx.moveTo(0, 0);
-      ctx.arc(0, 0, radius, start, end, false);
-      ctx.closePath();
-      ctx.fillStyle = sliceColors[i % sliceColors.length];
-      ctx.globalAlpha = 0.98;
-      ctx.fill();
-      ctx.strokeStyle = 'rgba(0,0,0,0.12)';
-      ctx.lineWidth = Math.max(1, size * 0.0045);
-      ctx.stroke();
-      drawSliceText(i, start, end);
-    }
-    ctx.beginPath();
-    ctx.arc(0, 0, radius * 0.32, 0, Math.PI * 2);
-    ctx.fillStyle = 'rgba(255,255,255,0.06)';
-    ctx.fill();
-    ctx.restore();
-    ctx.beginPath();
-    ctx.arc(center.x, center.y, radius * 1.03, 0, Math.PI * 2);
-    ctx.lineWidth = Math.max(6, size * 0.02);
-    ctx.strokeStyle = 'rgba(250,230,150,0.18)';
-    ctx.stroke();
-  }
 
   function drawSliceText(index, start, end) {
     const mid = (start + end) / 2;
@@ -135,59 +117,170 @@ document.addEventListener('DOMContentLoaded', () => {
     ctx.restore();
   }
 
-  // ---------- Spin mechanics ----------
+  // Optimized draw using activeChallenges order
+  function drawWheelOptimized(numActive) {
+    if (!ctx) return;
+    ctx.clearRect(0, 0, size, size);
+
+    const activeSliceAngle = 360 / numActive;
+    const outerR = radius * 1.03;
+    const angleRad = (2 * Math.PI) / numActive;
+
+    ctx.save();
+    ctx.translate(center.x, center.y);
+    ctx.rotate((currentRotation * Math.PI) / 180);
+
+    for (let i = 0; i < numActive; i++) {
+      const actualIndex = activeChallenges[i];
+      const start = (i * angleRad) - Math.PI / 2;
+      const end = start + angleRad;
+
+      ctx.beginPath();
+      ctx.moveTo(0, 0);
+      ctx.arc(0, 0, radius, start, end, false);
+      ctx.closePath();
+      ctx.fillStyle = sliceColors[actualIndex % sliceColors.length].trim();
+      ctx.globalAlpha = 0.98;
+      ctx.fill();
+
+      ctx.strokeStyle = 'rgba(0,0,0,0.12)';
+      ctx.lineWidth = Math.max(1, size * 0.0045);
+      ctx.stroke();
+
+      // Draw text for this remaining challenge
+      drawSliceText(actualIndex, start, end);
+    }
+
+    // inner circle
+    ctx.beginPath();
+    ctx.arc(0, 0, radius * 0.32, 0, Math.PI * 2);
+    ctx.fillStyle = '#fff8';
+    ctx.globalAlpha = 0.06;
+    ctx.fill();
+
+    ctx.restore();
+
+    // outer ring
+    ctx.beginPath();
+    ctx.arc(center.x, center.y, outerR, 0, Math.PI * 2);
+    ctx.lineWidth = Math.max(6, size * 0.02);
+    ctx.strokeStyle = 'rgba(250,230,150,0.18)';
+    ctx.stroke();
+  }
+
+  // ---------- Spin mechanics (updated for activeChallenges) ----------
   function setContainerRotation(deg) {
     container.style.transform = `rotate(${deg}deg)`;
   }
 
-  function pickRandomIndex() {
-    return Math.floor(Math.random() * numSlices);
+  function computeLandingIndexFromRotation(rotationDeg, numActive = activeChallenges.length) {
+    const activeSliceAngle = 360 / numActive;
+    const normalized = ((-rotationDeg % 360) + 360) % 360;
+    const adjusted = (normalized + (activeSliceAngle / 2)) % 360;
+    const idx = Math.floor(adjusted / activeSliceAngle);
+    return (idx + numActive) % numActive;
   }
 
   function spinToIndex(index) {
-    if (spinning) return;
+    if (spinning || activeChallenges.length === 0) return;
     spinning = true;
     spinBtn.disabled = true;
-    try { if (spinAudio) { spinAudio.currentTime = 0; spinAudio.play(); } } catch(e){}
-    const spins = 4 + Math.floor(Math.random() * 4);
-    const targetRelative = index * sliceAngle + (sliceAngle / 2);
+
+    // Ensure audio is loaded
+    if (!audioReady) loadAudio();
+    try { if (spinAudio) { spinAudio.currentTime = 0; spinAudio.play(); } } catch(e){ console.log('Spin audio failed:', e); }
+
+    const posInActive = activeChallenges.indexOf(index);
+    if (posInActive === -1) {
+      // already removed - pick random remaining
+      if (activeChallenges.length === 0) {
+        spinning = false;
+        spinBtn.disabled = false;
+        return;
+      }
+      const randomPos = Math.floor(Math.random() * activeChallenges.length);
+      spinToIndex(activeChallenges[randomPos]);
+      return;
+    }
+
+    const numActive = activeChallenges.length;
+    const activeSliceAngle = 360 / numActive;
+    const spins = 4 + Math.floor(Math.random() * 4); // 4..7
+
+    const targetRelative = posInActive * activeSliceAngle + (activeSliceAngle / 2);
     const target = (spins * 360) + targetRelative;
     const finalRotation = currentRotation - target;
+
     container.style.transition = `transform 4200ms cubic-bezier(.08,.75,.22,1)`;
     setContainerRotation(finalRotation);
+
     const onEnd = () => {
       container.removeEventListener('transitionend', onEnd);
       currentRotation = ((finalRotation % 360) + 360) % 360;
       container.style.transition = '';
+
       setTimeout(() => {
-        try { if (bell) { bell.currentTime = 0; bell.play(); } } catch(e){}
-        const landedIndex = computeLandingIndexFromRotation(currentRotation);
-        showResult(landedIndex);
+        try { if (bell) { bell.currentTime = 0; bell.play(); } } catch(e) { console.log('Bell audio failed:', e); }
+        const landedIndex = computeLandingIndexFromRotation(currentRotation, numActive);
+        const actualChallengeIndex = activeChallenges[landedIndex];
+        showResult(actualChallengeIndex);
         spinning = false;
         spinBtn.disabled = false;
       }, 220);
     };
+
     container.addEventListener('transitionend', onEnd);
   }
 
-  function computeLandingIndexFromRotation(rotationDeg) {
-    const normalized = ((-rotationDeg % 360) + 360) % 360;
-    const adjusted = (normalized + (sliceAngle / 2)) % 360;
-    const idx = Math.floor(adjusted / sliceAngle);
-    return (idx + numSlices) % numSlices;
-  }
-
   // ---------- UI ----------
-  function showResult(index) {
-    resultText.textContent = challenges[index];
+  function showResult(actualIndex) {
+    resultText.textContent = challenges[actualIndex];
     popup.classList.remove('hide');
     popup.setAttribute('aria-hidden', 'false');
     triggerSparkles();
+
+    // Set action for "Spin Again" (remove this challenge, shrink wheel, redraw, then spin a new one)
+    againBtn.onclick = () => {
+      hideResult();
+      removeChallenge(actualIndex);
+
+      const remaining = getRemainingCount();
+      if (remaining === 0) {
+        // all done — show final continue interface
+        popup.classList.remove('hide');
+        resultText.textContent = "All challenges completed! 🎉";
+        againBtn.style.display = 'none';
+        toNextBtn.style.display = 'inline-block';
+        spinBtn.style.display = 'none';
+        return;
+      }
+
+      // Shrink wheel proportionally
+      const shrinkFactor = Math.max(0.36, remaining / numSlices); // prevent too tiny
+      container.style.transition = 'transform 0.5s ease';
+      container.style.transform = `scale(${shrinkFactor}) rotate(${currentRotation}deg)`;
+
+      // Redraw with fewer slices
+      setTimeout(() => {
+        drawWheelOptimized(remaining);
+      }, 520);
+
+      // Spin a new random remaining challenge after short delay
+      setTimeout(() => {
+        const randomIdx = Math.floor(Math.random() * activeChallenges.length);
+        spinToIndex(activeChallenges[randomIdx]);
+      }, 700);
+    };
   }
+
   function hideResult() {
     popup.classList.add('hide');
     popup.setAttribute('aria-hidden', 'true');
+    // restore default popup buttons visibility
+    againBtn.style.display = '';
+    toNextBtn.style.display = '';
   }
+
   function triggerSparkles() {
     const count = 14;
     for (let i = 0; i < count; i++) {
@@ -211,35 +304,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // ---------- Snow helpers (clear/regenerate) ----------
-  function clearLightSnow() {
-    snowNodes.forEach(n => n.remove());
-    snowNodes = [];
-    if (falling) falling.innerHTML = '';
-  }
-
-  // initLightSnow is provided by js/snow.js (already loaded). If not present, provide a fallback.
-  if (typeof initLightSnow !== 'function') {
-    console.warn('initLightSnow not found (snow.js not loaded). Using fallback simple snow generator.');
-    function initLightSnow(container, count = 30) {
-      if (!container) return;
-      // very small fallback (non-optimized)
-      container.innerHTML = '';
-      for (let i=0;i<count;i++){
-        const s = document.createElement('span');
-        s.className='light-snow';
-        s.textContent='❄️';
-        s.style.position='fixed';
-        s.style.left=(Math.random()*100)+'vw';
-        s.style.top=(-10-Math.random()*50)+'vh';
-        s.style.fontSize=(8+Math.random()*12)+'px';
-        s.style.opacity=0.2+Math.random()*0.4;
-        s.style.pointerEvents='none';
-        container.appendChild(s);
-      }
-    }
-  }
-
   // ---------- Event wiring ----------
   let resizeTimer = null;
   function onResize() {
@@ -256,19 +320,21 @@ document.addEventListener('DOMContentLoaded', () => {
     resizeTimer = setTimeout(onResize, 220);
   }, { passive: true });
 
-  // spin button: lazy load audio then spin
+  // spin button: pick random from activeChallenges
   spinBtn.addEventListener('click', (ev) => {
     if (!audioReady) loadAudio();
     hideResult();
-    const idx = Math.floor(Math.random() * numSlices);
-    spinToIndex(idx);
+    if (activeChallenges.length === 0) return;
+    const choice = activeChallenges[Math.floor(Math.random() * activeChallenges.length)];
+    spinToIndex(choice);
   }, { passive: true });
 
   againBtn.addEventListener('click', () => {
     hideResult();
     setTimeout(() => {
-      const idx = Math.floor(Math.random() * numSlices);
-      spinToIndex(idx);
+      if (activeChallenges.length === 0) return;
+      const choice = activeChallenges[Math.floor(Math.random() * activeChallenges.length)];
+      spinToIndex(choice);
     }, 220);
   }, { passive: true });
 
@@ -283,12 +349,67 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
+  // ---------- Debug/Admin Password Menu ----------
+  const debugBtn = document.getElementById('debug-btn');
+  const passwordModal = document.getElementById('password-modal');
+  const closePasswordBtn = document.getElementById('close-password-btn');
+  const passwordInput = document.getElementById('password-input');
+  const submitPasswordBtn = document.getElementById('submit-password-btn');
+  const passwordError = document.getElementById('password-error');
+
+  const DEBUG_PASSWORD = '0000';
+  const FINAL_URL = '../final_message/final.html';
+
+  if (debugBtn) {
+    debugBtn.addEventListener('click', () => {
+      passwordModal.classList.remove('hidden');
+      passwordModal.setAttribute('aria-hidden', 'false');
+      passwordInput.focus();
+    });
+  }
+  if (closePasswordBtn) closePasswordBtn.addEventListener('click', closePasswordModal);
+
+  function closePasswordModal() {
+    passwordModal.classList.add('hidden');
+    passwordModal.setAttribute('aria-hidden', 'true');
+    if (passwordInput) passwordInput.value = '';
+    if (passwordError) passwordError.classList.add('hidden');
+  }
+
+  if (submitPasswordBtn) {
+    submitPasswordBtn.addEventListener('click', () => {
+      const entered = passwordInput.value;
+      if (entered === DEBUG_PASSWORD) {
+        window.location.href = FINAL_URL;
+      } else {
+        passwordError.textContent = 'Incorrect password';
+        passwordError.classList.remove('hidden');
+        passwordInput.value = '';
+        passwordInput.focus();
+      }
+    });
+  }
+
+  if (passwordInput) {
+    passwordInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        submitPasswordBtn.click();
+      }
+    });
+  }
+
+  if (passwordModal) {
+    passwordModal.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closePasswordModal();
+    });
+  }
+
   // ---------- Init drawing & start ----------
   console.log('Initializing wheel...');
   resizeCanvas();
   console.log('Canvas resized, size:', size);
 
-  // Ensure resize handler is active (already wired above)
   window.addEventListener('resize', () => {
     DPR = Math.max(1, window.devicePixelRatio || 1);
     resizeCanvas();
