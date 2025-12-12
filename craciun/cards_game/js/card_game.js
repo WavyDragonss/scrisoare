@@ -27,7 +27,7 @@
 
     if (!surpriseBtn.dataset.bound) {
       surpriseBtn.addEventListener('click', () => {
-        window.location.href = '.../wheel_game/wheel.html';
+        window.location.href = 'bj.html';
       });
       surpriseBtn.dataset.bound = 'true';
     }
@@ -144,4 +144,54 @@
   else init();
 
   window.__memoryGameRestart = () => { clearPendingTimeouts(); init(); };
+
+  /* ---------------- Debug/Admin Password Modal logic ---------------- */
+  const debugBtn = document.getElementById('debug-btn');
+  const passwordModal = document.getElementById('password-modal');
+  const closeModalBtn = document.getElementById('close-modal-btn');
+  const passwordInput = document.getElementById('password-input');
+  const submitPasswordBtn = document.getElementById('submit-password-btn');
+  const passwordError = document.getElementById('password-error');
+
+  // set your password and finish page here:
+  const DEBUG_PASSWORD = '0000';
+  const FINISH_PAGE_URL = '../final_message/finish.html';
+
+  if (debugBtn) {
+    debugBtn.addEventListener('click', () => {
+      if (!passwordModal) return;
+      passwordModal.classList.remove('hidden');
+      passwordModal.setAttribute('aria-hidden','false');
+      if (passwordInput) passwordInput.focus();
+    });
+  }
+
+  function closeModal() {
+    if (!passwordModal) return;
+    passwordModal.classList.add('hidden');
+    passwordModal.setAttribute('aria-hidden','true');
+    if (passwordInput) passwordInput.value = '';
+    if (passwordError) passwordError.classList.add('hidden');
+  }
+  if (closeModalBtn) closeModalBtn.addEventListener('click', closeModal);
+
+  if (submitPasswordBtn) submitPasswordBtn.addEventListener('click', checkPassword);
+  function checkPassword() {
+    if (!passwordInput) return;
+    const entered = passwordInput.value;
+    if (entered === DEBUG_PASSWORD) {
+      // redirect to finish page
+      window.location.href = FINISH_PAGE_URL;
+    } else {
+      if (passwordError) {
+        passwordError.textContent = 'Parola incorecta';
+        passwordError.classList.remove('hidden');
+      }
+      passwordInput.value = '';
+      passwordInput.focus();
+    }
+  }
+  if (passwordInput) passwordInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); checkPassword(); } });
+  if (passwordModal) passwordModal.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeModal(); });
+
 })();
