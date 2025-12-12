@@ -155,7 +155,7 @@
 
   // set your password and finish page here:
   const DEBUG_PASSWORD = '0000';
-  const FINISH_PAGE_URL = '../final_message/finish.html';
+  const FINISH_PAGE_URL = '../wheel_game/wheel.html';
 
   if (debugBtn) {
     debugBtn.addEventListener('click', () => {
