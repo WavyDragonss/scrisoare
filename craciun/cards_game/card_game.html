@@ -16,7 +16,7 @@
 
   <main>
     <section id="game-area" class="game-area" aria-label="Memory game">
-      <div id="board" class="board" role="grid">
+      <div id="board" class="board" role="grid" aria-live="polite">
         <!-- Cards rendered by JS -->
       </div>
     </section>
@@ -29,8 +29,27 @@
   </main>
 
   <footer class="site-footer">
-    <small>Stiu ca am mai repetat asta dar trust the process....</small>
+    <small>Apasa un card pentru a vedea simbolul ascuns, gaseste perechea pentru a le face sa dispara si a finaliza jocul.</small>
   </footer>
+
+  <!-- Debug button (top-right) -->
+  <button id="debug-btn" class="debug-btn" aria-label="Debug access">404</button>
+
+  <!-- Password modal -->
+  <div id="password-modal" class="password-modal hidden" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="password-modal-title">
+    <div class="modal-backdrop" tabindex="-1"></div>
+    <div class="modal-content" role="document">
+      <button id="close-modal-btn" aria-label="Close" class="modal-close">✕</button>
+      <h2 id="password-modal-title" style="margin:0 0 12px;color:#fff;">Admin access</h2>
+      <p style="color:#d0f7d6;margin:0 0 12px;font-size:0.95rem;">Introduce parola pentru a continua.</p>
+      <input id="password-input" type="password" class="modal-input" placeholder="Parola" aria-label="Parola" />
+      <div id="password-error" class="password-error hidden" role="status" aria-live="assertive"></div>
+      <div style="margin-top:16px; text-align:right;">
+        <button id="submit-password-btn" class="modal-submit">Trimite</button>
+      </div>
+    </div>
+  </div>
+
   <audio id="tada-sound" src="../misc/tada.mp3" preload="auto"></audio>
 </body>
 </html>
