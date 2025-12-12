@@ -27,7 +27,7 @@
 
     if (!surpriseBtn.dataset.bound) {
       surpriseBtn.addEventListener('click', () => {
-        window.location.href = 'bj.html';
+        window.location.href = '.../wheel_game/wheel.html';
       });
       surpriseBtn.dataset.bound = 'true';
     }
