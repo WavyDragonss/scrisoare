@@ -74,13 +74,14 @@ function triggerCluster(cx, cy, count, maxRadius) {
 // 3. MESSAGES SEQUENCE + FINAL BUTTON
 const festiveMessages = [
     "Craciun fericit iubire...",
-    "Sper ca ti-a placut la unghii",
-    "Si ca totul a fost bine",
-    "Va urma o serie de jocuri...",
-    "Daca ai analizat cadoul meu,",
-    "Sunt sigur ca ai observat natura neobisnuita..",
-    "Pentru a iti „debloca” cadoul,",
-    "Va trebuii sa completezi toate jocuietzele :D",
+    "Sper ca iti va placea la unghii",
+    "Si ca totul va fi bine",
+    "Va urma un joc dupa care poti deschide cadoul...",
+    "Nu este nici body mist, nici lumanare parfumata,",
+    "Si e ceva pe care tu deja-l ai si imi pare rau",
+    "Dar il luasem deja cand tu l-ai luat",
+    "Te rog sa te uiti si la scrisoare,",
+    "Nu te mai retin...",
     "MULT NOROC SI TE IUHESC ❤️❤️❤️❤️✨✨✨✨"
 ];
 
