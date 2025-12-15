@@ -7,6 +7,7 @@
   --gap: 9px;
 }
 
+/* Base and layout */
 * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 html,body { height:100%; margin:0; padding:0; background:linear-gradient(110deg, var(--accent) 0%, var(--bg) 100%, var(--accent-2) 120%); font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial; color:#222; -webkit-font-smoothing:antialiased; }
 
@@ -25,6 +26,7 @@ html,body { height:100%; margin:0; padding:0; background:linear-gradient(110deg,
   touch-action: manipulation;
 }
 
+/* Card styles */
 .card {
   position: relative;
   width: 100%;
@@ -57,7 +59,7 @@ html,body { height:100%; margin:0; padding:0; background:linear-gradient(110deg,
   font-weight: 900;
 }
 
-/* Front (face-down) design */
+/* Front (face-down) */
 .card-front {
   background: linear-gradient(135deg, var(--accent) 70%, var(--accent-2) 100%);
   color: white;
@@ -65,7 +67,7 @@ html,body { height:100%; margin:0; padding:0; background:linear-gradient(110deg,
   text-shadow: 0 4px 12px #be233483;
 }
 
-/* Back (face-up) with emoji */
+/* Back (face-up) */
 .card-back {
   background: var(--card-back);
   color: #d80c30;
@@ -74,10 +76,11 @@ html,body { height:100%; margin:0; padding:0; background:linear-gradient(110deg,
   text-shadow: 0 0 14px #eacc44bb, 0 0 3px #fff4;
 }
 
-/* Hidden / removed cards */
+/* Hidden (removed) */
 .card.hidden { visibility: hidden; opacity: 0; transform: scale(0.9); transition: visibility .3s, opacity .3s, transform .3s; }
 
-/.end-controls { text-align:center; margin-top:22px; }
+/* Surprise button */
+.end-controls { text-align:center; margin-top:22px; }
 .surprise-btn {
   display: none;
   background: linear-gradient(90deg,#ffd166 50%,#fae579 100%);
@@ -94,6 +97,26 @@ html,body { height:100%; margin:0; padding:0; background:linear-gradient(110deg,
   transition: background .16s;
 }
 
+/* Emoji pop layer */
+#emoji-layer {
+  position: fixed;
+  left: 0; top: 0;
+  width: 100vw; height: 100vh;
+  pointer-events: none;
+  z-index: 45;
+}
+.emoji-pop {
+  position: absolute;
+  font-size: 2.45em;
+  opacity: 1;
+  pointer-events: none;
+  transition: opacity 0.42s, transform 0.7s;
+  will-change: transform, opacity;
+  filter: drop-shadow(0 4px 12px #fff8);
+  user-select: none;
+}
+
+/* Responsive tweaks */
 .card:focus { outline: 4px solid #eacc44; outline-offset: 5px; }
 @media (max-width:480px) {
   :root { --gap: 6px; }
@@ -104,4 +127,105 @@ html,body { height:100%; margin:0; padding:0; background:linear-gradient(110deg,
 @media (orientation: landscape) and (max-height: 420px) {
   .board { gap: 6px; max-width: 700px; }
   .card-face { font-size: 1.13em; }
+}
+
+/* ---------------- Debug button (top-right) ---------------- */
+.debug-btn {
+  position: fixed;
+  top: env(safe-area-inset-top, 12px);
+  right: env(safe-area-inset-right, 12px);
+  z-index: 100;
+
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border: 2px solid rgba(255, 107, 107, 0.7);
+  background: rgba(255, 107, 107, 0.1);
+  color: #ff6b6b;
+
+  font-size: 10px;
+  font-weight: bold;
+  cursor: pointer;
+
+  transition: all 0.25s ease;
+}
+.debug-btn:hover {
+  background: rgba(255, 107, 107, 0.2);
+  border-color: rgba(255, 107, 107, 0.95);
+  box-shadow: 0 0 12px rgba(255, 107, 107, 0.3);
+}
+.debug-btn:active { transform: scale(0.9); }
+.debug-btn:focus-visible { outline: 2px solid #ff6b6b; outline-offset: 2px; }
+
+/* ---------------- Password Modal ---------------- */
+.password-modal {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+  opacity: 1;
+  pointer-events: auto;
+  transition: opacity 0.3s ease;
+}
+.password-modal.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+.modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(5px);
+}
+.modal-content {
+  position: relative;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+  border: 2px solid rgba(31, 191, 107, 0.5);
+  border-radius: 12px;
+  padding: 20px;
+  max-width: 360px;
+  width: 92vw;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+  animation: slideUp 0.28s ease;
+  color: #d8ffe6;
+}
+.modal-close {
+  position: absolute;
+  right: 12px;
+  top: 10px;
+  border: none;
+  background: transparent;
+  color: #fff;
+  font-size: 1.05rem;
+  cursor: pointer;
+}
+.modal-input {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.03);
+  color: #fff;
+  margin-top: 10px;
+  font-size: 1rem;
+}
+.modal-submit {
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: none;
+  background: #1fbf6b;
+  color: #06210f;
+  font-weight: 700;
+  cursor: pointer;
+}
+.password-error {
+  margin-top: 8px;
+  color: #ff9b9b;
+  font-size: 0.95rem;
+}
+@keyframes slideUp {
+  from { transform: translateY(8px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
 }
