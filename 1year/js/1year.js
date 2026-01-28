@@ -5,7 +5,8 @@ const messageDiv = document.querySelector('.romantic-message');
 const mainWrapper = document.querySelector('.main-wrapper');
 
 // For message sequence overlay
-let whiteTransitionScreen, messageSequenceScreen;
+let whiteTransitionScreen, messageSequenceScreen, collageSection;
+let musicAudio;
 
 // -- CONFIG --
 const burstEmojis = [ "💖", "❤️", "🥰", "🌸", "✨", "🫶", "😘", "💗", "💝" ];
@@ -17,6 +18,14 @@ const MESSAGES = [
   "I’d choose you again. Every single time.",
   "This is just the beginning. 💗"
 ];
+// List your collage images here (numbered, add more as needed)
+const COLLAGE_IMAGES = [
+  ['1.jpg', '2.jpg'], // row 1 (2 per row)
+  ['3.jpg', '4.jpg'],
+  ['5.jpg'],          // row 3 (single)
+  ['6.jpg', '7.jpg'],
+  ['8.jpg', '9.jpg']
+];
 const FIRST_EXPLODE_COUNT = 18;
 const FIRST_SPARKLE_COUNT = 16;
 const BURST_COUNT = 7;
@@ -24,17 +33,16 @@ const BURST_COUNT = 7;
 // -- STATE --
 let exploded = false;
 
-// -- INTERACTION: EMOJI PARTICLE GENERATOR --
+// -- INTERACTION: EMOJI PARTICLE GENERATOR (unchanged; see previous code) --
 function createExplosionParticle(type = "emoji") {
+  // ...same as previous script...
   const isEmoji = type === "emoji";
   const set = isEmoji ? burstEmojis : burstSparkles;
   const el = document.createElement('span');
   el.className = isEmoji ? 'burst-emoji explode' : 'burst-sparkle explode';
   el.textContent = set[Math.floor(Math.random() * set.length)];
-
-  // Random full-circle angle for explosion!
   const theta = Math.random() * 2 * Math.PI;
-  const dist = (110 + Math.random() * 54); // px move outward
+  const dist = (110 + Math.random() * 54);
   const tx = Math.cos(theta) * dist;
   const ty = Math.sin(theta) * dist;
   const rot = -40 + Math.random() * 80;
@@ -43,99 +51,97 @@ function createExplosionParticle(type = "emoji") {
   el.style.setProperty('--ty', `${ty}px`);
   el.style.setProperty('--rot', `${rot}deg`);
   el.style.setProperty('--scale', scale);
-
-  // Random size for emojis, sparkles are smaller
   el.style.fontSize = (isEmoji ? (8 + Math.random()*3) : (3 + Math.random()*2)) + 'vw';
-
   emojiContainer.appendChild(el);
-
-  // Clean up after animation completes
-  el.addEventListener('animationend', () => {
-    if (el.parentNode) el.parentNode.removeChild(el);
-  });
+  el.addEventListener('animationend', () => { if (el.parentNode) el.parentNode.removeChild(el); });
 }
-
 function createSoftBurstParticle() {
+  // ...same as before...
   const el = document.createElement('span');
   el.className = 'burst-emoji burst';
   el.textContent = burstEmojis[Math.floor(Math.random() * burstEmojis.length)];
-  // Softer, mostly upward
-  const xOff = (-65 + Math.random() * 130); // px left-right
-  const yOff = -68 - Math.random() * 90;   // px upward
-  const rot = -22 + Math.random() * 44;    // slight rotation
+  const xOff = (-65 + Math.random() * 130);
+  const yOff = -68 - Math.random() * 90;
+  const rot = -22 + Math.random() * 44;
   const scale = 0.99 + Math.random() * 0.46;
   el.style.setProperty('--x', `${xOff}px`);
   el.style.setProperty('--y', `${yOff}px`);
   el.style.setProperty('--rot', `${rot}deg`);
   el.style.setProperty('--scale', scale);
   el.style.fontSize = (7 + Math.random()*2.6) + 'vw';
-
   emojiContainer.appendChild(el);
-  el.addEventListener('animationend', () => {
-    if (el.parentNode) el.parentNode.removeChild(el);
-  });
+  el.addEventListener('animationend', () => { if (el.parentNode) el.parentNode.removeChild(el); });
 }
 
-// -- FIRST TAP: EXPLOSION + PAGE TRANSITION --
+// -- FIRST TAP: SLOW PACE, EXPLOSION, FADE, THEN MESSAGES+MUSIC --
 function handleGiftExplosion() {
   exploded = true;
-
-  // 1. Play explosion "pop" on gift
   giftBtn.classList.add('explode');
   vibrate(26);
-
-  // 2. Create emoji + sparkle burst, all directions
   for (let i = 0; i < FIRST_EXPLODE_COUNT; ++i)
-    setTimeout(() => createExplosionParticle("emoji"), Math.random()*100);
-
+    setTimeout(() => createExplosionParticle("emoji"), Math.random()*150);
   for (let i = 0; i < FIRST_SPARKLE_COUNT; ++i)
-    setTimeout(() => createExplosionParticle("sparkle"), 25+Math.random()*110);
+    setTimeout(() => createExplosionParticle("sparkle"), 25+Math.random()*100);
 
-  // 3. After quick pop, fade gift out and bring in white screen
+  // Let explosion play for 1.7s, then slow fade
   setTimeout(() => {
-    // Fade out the gift and stop animations
+    // Hide the gift and background content
     giftBtn.classList.add('hide');
+    mainWrapper.style.transition = "opacity 1.5s cubic-bezier(.47,0,.58,1)";
+    mainWrapper.style.opacity = "0";
 
-    // Create and fade in the white transition screen
+    // Create white overlay
     if (!whiteTransitionScreen) {
       whiteTransitionScreen = document.createElement('div');
       whiteTransitionScreen.className = 'white-transition';
       document.body.appendChild(whiteTransitionScreen);
-      // Animate in
-      setTimeout(()=>whiteTransitionScreen.classList.add('active'), 30);
+      // Trigger slow fade in
+      setTimeout(()=>whiteTransitionScreen.classList.add('active'), 90);
     } else {
       whiteTransitionScreen.classList.add('active');
     }
-    // Hide background
-    mainWrapper.style.visibility = "hidden";
 
-    // Proceed to message sequence after 1.1s on white
-    setTimeout(startMessageSequence, 1100);
-  }, 330);
+    // Remove all burst particles just before fade completes
+    setTimeout(() => { emojiContainer.innerHTML = ''; }, 1100);
 
-  // Remove emoji animations after a second
-  setTimeout(() => {
-    emojiContainer.innerHTML = '';
-  }, 900);
+    // Wait for fade-in to be full (~1.7s + 1.5s = ~3.2s to white)
+    setTimeout(startMusicAndMessages, 1550);
+  }, 1700);
 }
 
-// -- SUBSEQUENT TAPS: SOFT BURST ONLY --
-function softBurstFromGift() {
-  for (let i = 0; i < BURST_COUNT; ++i)
-    setTimeout(createSoftBurstParticle, Math.random() * 190);
-  vibrate(10);
-}
+// -- SUBSEQUENT TAPS: SOFT BURST (if you want, not by default here) --
+// function softBurstFromGift() { ... unchanged ... }
 
-// -- TAP/VIBRATE SUPPORT --
-function vibrate(ms) {
-  if (navigator.vibrate) {
-    navigator.vibrate(ms || 20);
+// -- VIBRATE SUPPORT --
+function vibrate(ms) { if (navigator.vibrate) navigator.vibrate(ms || 20); }
+
+// -- MUSIC: fade in after white, keep playing through collage --
+function playMusic() {
+  // Place your mp3/ogg in a 'music.mp3' file in /1year/
+  if (!musicAudio) {
+    musicAudio = document.createElement('audio');
+    musicAudio.src = 'music/song.mp3';
+    musicAudio.loop = true;
+    musicAudio.volume = 0.0; // will fade in
+    document.body.appendChild(musicAudio);
   }
+  musicAudio.play().catch(()=>{});
+  let vol = 0;
+  const fade = setInterval(()=>{
+    vol += 0.05;
+    musicAudio.volume = Math.min(vol, 0.58);
+    if(vol >= 0.58) clearInterval(fade);
+  }, 110);
 }
 
-// -- SEQUENCED MESSAGE SCENE (AFTER WHITE FADE) --
-function startMessageSequence() {
-  // Remove/clean white and create overlay
+// -- MESSAGES BEGIN AFTER WHITE IS FULLY SHOWN --
+function startMusicAndMessages() {
+  // Fade-in music
+  playMusic();
+
+  // Hide main UI elements, fade in message overlay
+  mainWrapper.style.display = "none";
+  // Message overlay
   if (!messageSequenceScreen) {
     messageSequenceScreen = document.createElement('div');
     messageSequenceScreen.className = 'message-sequence';
@@ -143,49 +149,39 @@ function startMessageSequence() {
   } else {
     messageSequenceScreen.innerHTML = '';
   }
-  // Lock scroll
   document.body.style.overflow = "hidden";
-  // Scroll to top
   window.scrollTo(0,0);
 
-  // Sequence each message with smooth appear/fade
+  // Show messages in sequence
   let idx = 0;
   function showNextMsg() {
-    // Clean previous if any
+    // Remove previous
     const prev = messageSequenceScreen.querySelector('.sequence-message.active');
     if (prev) {
       prev.classList.remove('active');
       prev.classList.add('exit');
       setTimeout(()=>{ if(prev.parentNode) prev.parentNode.removeChild(prev); }, 700);
     }
-
     // Add new message
     const mDiv = document.createElement('div');
     mDiv.className = 'sequence-message';
     mDiv.textContent = MESSAGES[idx];
-
     messageSequenceScreen.appendChild(mDiv);
-    // Animate in after a short tick
-    setTimeout(()=>mDiv.classList.add('active'), 70);
-
-    // Next step: another message, or finish with the last
+    setTimeout(()=>mDiv.classList.add('active'), 80);
+    // Next step
     if (idx < MESSAGES.length - 1) {
       idx++;
-      setTimeout(showNextMsg, 3200 + Math.random()*700); // 3–4s
+      setTimeout(showNextMsg, 3200 + Math.random()*800);
     } else {
-      // Final message: leave on screen, and pulse heart below
+      // Final: show heart under, then collage
       setTimeout(() => pulseHeart(mDiv), 1000);
-      // Optional: unlock scrolling after 2.5+ sec if you want
-      setTimeout(() => { document.body.style.overflow='auto'; }, 2800);
+      setTimeout(() => showCollage(messageSequenceScreen, mDiv), 2900);
     }
   }
-  showNextMsg();
+  setTimeout(showNextMsg, 3200); // 1st message appears after 3.2s of white
 }
 
-// Final animated pink heart under last message
-// ...[your previous code above remains unchanged]...
-
-// -- FINAL: Add animated heart under last message --
+// -- FINAL HEART UNDER LAST MESSAGE --
 function pulseHeart(targetDiv) {
   const heart = document.createElement('div');
   heart.className = 'pulse-heart';
@@ -194,31 +190,71 @@ function pulseHeart(targetDiv) {
   targetDiv.insertAdjacentElement('afterend', heart);
 }
 
-// -- EVENT LISTENERS (one-time explosion vs. future soft bursts) --
-function onGiftTap(e) {
-  if (exploded) {
-    // After explosion, ignore taps (optional: soft burst allowed after final? add here if you wish)
-    e.preventDefault();
-    return false;
-  }
-  handleGiftExplosion();
+// -- COLLAGE REVEAL & INSERT --
+function showCollage(msgScreen, lastMsgDiv) {
+  // Animate last message upward to make room
+  lastMsgDiv.style.transition = 'transform 1.1s cubic-bezier(.31,.67,.16,1)';
+  lastMsgDiv.style.transform = 'translateY(-46px) scale(0.96)';
+  const heart = msgScreen.querySelector('.pulse-heart');
+  if (heart) heart.style.transform = 'translateY(-34px)';
+
+  // Create divider heart
+  setTimeout(() => {
+    const divider = document.createElement('div');
+    divider.className = 'collage-heart-divider';
+    divider.textContent = '💗';
+    msgScreen.appendChild(divider);
+
+    // Insert collage section
+    collageSection = document.createElement('section');
+    collageSection.className = 'collage-section';
+    msgScreen.appendChild(collageSection);
+    // Generate rows and images
+    COLLAGE_IMAGES.forEach(row => {
+      const rowDiv = document.createElement('div');
+      rowDiv.className = 'collage-row';
+      row.forEach(img => {
+        const imgEl = document.createElement('img');
+        imgEl.className = 'collage-image';
+        imgEl.src = `images/${img}`;
+        imgEl.alt = "";
+        // Reveal on scroll
+        rowDiv.appendChild(imgEl);
+      });
+      collageSection.appendChild(rowDiv);
+    });
+
+    // Enable scrolling
+    setTimeout(()=>{ document.body.style.overflow='auto';}, 650);
+
+    // Animate-in as user scrolls
+    setTimeout(setupCollageReveal, 1);
+
+  }, 900);
 }
 
-// Touch/click: only one tap ever gets explosion!
+// Collage images reveal on scroll
+function setupCollageReveal() {
+  const imgs = Array.from(document.querySelectorAll('.collage-image'));
+  const showIfVisible = () => {
+    const winH = window.innerHeight;
+    imgs.forEach(img => {
+      if (img.classList.contains('visible')) return;
+      const rect = img.getBoundingClientRect();
+      if (rect.top < winH - 40) img.classList.add('visible');
+    });
+  };
+  window.addEventListener('scroll', showIfVisible, {passive: true});
+  showIfVisible();
+}
+
+// -- EVENT LISTENERS --
+function onGiftTap(e) {
+  if (exploded) return false;
+  handleGiftExplosion();
+}
 giftBtn.addEventListener('click', onGiftTap, { once: true });
 giftBtn.addEventListener('touchstart', function(e){
   e.preventDefault();
   onGiftTap(e);
 }, { once: true, passive: false });
-
-// Optional: allow soft bursts after explosion, e.g. after all messages shown
-// Example: Uncomment this to allow soft bursts if the user taps the still-visible white screen
-/*
-document.body.addEventListener('click', function(e) {
-  if (exploded && messageSequenceScreen && e.target === messageSequenceScreen) {
-    softBurstFromGift();
-  }
-});
-*/
-
-// -- END --
