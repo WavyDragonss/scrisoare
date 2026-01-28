@@ -1,0 +1,222 @@
+/* -- BASE -- */
+html, body {
+  min-height: 100%;
+  margin: 0;
+  padding: 0;
+  background: linear-gradient(135deg, #ffe4ec 0%, #f9e7ff 100%);
+  font-family: 'Quicksand', 'Nunito', 'Arial Rounded', Arial, sans-serif;
+  width: 100vw;
+  user-select: none;
+  overscroll-behavior: none;
+  touch-action: manipulation;
+}
+
+/* -- GENERAL LAYOUT -- */
+.main-wrapper, .hero-section, .gift-area {
+  min-height: 100vh;
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+/* Center everything for normal flow */
+.hero-section {
+  flex: 1;
+  justify-content: center;
+}
+
+/* -- GIFT BUTTON -- */
+.gift-btn {
+  font-size: 22vw;
+  background: none;
+  border: none;
+  outline: none;
+  touch-action: manipulation;
+  cursor: pointer;
+  margin: 0;
+  padding: 0;
+  position: relative;
+  z-index: 2;
+  user-select: none;
+  transition: filter 0.25s, box-shadow 0.22s, transform 0.22s;
+  filter: drop-shadow(0 0 12px #ffd6ee);
+  animation: gift-float 2.7s ease-in-out infinite;
+}
+
+@keyframes gift-float {
+  0%   { transform: translateY(0); }
+  50%  { transform: translateY(-18px) scale(1.04);}
+  100% { transform: translateY(0);}
+}
+
+/* -- GIFT POP/EXPLOSION EFFECT (first tap only) -- */
+.gift-btn.explode {
+  animation: none;
+  transition: transform 0.08s cubic-bezier(.3,1.5,.5,1.2);
+  transform: scale(1.35) rotate(-8deg);
+  filter: drop-shadow(0 0 40px #fff0f7b0) brightness(1.14);
+}
+
+.gift-btn.hide {
+  opacity: 0;
+  transition: opacity 0.4s;
+  pointer-events: none;
+}
+
+/* -- EMOJI + SPARKLE PARTICLES -- */
+.emoji-container {
+  position: absolute;
+  left: 50%;
+  top: 54%;
+  transform: translate(-50%, -60%);
+  width: 100vw;
+  height: 70vh;
+  z-index: 3;
+  pointer-events: none;
+  overflow: visible;
+}
+
+/* Burst particles fly outward in all directions on explosion */
+.burst-emoji, .burst-sparkle {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%) scale(0.6);
+  opacity: 0.8;
+  will-change: transform, opacity;
+  font-size: 8vw;
+  pointer-events: none;
+  transition: none;
+  /* The animation is dynamic via custom properties */
+}
+
+.burst-emoji.explode, .burst-sparkle.explode {
+  animation: burst-explode 0.64s cubic-bezier(.16,.67,.34,1.38) forwards;
+}
+.burst-emoji.burst, .burst-sparkle.burst {
+  animation: floatUp 1.1s cubic-bezier(.38,.01,.5,1.01) forwards;
+}
+
+@keyframes burst-explode {
+  0% {
+    opacity: 0.95;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  90% {
+    opacity: 0.88;
+  }
+  100% {
+    opacity: 0;
+    /* transformed via --tx, --ty, --rot, --scale inline */
+    transform: translate(var(--tx, 0), var(--ty, 0)) scale(var(--scale,1.18)) rotate(var(--rot, 0deg));
+  }
+}
+
+@keyframes floatUp {
+  0% {
+    opacity: 0.9;
+    transform: translate(-50%, 0) scale(1);
+  }
+  80% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--x, -50%), var(--y, -88px)) scale(var(--scale,1.45)) rotate(var(--rot, 0deg));
+  }
+}
+
+/* Sparkle style (smaller, glowy) */
+.burst-sparkle {
+  font-size: 4vw;
+  color: #ffe1f6;
+  filter: drop-shadow(0 0 7px #ff7dfe60) brightness(1.12);
+  opacity: 0.95;
+}
+
+@media (max-width: 400px) {
+  .gift-btn { font-size: 29vw; }
+}
+
+/* -- WHITE TRANSITION SCREEN -- */
+.white-transition {
+  position: fixed;
+  z-index: 9999;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: auto;
+  background: #fff;
+  opacity: 0;
+  transition: opacity 0.7s cubic-bezier(.29,1.08,.52,1);
+}
+.white-transition.active {
+  opacity: 1;
+}
+
+/* -- MESSAGE SEQUENCE SCREEN -- */
+.message-sequence {
+  position: fixed;
+  z-index: 10000;
+  inset: 0;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: auto;
+  /* No scroll by default */
+  overflow: hidden;
+}
+
+/* Pink, large, centered, soft shadow, fade/up in */
+.sequence-message {
+  color: #ea62a5;
+  font-size: 8vw;
+  font-family: 'Caveat', 'Pacifico', 'Comic Sans MS', cursive, sans-serif;
+  font-weight: 500;
+  text-align: center;
+  /* initial state: hidden and low */
+  opacity: 0;
+  transform: translateY(30px) scale(0.97);
+  transition:
+    opacity 0.75s cubic-bezier(.59,0,.44,1.27),
+    transform 0.75s cubic-bezier(.59,0,.44,1.27);
+  margin-bottom: 0.7em;
+  letter-spacing: 0.01em;
+  text-shadow: 0 1px 13px #ffd8ee4c;
+  line-height: 1.22;
+}
+.sequence-message.active {
+  opacity: 1;
+  transform: translateY(0) scale(1.00);
+}
+.sequence-message.exit {
+  opacity: 0;
+  transform: translateY(-22px) scale(1.01);
+  transition:
+    opacity 0.48s cubic-bezier(.22,0,.38,1.08),
+    transform 0.64s cubic-bezier(.42,0,.24,1.12);
+}
+
+/* -- FINAL PULSE HEART -- */
+.pulse-heart {
+  display: block;
+  text-align: center;
+  font-size: 9vw;
+  margin: 0.14em auto 0 auto;
+  animation: final-heart-pulse 1.5s ease-in-out infinite;
+  color: #ec6cb7;
+  filter: drop-shadow(0 0 6px #ffcae9bb);
+}
+
+@keyframes final-heart-pulse {
+  0% { transform: scale(1);}
+  30% { transform: scale(1.15);}
+  55% { transform: scale(0.89);}
+  75% { transform: scale(1.11);}
+  100% { transform: scale(1);}
+}
