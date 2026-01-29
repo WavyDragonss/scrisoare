@@ -231,26 +231,7 @@ html, body {
   position: static;
 }
 
-.carousel-arrow {
-  background: #fff4fc;
-  border: none;
-  border-radius: 50%;
-  box-shadow: 0 1px 10px #e7acd037;
-  font-size: 2.6em;
-  padding: 0.25em 0.5em;
-  color: #e16bb9;
-  cursor: pointer;
-  margin: 0 1.5vw;
-  position: relative;
-  top: 50%;
-  transform: translateY(-75%);
-  outline: none;
-  transition: background 0.19s;
-  z-index: 1;
-}
-.carousel-arrow:active {
-  background: #fbe7fe;
-}
+
 
 .carousel-pager {
   margin-top: 1em;
@@ -325,27 +306,6 @@ html, body {
   opacity: 1;
   transform: scale(1);
   position: static;
-}
-
-.carousel-arrow {
-  background: #fff4fc;
-  border: none;
-  border-radius: 50%;
-  box-shadow: 0 1px 10px #e7acd037;
-  font-size: 2.6em;
-  padding: 0.25em 0.5em;
-  color: #e16bb9;
-  cursor: pointer;
-  margin: 0 1.5vw;
-  position: relative;
-  top: 50%;
-  transform: translateY(-75%);
-  outline: none;
-  transition: background 0.19s;
-  z-index: 1;
-}
-.carousel-arrow:active {
-  background: #fbe7fe;
 }
 
 .carousel-pager {
