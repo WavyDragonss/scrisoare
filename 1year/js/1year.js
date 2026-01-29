@@ -1,14 +1,9 @@
-// -- ELEMENTS --
 const giftBtn = document.querySelector('.gift-btn');
 const emojiContainer = document.querySelector('.emoji-container');
-const messageDiv = document.querySelector('.romantic-message');
 const mainWrapper = document.querySelector('.main-wrapper');
 
-// For overlays, music, modal
 let whiteTransitionScreen, messageSequenceScreen, collageSection, musicAudio;
-let currentVideoModal = null;
 
-// -- CONFIG --
 const burstEmojis = [ "💖", "❤️", "🥰", "🌸", "✨", "🫶", "😘", "💗", "💝" ];
 const burstSparkles = [ "✨", "🩷", "🌸", "⭐️", "💫" ];
 const MESSAGES = [
@@ -18,23 +13,14 @@ const MESSAGES = [
   "I’d choose you again. Every single time.",
   "This is just the beginning. 💗"
 ];
-// 35 photos, 1-based numbering; videos 1.mp4, 2.mp4 in videos/
-const COLLAGE_IMAGES = [
-  ['1.jpg', '2.jpg'], ['3.jpg', '4.jpg'], ['5.jpg', '6.jpg'], ['7.jpg', '8.jpg'],
-  ['9.jpg', '10.jpg'], ['11.jpg', '12.jpg'], ['13.jpg', '14.jpg'], ['15.jpg', '16.jpg'],
-  ['17.jpg', '18.jpg'], ['19.jpg', '20.jpg'], ['21.jpg', '22.jpg'], ['23.jpg', '24.jpg'],
-  ['25.jpg', '26.jpg'], ['27.jpg', '28.jpg'], ['29.jpg', '30.jpg'], ['31.jpg', '32.jpg'],
-  ['33.jpg', '34.jpg'], ['35.jpg']
-];
-const COLLAGE_VIDEOS = [
-  '1.mp4', '2.mp4'
-];
+
+// MAKE SURE YOU HAVE 35 images in images/1.jpg ... images/35.jpg
+const COLLAGE_IMAGES = Array.from({length: 35}, (_, i) => `${i+1}.jpg`);
 const FIRST_EXPLODE_COUNT = 18;
 const FIRST_SPARKLE_COUNT = 16;
-const BURST_COUNT = 7;
 let exploded = false;
 
-// ---- PARTICLE BURST ----
+// Particle burst (as before)
 function createExplosionParticle(type = "emoji") {
   const isEmoji = type === "emoji";
   const set = isEmoji ? burstEmojis : burstSparkles;
@@ -55,24 +41,10 @@ function createExplosionParticle(type = "emoji") {
   emojiContainer.appendChild(el);
   el.addEventListener('animationend', () => { if (el.parentNode) el.parentNode.removeChild(el); });
 }
-function createSoftBurstParticle() {
-  const el = document.createElement('span');
-  el.className = 'burst-emoji burst';
-  el.textContent = burstEmojis[Math.floor(Math.random() * burstEmojis.length)];
-  const xOff = (-65 + Math.random() * 130);
-  const yOff = -68 - Math.random() * 90;
-  const rot = -22 + Math.random() * 44;
-  const scale = 0.99 + Math.random() * 0.46;
-  el.style.setProperty('--x', `${xOff}px`);
-  el.style.setProperty('--y', `${yOff}px`);
-  el.style.setProperty('--rot', `${rot}deg`);
-  el.style.setProperty('--scale', scale);
-  el.style.fontSize = (7 + Math.random()*2.6) + 'vw';
-  emojiContainer.appendChild(el);
-  el.addEventListener('animationend', () => { if (el.parentNode) el.parentNode.removeChild(el); });
-}
 
-// ---- GIFT EXPLOSION, PAGE FADE, THEN MESSAGES+MUSIC ----
+function vibrate(ms) { if (navigator.vibrate) navigator.vibrate(ms || 20); }
+
+// GIFT EXPLOSION + FADE + MESSAGES + COLLAGE
 function handleGiftExplosion() {
   exploded = true;
   giftBtn.classList.add('explode');
@@ -98,9 +70,8 @@ function handleGiftExplosion() {
     setTimeout(startMusicAndMessages, 1550);
   }, 1700);
 }
-function vibrate(ms) { if (navigator.vibrate) navigator.vibrate(ms || 20); }
 
-// ---- MUSIC (fade in after white, keep playing) ----
+// Background music
 function playMusic() {
   if (!musicAudio) {
     musicAudio = document.createElement('audio');
@@ -118,7 +89,7 @@ function playMusic() {
   }, 110);
 }
 
-// ---- MESSAGE SEQUENCE, THEN COLLAGE ----
+// Messages, then Collage/Carousel
 function startMusicAndMessages() {
   playMusic();
   mainWrapper.style.display = "none";
@@ -131,6 +102,7 @@ function startMusicAndMessages() {
   }
   document.body.style.overflow = "hidden";
   window.scrollTo(0,0);
+
   let idx = 0;
   function showNextMsg() {
     const prev = messageSequenceScreen.querySelector('.sequence-message.active');
@@ -149,7 +121,7 @@ function startMusicAndMessages() {
       setTimeout(showNextMsg, 3200 + Math.random()*800);
     } else {
       setTimeout(() => pulseHeart(mDiv), 1000);
-      setTimeout(() => showCollage(messageSequenceScreen, mDiv), 2900);
+      setTimeout(() => showCollageCarousel(messageSequenceScreen, mDiv), 2900);
     }
   }
   setTimeout(showNextMsg, 3200);
@@ -163,12 +135,13 @@ function pulseHeart(targetDiv) {
   targetDiv.insertAdjacentElement('afterend', heart);
 }
 
-// ---- COLLAGE (PHOTOS THEN VIDEOS) ----
-function showCollage(msgScreen, lastMsgDiv) {
+// --- COLLAGE CAROUSEL LOGIC ---
+function showCollageCarousel(msgScreen, lastMsgDiv) {
   lastMsgDiv.style.transition = 'transform 1.1s cubic-bezier(.31,.67,.16,1)';
   lastMsgDiv.style.transform = 'translateY(-46px) scale(0.96)';
   const heart = msgScreen.querySelector('.pulse-heart');
   if (heart) heart.style.transform = 'translateY(-34px)';
+
   setTimeout(() => {
     const divider = document.createElement('div');
     divider.className = 'collage-heart-divider';
@@ -179,89 +152,86 @@ function showCollage(msgScreen, lastMsgDiv) {
     collageSection.className = 'collage-section';
     msgScreen.appendChild(collageSection);
 
-    // photo collage
-    COLLAGE_IMAGES.forEach(row => {
-      const rowDiv = document.createElement('div');
-      rowDiv.className = 'collage-row';
-      row.forEach(img => {
-        const imgEl = document.createElement('img');
-        imgEl.className = 'collage-image';
-        imgEl.src = `images/${img}`;
-        imgEl.alt = "";
-        rowDiv.appendChild(imgEl);
-      });
-      collageSection.appendChild(rowDiv);
+    // carousel UI
+    const carousel = document.createElement('div');
+    carousel.className = 'carousel-wrapper';
+    collageSection.appendChild(carousel);
+
+    // Arrows
+    const left = document.createElement('button');
+    left.className = 'carousel-arrow';
+    left.innerHTML = '‹';
+    left.setAttribute('aria-label','Previous photo');
+
+    const right = document.createElement('button');
+    right.className = 'carousel-arrow';
+    right.innerHTML = '›';
+    right.setAttribute('aria-label','Next photo');
+
+    // Image area
+    const imgArea = document.createElement('div');
+    imgArea.className = 'carousel-img-area';
+    carousel.appendChild(left);
+    carousel.appendChild(imgArea);
+    carousel.appendChild(right);
+
+    // Image elements for quick fade
+    const imgEls = COLLAGE_IMAGES.map(src => {
+      const el = document.createElement('img');
+      el.className = 'carousel-img';
+      el.src = `images/${src}`;
+      el.alt = "";
+      imgArea.appendChild(el);
+      return el;
     });
 
-    // videos: divider + player
-    if (COLLAGE_VIDEOS.length > 0) {
-      const divider2 = document.createElement('div');
-      divider2.className = 'collage-heart-divider';
-      divider2.textContent = '💗';
-      collageSection.appendChild(divider2);
+    // Pager
+    const pager = document.createElement('div');
+    pager.className = 'carousel-pager';
+    const dots = COLLAGE_IMAGES.map((img, i) => {
+      const dot = document.createElement('div');
+      dot.className = 'carousel-dot';
+      pager.appendChild(dot);
+      dot.addEventListener('click', ()=>showSlide(i));
+      return dot;
+    });
+    carousel.appendChild(pager);
 
-      COLLAGE_VIDEOS.forEach((videoFile, idx) => {
-        const thumb = document.createElement('div');
-        thumb.className = 'collage-video-thumb';
-        thumb.setAttribute('tabindex', '0');
-        thumb.innerHTML = `<span class="video-play-btn">▶</span>`;
-        thumb.addEventListener('click', () => openVideoPlayer(videoFile));
-        thumb.addEventListener('keypress', (e) => {
-          if (e.key === 'Enter' || e.key === ' ') openVideoPlayer(videoFile);
-        });
-        collageSection.appendChild(thumb);
+    // Carousel logic
+    let idx = 0;
+    function showSlide(i) {
+      idx = (i + COLLAGE_IMAGES.length) % COLLAGE_IMAGES.length;
+      imgEls.forEach((imgEl, j) => {
+        if(j === idx) imgEl.classList.add('visible');
+        else imgEl.classList.remove('visible');
       });
+      dots.forEach((dot,j)=>dot.classList.toggle('active',j===idx));
     }
+    left.addEventListener('click', ()=>{showSlide(idx-1)});
+    right.addEventListener('click', ()=>{showSlide(idx+1)});
+    // Mobile swipe
+    let sx, sy;
+    imgArea.addEventListener('touchstart', (e)=>{
+      sx = e.touches[0].clientX;
+      sy = e.touches[0].clientY;
+    }, {passive:true});
+    imgArea.addEventListener('touchend', (e)=>{
+      if(sx !== undefined) {
+        const dx = e.changedTouches[0].clientX - sx;
+        const dy = Math.abs(e.changedTouches[0].clientY - sy);
+        if(Math.abs(dx)>40 && dy<80) {
+          if(dx<0) showSlide(idx+1); else showSlide(idx-1);
+        }
+      }
+      sx=undefined; sy=undefined;
+    }, {passive:true});
+    showSlide(0);
 
-    setTimeout(()=>{ document.body.style.overflow='auto';}, 650);
-    setTimeout(setupCollageReveal, 30);
+    setTimeout(()=>{document.body.style.overflow='auto'},700);
   }, 900);
 }
-function setupCollageReveal() {
-  const imgs = Array.from(document.querySelectorAll('.collage-image'));
-  function showIfVisible() {
-    const winH = window.innerHeight;
-    imgs.forEach(img => {
-      if (img.classList.contains('visible')) return;
-      const rect = img.getBoundingClientRect();
-      if (rect.top < winH - 40) img.classList.add('visible');
-    });
-  }
-  // Now: reveal on scroll and on resize!
-  window.addEventListener('scroll', showIfVisible, {passive: true});
-  window.addEventListener('resize', showIfVisible);
-  // Run the check right away *and* after a bit, to catch images that paint a bit late.
-  showIfVisible();
-  setTimeout(showIfVisible, 150);
-  setTimeout(showIfVisible, 700);
-}
 
-// ---- SPECIAL VIDEO PLAYER ----
-function openVideoPlayer(videoFile) {
-  if (currentVideoModal) return;
-  currentVideoModal = document.createElement('div');
-  currentVideoModal.className = 'video-player-modal';
-  currentVideoModal.innerHTML = `
-    <video src="videos/${videoFile}" controls autoplay playsinline></video>
-    <button class="close-modal-btn" aria-label="Close video" title="Close">✕</button>
-  `;
-  document.body.appendChild(currentVideoModal);
-  const closeBtn = currentVideoModal.querySelector('.close-modal-btn');
-  closeBtn.addEventListener('click', closeVideoPlayer);
-  currentVideoModal.addEventListener('click', (e) => {
-    if (e.target === currentVideoModal) closeVideoPlayer();
-  });
-  document.body.style.overflow = 'hidden';
-}
-function closeVideoPlayer() {
-  if (currentVideoModal) {
-    currentVideoModal.remove();
-    currentVideoModal = null;
-    document.body.style.overflow = 'auto';
-  }
-}
-
-// ---- INITIAL EVENT ----
+// -- EVENTS --
 function onGiftTap(e) {
   if (exploded) return false;
   handleGiftExplosion();

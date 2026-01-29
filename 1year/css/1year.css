@@ -10,7 +10,6 @@ html, body {
   touch-action: manipulation;
 }
 
-/* Center main content and hide scrollbars initially */
 .main-wrapper, .hero-section, .gift-area {
   min-height: 100vh;
   width: 100vw;
@@ -26,7 +25,6 @@ html, body {
   justify-content: center;
 }
 
-/* Gift button, pulsing, floating before tap */
 .gift-btn {
   font-size: 22vw;
   background: none;
@@ -43,7 +41,6 @@ html, body {
   transition: filter 0.25s, box-shadow 0.22s, transform 0.22s, opacity 0.4s;
 }
 
-/* Explosion pop */
 .gift-btn.explode {
   animation: none;
   transition: transform 0.18s cubic-bezier(.3,1.5,.5,1.2), filter 0.18s;
@@ -62,7 +59,6 @@ html, body {
   100% { transform: translateY(0);}
 }
 
-/* Emoji/Sparkle particles */
 .emoji-container {
   position: absolute;
   left: 50%;
@@ -85,14 +81,12 @@ html, body {
   font-size: 8vw;
   pointer-events: none;
 }
-
 .burst-emoji.explode, .burst-sparkle.explode {
   animation: burst-explode 0.64s cubic-bezier(.16,.67,.34,1.38) forwards;
 }
 .burst-emoji.burst, .burst-sparkle.burst {
   animation: floatUp 1.1s cubic-bezier(.38,.01,.5,1.01) forwards;
 }
-
 @keyframes burst-explode {
   0% { opacity: 0.95; transform: translate(-50%, -50%) scale(1);}
   90% { opacity: 0.88; }
@@ -101,7 +95,6 @@ html, body {
     transform: translate(var(--tx, 0), var(--ty, 0)) scale(var(--scale,1.18)) rotate(var(--rot, 0deg));
   }
 }
-
 @keyframes floatUp {
   0%   { opacity: 0.9;   transform: translate(-50%, 0) scale(1);}
   80%  { opacity: 1; }
@@ -110,7 +103,6 @@ html, body {
     transform: translate(var(--x, -50%), var(--y, -88px)) scale(var(--scale,1.45)) rotate(var(--rot, 0deg));
   }
 }
-
 .burst-sparkle {
   font-size: 4vw;
   color: #ffe1f6;
@@ -118,7 +110,6 @@ html, body {
   opacity: 0.95;
 }
 
-/* White page fade */
 .white-transition {
   position: fixed;
   z-index: 9999;
@@ -133,8 +124,6 @@ html, body {
 .white-transition.active {
   opacity: 1;
 }
-
-/* Message sequence screen (white background, no scroll) */
 .message-sequence {
   position: fixed;
   z-index: 10000;
@@ -147,7 +136,6 @@ html, body {
   pointer-events: auto;
   overflow: hidden;
 }
-
 .sequence-message {
   color: #ea62a5;
   font-size: 8vw;
@@ -171,8 +159,6 @@ html, body {
   transform: translateY(-22px) scale(1.01);
   transition: opacity 0.48s cubic-bezier(.22,0,.38,1.08), transform 0.64s cubic-bezier(.42,0,.24,1.12);
 }
-
-/* Final pulsing heart */
 .pulse-heart {
   display: block;
   text-align: center;
@@ -190,7 +176,7 @@ html, body {
   100% { transform: scale(1);}
 }
 
-/* Collage styles */
+/* --- Collage Carousel --- */
 .collage-section {
   background: #fff;
   position: relative;
@@ -203,30 +189,88 @@ html, body {
   overflow-x: hidden;
   z-index: 50;
 }
-.collage-row {
+
+.carousel-wrapper {
+  width: 100vw;
+  max-width: 450px;
+  margin: 0 auto;
+  position: relative;
   display: flex;
-  gap: 4vw;
-  margin-bottom: 5vw;
-  width: 92vw;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
 }
-.collage-image {
-  width: 44vw;
-  max-width: 220px;
-  height: 68vw;
-  max-height: 325px;
+
+.carousel-img-area {
+  width: 92vw;
+  max-width: 96vw;
+  aspect-ratio: 4/6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fbe7fe;
+  border-radius: 3vw;
+  box-shadow: 0 4px 18px #fad0e9a8;
+  overflow: hidden;
+  position: relative;
+}
+
+.carousel-img {
+  width: 100%;
+  height: 100%;
+  max-height: 72vh;
   object-fit: cover;
   border-radius: 3vw;
-  box-shadow: 0 4px 18px #fad0e9a8, 0 0.5px 0.7px #efb2d155;
-  background: #fde8f761;
   opacity: 0;
-  transform: translateY(32px);
-  transition: opacity 0.77s cubic-bezier(.59,0,.44,1.3), transform 0.7s cubic-bezier(.29,1.09,.34,1.15);
+  transform: scale(0.98);
+  transition: opacity 0.77s cubic-bezier(.59,0,.44,1.3), transform 0.64s;
+  position: absolute;
 }
-.collage-image.visible {
+.carousel-img.visible {
   opacity: 1;
-  transform: translateY(0);
+  transform: scale(1);
+  position: static;
 }
+
+.carousel-arrow {
+  background: #fff4fc;
+  border: none;
+  border-radius: 50%;
+  box-shadow: 0 1px 10px #e7acd037;
+  font-size: 2.6em;
+  padding: 0.25em 0.5em;
+  color: #e16bb9;
+  cursor: pointer;
+  margin: 0 1.5vw;
+  position: relative;
+  top: 50%;
+  transform: translateY(-75%);
+  outline: none;
+  transition: background 0.19s;
+  z-index: 1;
+}
+.carousel-arrow:active {
+  background: #fbe7fe;
+}
+
+.carousel-pager {
+  margin-top: 1em;
+  display: flex;
+  gap: .45em;
+  justify-content: center;
+}
+.carousel-dot {
+  width: 11px;
+  height: 11px;
+  background: #f4cbe5;
+  border-radius: 50%;
+  opacity: 0.47;
+  transition: opacity 0.12s;
+}
+.carousel-dot.active {
+  opacity: 1;
+  background: #ea62a5;
+}
+
 .collage-heart-divider {
   font-size: 7vw;
   color: #f797d8;
@@ -235,67 +279,7 @@ html, body {
   text-align: center;
 }
 
-/* Collage video thumbnail and modal */
-.collage-video-thumb {
-  width: 92vw;
-  max-width: 380px;
-  border-radius: 3vw;
-  box-shadow: 0 4px 16px #fad0e7a8;
-  margin-bottom: 5vw;
-  aspect-ratio: 16/9;
-  background: #fbe7fe;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  overflow: hidden;
-  cursor: pointer;
-}
-.collage-video-thumb .video-play-btn {
-  font-size: 12vw;
-  color: #fff;
-  text-shadow: 0 0 15px #ef5ed330, 0 2px 5px #412b4455;
-  position: absolute;
-  pointer-events: none;
-}
-
-.video-player-modal {
-  position: fixed;
-  z-index: 99999;
-  inset: 0;
-  width: 100vw;
-  height: 100vh;
-  background: rgba(255,255,255,0.96);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  animation: modalFadeIn 0.45s cubic-bezier(.42,.12,.27,1.45);
-}
-@keyframes modalFadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-.video-player-modal video {
-  max-width: 92vw;
-  max-height: 62vh;
-  background: #000;
-  border-radius: 16px;
-  box-shadow: 0 8px 32px #0002;
-}
-.video-player-modal .close-modal-btn {
-  font-size: 9vw;
-  background: none;
-  border: none;
-  color: #ec6cb7;
-  margin-top: 2em;
-  cursor: pointer;
-  outline: none;
-}
-
 @media (max-width: 400px) {
   .gift-btn { font-size: 29vw; }
   .romantic-message { font-size: 7vw; }
-  .collage-image { width: 91vw; height: 56vw; }
-  .collage-row { gap: 3vw; }
 }
