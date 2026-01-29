@@ -196,7 +196,22 @@ function showCollageCarousel(msgScreen, lastMsgDiv) {
       return dot;
     });
     carousel.appendChild(pager);
+    function showCollage(msgScreen, lastMsgDiv) {
+  // ... previous code to adjust messages/heart ...
 
+  setTimeout(() => {
+    // Create and append the section
+    const collageSection = document.createElement('section');
+    collageSection.className = 'collage-section';
+    msgScreen.appendChild(collageSection);
+
+    // Here is the key line – call the carousel!
+    createCarousel('.collage-section');
+
+    // Allow scrolling again
+    setTimeout(() => { document.body.style.overflow = 'auto'; }, 750);
+  }, 900);
+}
     // Carousel logic
     let idx = 0;
     function showSlide(i) {

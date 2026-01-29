@@ -283,3 +283,86 @@ html, body {
   .gift-btn { font-size: 29vw; }
   .romantic-message { font-size: 7vw; }
 }
+
+.carousel-wrapper {
+  width: 100vw;
+  max-width: 450px;
+  margin: 0 auto;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.carousel-img-area {
+  width: 92vw;
+  max-width: 96vw;
+  aspect-ratio: 4/6;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fbe7fe;
+  border-radius: 3vw;
+  box-shadow: 0 4px 18px #fad0e9a8;
+  overflow: hidden;
+  position: relative;
+  min-height: 48vw;
+}
+
+.carousel-img {
+  width: 100%;
+  height: 100%;
+  max-height: 72vh;
+  object-fit: cover;
+  border-radius: 3vw;
+  opacity: 0;
+  transform: scale(0.98);
+  transition: opacity 0.77s cubic-bezier(.59,0,.44,1.3), transform 0.64s;
+  position: absolute;
+  left: 0; top: 0;
+}
+.carousel-img.visible {
+  opacity: 1;
+  transform: scale(1);
+  position: static;
+}
+
+.carousel-arrow {
+  background: #fff4fc;
+  border: none;
+  border-radius: 50%;
+  box-shadow: 0 1px 10px #e7acd037;
+  font-size: 2.6em;
+  padding: 0.25em 0.5em;
+  color: #e16bb9;
+  cursor: pointer;
+  margin: 0 1.5vw;
+  position: relative;
+  top: 50%;
+  transform: translateY(-75%);
+  outline: none;
+  transition: background 0.19s;
+  z-index: 1;
+}
+.carousel-arrow:active {
+  background: #fbe7fe;
+}
+
+.carousel-pager {
+  margin-top: 1em;
+  display: flex;
+  gap: .45em;
+  justify-content: center;
+}
+.carousel-dot {
+  width: 11px;
+  height: 11px;
+  background: #f4cbe5;
+  border-radius: 50%;
+  opacity: 0.47;
+  transition: opacity 0.12s;
+}
+.carousel-dot.active {
+  opacity: 1;
+  background: #ea62a5;
+}
