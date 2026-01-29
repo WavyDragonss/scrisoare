@@ -1,6 +1,5 @@
-/* -- BASE -- */
 html, body {
-  min-height: 100%;
+  height: 100%;
   margin: 0;
   padding: 0;
   background: linear-gradient(135deg, #ffe4ec 0%, #f9e7ff 100%);
@@ -11,7 +10,7 @@ html, body {
   touch-action: manipulation;
 }
 
-/* -- GENERAL LAYOUT -- */
+/* Center main content and hide scrollbars initially */
 .main-wrapper, .hero-section, .gift-area {
   min-height: 100vh;
   width: 100vw;
@@ -22,28 +21,39 @@ html, body {
   position: relative;
 }
 
-/* Center everything for normal flow */
 .hero-section {
   flex: 1;
   justify-content: center;
 }
 
-/* -- GIFT BUTTON -- */
+/* Gift button, pulsing, floating before tap */
 .gift-btn {
   font-size: 22vw;
   background: none;
   border: none;
   outline: none;
-  touch-action: manipulation;
   cursor: pointer;
   margin: 0;
   padding: 0;
   position: relative;
   z-index: 2;
   user-select: none;
-  transition: filter 0.25s, box-shadow 0.22s, transform 0.22s;
   filter: drop-shadow(0 0 12px #ffd6ee);
   animation: gift-float 2.7s ease-in-out infinite;
+  transition: filter 0.25s, box-shadow 0.22s, transform 0.22s, opacity 0.4s;
+}
+
+/* Explosion pop */
+.gift-btn.explode {
+  animation: none;
+  transition: transform 0.18s cubic-bezier(.3,1.5,.5,1.2), filter 0.18s;
+  transform: scale(1.35) rotate(-8deg);
+  filter: drop-shadow(0 0 40px #fff0f7b0) brightness(1.14);
+}
+.gift-btn.hide {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 1.1s;
 }
 
 @keyframes gift-float {
@@ -52,21 +62,7 @@ html, body {
   100% { transform: translateY(0);}
 }
 
-/* -- GIFT POP/EXPLOSION EFFECT (first tap only) -- */
-.gift-btn.explode {
-  animation: none;
-  transition: transform 0.08s cubic-bezier(.3,1.5,.5,1.2);
-  transform: scale(1.35) rotate(-8deg);
-  filter: drop-shadow(0 0 40px #fff0f7b0) brightness(1.14);
-}
-
-.gift-btn.hide {
-  opacity: 0;
-  transition: opacity 0.4s;
-  pointer-events: none;
-}
-
-/* -- EMOJI + SPARKLE PARTICLES -- */
+/* Emoji/Sparkle particles */
 .emoji-container {
   position: absolute;
   left: 50%;
@@ -79,7 +75,6 @@ html, body {
   overflow: visible;
 }
 
-/* Burst particles fly outward in all directions on explosion */
 .burst-emoji, .burst-sparkle {
   position: absolute;
   left: 50%;
@@ -89,8 +84,6 @@ html, body {
   will-change: transform, opacity;
   font-size: 8vw;
   pointer-events: none;
-  transition: none;
-  /* The animation is dynamic via custom properties */
 }
 
 .burst-emoji.explode, .burst-sparkle.explode {
@@ -101,35 +94,23 @@ html, body {
 }
 
 @keyframes burst-explode {
-  0% {
-    opacity: 0.95;
-    transform: translate(-50%, -50%) scale(1);
-  }
-  90% {
-    opacity: 0.88;
-  }
+  0% { opacity: 0.95; transform: translate(-50%, -50%) scale(1);}
+  90% { opacity: 0.88; }
   100% {
     opacity: 0;
-    /* transformed via --tx, --ty, --rot, --scale inline */
     transform: translate(var(--tx, 0), var(--ty, 0)) scale(var(--scale,1.18)) rotate(var(--rot, 0deg));
   }
 }
 
 @keyframes floatUp {
-  0% {
-    opacity: 0.9;
-    transform: translate(-50%, 0) scale(1);
-  }
-  80% {
-    opacity: 1;
-  }
+  0%   { opacity: 0.9;   transform: translate(-50%, 0) scale(1);}
+  80%  { opacity: 1; }
   100% {
     opacity: 0;
     transform: translate(var(--x, -50%), var(--y, -88px)) scale(var(--scale,1.45)) rotate(var(--rot, 0deg));
   }
 }
 
-/* Sparkle style (smaller, glowy) */
 .burst-sparkle {
   font-size: 4vw;
   color: #ffe1f6;
@@ -137,11 +118,7 @@ html, body {
   opacity: 0.95;
 }
 
-@media (max-width: 400px) {
-  .gift-btn { font-size: 29vw; }
-}
-
-/* -- WHITE TRANSITION SCREEN -- */
+/* White page fade */
 .white-transition {
   position: fixed;
   z-index: 9999;
@@ -151,13 +128,13 @@ html, body {
   pointer-events: auto;
   background: #fff;
   opacity: 0;
-  transition: opacity 0.7s cubic-bezier(.29,1.08,.52,1);
+  transition: opacity 1.5s cubic-bezier(.47,0,.58,1);
 }
 .white-transition.active {
   opacity: 1;
 }
 
-/* -- MESSAGE SEQUENCE SCREEN -- */
+/* Message sequence screen (white background, no scroll) */
 .message-sequence {
   position: fixed;
   z-index: 10000;
@@ -168,23 +145,18 @@ html, body {
   align-items: center;
   justify-content: center;
   pointer-events: auto;
-  /* No scroll by default */
   overflow: hidden;
 }
 
-/* Pink, large, centered, soft shadow, fade/up in */
 .sequence-message {
   color: #ea62a5;
   font-size: 8vw;
   font-family: 'Caveat', 'Pacifico', 'Comic Sans MS', cursive, sans-serif;
   font-weight: 500;
   text-align: center;
-  /* initial state: hidden and low */
   opacity: 0;
   transform: translateY(30px) scale(0.97);
-  transition:
-    opacity 0.75s cubic-bezier(.59,0,.44,1.27),
-    transform 0.75s cubic-bezier(.59,0,.44,1.27);
+  transition: opacity 0.75s cubic-bezier(.59,0,.44,1.27), transform 0.75s cubic-bezier(.59,0,.44,1.27);
   margin-bottom: 0.7em;
   letter-spacing: 0.01em;
   text-shadow: 0 1px 13px #ffd8ee4c;
@@ -197,12 +169,10 @@ html, body {
 .sequence-message.exit {
   opacity: 0;
   transform: translateY(-22px) scale(1.01);
-  transition:
-    opacity 0.48s cubic-bezier(.22,0,.38,1.08),
-    transform 0.64s cubic-bezier(.42,0,.24,1.12);
+  transition: opacity 0.48s cubic-bezier(.22,0,.38,1.08), transform 0.64s cubic-bezier(.42,0,.24,1.12);
 }
 
-/* -- FINAL PULSE HEART -- */
+/* Final pulsing heart */
 .pulse-heart {
   display: block;
   text-align: center;
@@ -212,7 +182,6 @@ html, body {
   color: #ec6cb7;
   filter: drop-shadow(0 0 6px #ffcae9bb);
 }
-
 @keyframes final-heart-pulse {
   0% { transform: scale(1);}
   30% { transform: scale(1.15);}
@@ -220,14 +189,8 @@ html, body {
   75% { transform: scale(1.11);}
   100% { transform: scale(1);}
 }
-/* ...[rest of your previous css above stays unchanged]... */
 
-/* Improved White Transition */
-.white-transition {
-  transition: opacity 1.5s cubic-bezier(.47,0,.58,1); /* Slow, soft */
-}
-
-/* Collage overall */
+/* Collage styles */
 .collage-section {
   background: #fff;
   position: relative;
@@ -240,7 +203,6 @@ html, body {
   overflow-x: hidden;
   z-index: 50;
 }
-
 .collage-row {
   display: flex;
   gap: 4vw;
@@ -248,7 +210,6 @@ html, body {
   width: 92vw;
   justify-content: center;
 }
-
 .collage-image {
   width: 44vw;
   max-width: 220px;
@@ -266,7 +227,6 @@ html, body {
   opacity: 1;
   transform: translateY(0);
 }
-
 .collage-heart-divider {
   font-size: 7vw;
   color: #f797d8;
@@ -275,7 +235,67 @@ html, body {
   text-align: center;
 }
 
+/* Collage video thumbnail and modal */
+.collage-video-thumb {
+  width: 92vw;
+  max-width: 380px;
+  border-radius: 3vw;
+  box-shadow: 0 4px 16px #fad0e7a8;
+  margin-bottom: 5vw;
+  aspect-ratio: 16/9;
+  background: #fbe7fe;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+.collage-video-thumb .video-play-btn {
+  font-size: 12vw;
+  color: #fff;
+  text-shadow: 0 0 15px #ef5ed330, 0 2px 5px #412b4455;
+  position: absolute;
+  pointer-events: none;
+}
+
+.video-player-modal {
+  position: fixed;
+  z-index: 99999;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(255,255,255,0.96);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  animation: modalFadeIn 0.45s cubic-bezier(.42,.12,.27,1.45);
+}
+@keyframes modalFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.video-player-modal video {
+  max-width: 92vw;
+  max-height: 62vh;
+  background: #000;
+  border-radius: 16px;
+  box-shadow: 0 8px 32px #0002;
+}
+.video-player-modal .close-modal-btn {
+  font-size: 9vw;
+  background: none;
+  border: none;
+  color: #ec6cb7;
+  margin-top: 2em;
+  cursor: pointer;
+  outline: none;
+}
+
 @media (max-width: 400px) {
+  .gift-btn { font-size: 29vw; }
+  .romantic-message { font-size: 7vw; }
   .collage-image { width: 91vw; height: 56vw; }
   .collage-row { gap: 3vw; }
 }
