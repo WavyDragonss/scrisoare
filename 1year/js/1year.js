@@ -219,16 +219,21 @@ function showCollage(msgScreen, lastMsgDiv) {
 }
 function setupCollageReveal() {
   const imgs = Array.from(document.querySelectorAll('.collage-image'));
-  const showIfVisible = () => {
+  function showIfVisible() {
     const winH = window.innerHeight;
     imgs.forEach(img => {
       if (img.classList.contains('visible')) return;
       const rect = img.getBoundingClientRect();
       if (rect.top < winH - 40) img.classList.add('visible');
     });
-  };
+  }
+  // Now: reveal on scroll and on resize!
   window.addEventListener('scroll', showIfVisible, {passive: true});
+  window.addEventListener('resize', showIfVisible);
+  // Run the check right away *and* after a bit, to catch images that paint a bit late.
   showIfVisible();
+  setTimeout(showIfVisible, 150);
+  setTimeout(showIfVisible, 700);
 }
 
 // ---- SPECIAL VIDEO PLAYER ----
