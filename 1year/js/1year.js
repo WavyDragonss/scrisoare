@@ -7,11 +7,33 @@ let whiteTransitionScreen, messageSequenceScreen, collageSection, musicAudio;
 const burstEmojis = [ "💖", "❤️", "🥰", "🌸", "✨", "🫶", "😘", "💗", "💝" ];
 const burstSparkles = [ "✨", "🩷", "🌸", "⭐️", "💫" ];
 const MESSAGES = [
-  "I can't believe it's already been a year.",
-  "Every day with you feels new.",
-  "You matter more to me than you'll ever know.",
-  "I’d choose you again. Every single time.",
-  "This is just the beginning. 💗"
+  "Doamne iubita,",
+  "Un an???",
+  "Cand au trecut atatea zile?",
+  "Parca ieri eram la munte..",
+  "Servind susi...",
+  "Si te-am surprins cu o cafea",
+  "(I WAS SMOOOOOTH I KNOW",
+  "And my first attempt to kis u",
+  "la easy box......",
+  "it was pretty awkward ik",
+  "chestii pe care nu le voi uita vreodata:D",
+  "scuzzema pentru ca rama are doar acest cod qr",
+  "now cash me if u can",
+  "nu am prea multe de spus",
+  "am spus mai multe in scrisoare",
+  "si sper sa iti placa poza",
+  "cred ca deja stii unde e DAR AI RABDARE",
+  "vreau sa te uiti la surpriza de la final",
+  "nu e jocuietz",
+  "scuzema",
+  "3...",
+  "TE IUBESC DRAGA MEA",
+  "2...",
+  "FOREVER AND EVER",
+  "1....",
+  "I WILL LOVE YOU FOREVER!!!!",
+  "ENJOY",
 ];
 
 // MAKE SURE YOU HAVE 35 images in images/1.jpg ... images/35.jpg
