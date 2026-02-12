@@ -25,38 +25,35 @@
 
     <button id="loveBtn" class="love-btn" type="button">Click for a kiss 💗</button>
     <p id="loveNote" class="love-note" role="status" aria-live="polite"></p>
-
-    <section class="music-player" aria-label="Music player">
-      <p id="nowPlaying" class="now-playing">Now playing: #1</p>
-
-      <div class="player-controls">
-        <button id="prevBtn" type="button" class="ctrl-btn">Prev</button>
-        <button id="playPauseBtn" type="button" class="ctrl-btn ctrl-main">Play</button>
-        <button id="nextBtn" type="button" class="ctrl-btn">Next</button>
-      </div>
-
-      <div class="player-controls secondary-controls">
-        <button id="reshuffleBtn" type="button" class="ctrl-btn">Reshuffle</button>
-        <label class="track-picker-label" for="trackSelect">Track</label>
-        <select id="trackSelect" class="track-select" aria-label="Select track">
-          <option value="1">1</option>
-          <option value="2">2</option>
-          <option value="3">3</option>
-          <option value="4">4</option>
-          <option value="5">5</option>
-          <option value="6">6</option>
-          <option value="7">7</option>
-          <option value="8">8</option>
-          <option value="9">9</option>
-          <option value="10">10</option>
-          <option value="11">11</option>
-          <option value="12">12</option>
-        </select>
-      </div>
-    </section>
   </main>
 
-  <audio id="bgSong" loop="false" preload="metadata"></audio>
+  <button id="playerToggle" class="player-toggle" type="button" aria-controls="musicPanel" aria-expanded="false">Music ♪</button>
+
+  <aside id="musicPanel" class="music-panel is-collapsed" aria-label="Music player">
+    <div class="panel-top">
+      <p id="nowPlaying" class="now-playing">Now playing: -</p>
+      <button id="panelCloseBtn" type="button" class="mini-btn">Hide</button>
+    </div>
+
+    <div class="player-controls">
+      <button id="prevBtn" type="button" class="ctrl-btn">Prev</button>
+      <button id="playPauseBtn" type="button" class="ctrl-btn ctrl-main">Play</button>
+      <button id="nextBtn" type="button" class="ctrl-btn">Next</button>
+    </div>
+
+    <div class="progress-wrap">
+      <input id="progressBar" class="progress-bar" type="range" min="0" max="1000" value="0" step="1" aria-label="Song progress" />
+      <p id="timeInfo" class="time-info">00:00 / 00:00 (left 00:00)</p>
+    </div>
+
+    <div class="player-controls secondary-controls">
+      <button id="reshuffleBtn" type="button" class="ctrl-btn">Reshuffle</button>
+      <label class="track-picker-label" for="trackSelect">Track</label>
+      <select id="trackSelect" class="track-select" aria-label="Select track"></select>
+    </div>
+  </aside>
+
+  <audio id="bgSong" preload="metadata"></audio>
 
   <div id="heartField" class="heart-field" aria-hidden="true"></div>
 
