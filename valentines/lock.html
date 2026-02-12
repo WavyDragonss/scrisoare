@@ -1,0 +1,122 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Hello Kitty Lock</title>
+  <style>
+    :root {
+      --pink-1: #ffd5e6;
+      --pink-2: #ff9dc2;
+      --pink-3: #ff4f89;
+      --ink: #6a2144;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100svh;
+      font-family: "Trebuchet MS", "Comic Sans MS", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 20% 20%, rgba(255,255,255,0.34), transparent 36%),
+        radial-gradient(circle at 80% 10%, rgba(255,255,255,0.24), transparent 32%),
+        linear-gradient(160deg, #ffd8ea, #ff9cc1 62%, #ff73a8);
+      display: grid;
+      place-items: center;
+      padding: 16px;
+    }
+
+    .lock-card {
+      width: min(100%, 440px);
+      background: rgba(255, 248, 252, 0.94);
+      border: 3px solid var(--pink-2);
+      border-radius: 24px;
+      padding: 1.2rem 1rem;
+      text-align: center;
+      box-shadow: 0 18px 50px rgba(183, 35, 97, 0.24);
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.6rem, 7.5vw, 2.2rem);
+      color: #df2e6b;
+    }
+
+    .sub {
+      margin: 0.45rem 0 1rem;
+      font-size: clamp(0.95rem, 4vw, 1rem);
+    }
+
+    .kitty {
+      font-size: 1.3rem;
+      margin-bottom: 0.7rem;
+    }
+
+    .input-row {
+      display: flex;
+      gap: 0.45rem;
+      flex-direction: column;
+    }
+
+    input {
+      width: 100%;
+      min-height: 48px;
+      border-radius: 12px;
+      border: 2px solid #ffaccd;
+      padding: 0 0.7rem;
+      font-size: 1rem;
+      color: #7f2048;
+    }
+
+    button {
+      min-height: 48px;
+      border: 0;
+      border-radius: 999px;
+      font-size: 1rem;
+      font-weight: 700;
+      color: #fff;
+      background: linear-gradient(180deg, #ff76aa, #ff4f89);
+      box-shadow: 0 8px 20px rgba(255, 79, 137, 0.34);
+    }
+
+    .hint {
+      margin: 0.8rem 0 0;
+      font-size: 0.82rem;
+      opacity: 0.75;
+    }
+  </style>
+</head>
+<body>
+  <main class="lock-card">
+    <h1>Hello Kitty Lock</h1>
+    <p class="sub">Enter password to open the surprise.</p>
+    <div class="kitty" aria-hidden="true">=^.^= 🎀 =^.^=</div>
+
+    <form id="lockForm" class="input-row" autocomplete="off">
+      <input id="passwordInput" type="password" placeholder="Password" required />
+      <button type="submit">Unlock</button>
+    </form>
+
+    <p class="hint">Mobile ready • Pink mode active</p>
+  </main>
+
+  <script>
+    const form = document.getElementById("lockForm");
+    const input = document.getElementById("passwordInput");
+
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const value = input.value.trim();
+
+      if (value === "banana!") {
+        window.location.href = "yoyo2007.htm";
+        return;
+      }
+
+      window.location.href = "rickroll.html";
+    });
+  </script>
+</body>
+</html>
