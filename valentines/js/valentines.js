@@ -33,7 +33,6 @@ const bgSong = document.getElementById("bgSong");
 const playPauseBtn = document.getElementById("playPauseBtn");
 const prevBtn = document.getElementById("prevBtn");
 const nextBtn = document.getElementById("nextBtn");
-const reshuffleBtn = document.getElementById("reshuffleBtn");
 const trackSelect = document.getElementById("trackSelect");
 const nowPlaying = document.getElementById("nowPlaying");
 const progressBar = document.getElementById("progressBar");
@@ -57,8 +56,6 @@ loveBtn.addEventListener("click", async () => {
   if (bgSong.paused) {
     await playCurrentTrack();
   }
-
-  openPanelTemporarily();
 });
 
 playPauseBtn.addEventListener("click", async () => {
@@ -78,12 +75,6 @@ nextBtn.addEventListener("click", async () => {
 
 prevBtn.addEventListener("click", async () => {
   await goToPrevTrack();
-  bumpPanelTimer();
-});
-
-reshuffleBtn.addEventListener("click", async () => {
-  reshuffleKeepingCurrent();
-  await playCurrentTrack();
   bumpPanelTimer();
 });
 
@@ -192,21 +183,6 @@ function buildShuffledOrder(avoidList) {
   }
 
   return ids;
-}
-
-function reshuffleKeepingCurrent() {
-  const currentId = shuffledOrder[currentOrderIndex];
-  const rest = tracks
-    .map((track) => track.id)
-    .filter((id) => id !== currentId);
-
-  for (let i = rest.length - 1; i > 0; i -= 1) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [rest[i], rest[j]] = [rest[j], rest[i]];
-  }
-
-  shuffledOrder = [currentId, ...rest];
-  currentOrderIndex = 0;
 }
 
 function setAudioSourceForCurrentTrack() {
