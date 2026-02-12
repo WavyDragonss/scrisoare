@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="ro">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Test Auto - Valentine Edition</title>
+  <link rel="stylesheet" href="css/driving-quiz.css" />
+</head>
+<body>
+  <div class="bg-overlay"></div>
+
+  <main class="quiz-card">
+    <p class="tag">TEST RUTIER</p>
+    <h1>Set de intrebari</h1>
+    <p id="metaLine" class="meta-line"></p>
+
+    <div id="quizPanel">
+      <p id="progressText" class="progress-text"></p>
+      <h2 id="questionText" class="question-text"></h2>
+      <div id="optionsWrap" class="options-wrap"></div>
+      <p id="feedbackText" class="feedback-text"></p>
+      <button id="nextBtn" class="next-btn" type="button" disabled>Urmatoarea</button>
+    </div>
+
+    <div id="resultPanel" class="result-panel hidden">
+      <h2 id="resultTitle"></h2>
+      <p id="resultText"></p>
+      <button id="resultBtn" class="result-btn" type="button"></button>
+    </div>
+  </main>
+
+  <script src="js/driving-quiz.js"></script>
+</body>
+</html>
