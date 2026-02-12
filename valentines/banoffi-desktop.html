@@ -1,0 +1,139 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Question</title>
+  <style>
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #fff;
+      color: #111;
+      overflow: hidden;
+      cursor: default;
+    }
+
+    .desktop-only {
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      text-align: center;
+      padding: 24px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2rem, 4vw, 3.4rem);
+      letter-spacing: 0.01em;
+    }
+
+    .sub {
+      margin: 0.75rem 0 2rem;
+      font-size: clamp(1rem, 1.8vw, 1.35rem);
+      color: #2a2a2a;
+    }
+
+    .yes-btn,
+    .no-btn {
+      position: fixed;
+      min-width: 110px;
+      min-height: 52px;
+      border: 0;
+      border-radius: 999px;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #fff;
+      cursor: pointer;
+      padding: 0 1rem;
+    }
+
+    .yes-btn {
+      left: calc(50% - 130px);
+      top: 62%;
+      background: #1e9d4a;
+    }
+
+    .no-btn {
+      left: calc(50% + 20px);
+      top: 62%;
+      background: #d84444;
+      transition: left 0.12s linear, top 0.12s linear;
+    }
+
+    .mobile-block {
+      display: none;
+      min-height: 100vh;
+      place-items: center;
+      text-align: center;
+      padding: 24px;
+      font-size: 1rem;
+    }
+
+    @media (hover: none), (pointer: coarse), (max-width: 900px) {
+      .desktop-only { display: none; }
+      .mobile-block { display: grid; }
+    }
+  </style>
+</head>
+<body>
+  <section class="desktop-only" aria-label="Desktop question">
+    <div>
+      <h1>Will you be my valentine?</h1>
+      <p class="sub">i dare you to say no</p>
+    </div>
+
+    <button id="yesBtn" class="yes-btn" type="button">YES</button>
+    <button id="noBtn" class="no-btn" type="button">NO</button>
+  </section>
+
+  <section class="mobile-block" aria-label="Mobile block">
+    <p>This one is desktop-only. Open it on desktop.</p>
+  </section>
+
+  <script>
+    const yesBtn = document.getElementById("yesBtn");
+    const noBtn = document.getElementById("noBtn");
+
+    yesBtn.addEventListener("click", () => {
+      window.location.href = "gateway.html";
+    });
+
+    function moveNoButtonAwayFrom(mouseX, mouseY) {
+      const rect = noBtn.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+      const dist = Math.hypot(centerX - mouseX, centerY - mouseY);
+
+      if (dist > 130) {
+        return;
+      }
+
+      const pad = 16;
+      const maxLeft = window.innerWidth - rect.width - pad;
+      const maxTop = window.innerHeight - rect.height - pad;
+
+      const nextLeft = Math.max(pad, Math.min(maxLeft, Math.floor(Math.random() * maxLeft)));
+      const nextTop = Math.max(pad, Math.min(maxTop, Math.floor(Math.random() * maxTop)));
+
+      noBtn.style.left = `${nextLeft}px`;
+      noBtn.style.top = `${nextTop}px`;
+    }
+
+    document.addEventListener("mousemove", (event) => {
+      moveNoButtonAwayFrom(event.clientX, event.clientY);
+    });
+
+    window.addEventListener("resize", () => {
+      const rect = noBtn.getBoundingClientRect();
+      if (rect.right > window.innerWidth || rect.bottom > window.innerHeight) {
+        noBtn.style.left = "60%";
+        noBtn.style.top = "62%";
+      }
+    });
+  </script>
+</body>
+</html>

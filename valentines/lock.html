@@ -95,7 +95,7 @@
     <div class="kitty" aria-hidden="true">=^.^= 🎀 =^.^=</div>
 
     <form id="lockForm" class="input-row" autocomplete="off">
-      <input id="passwordInput" type="password" placeholder="Password" required />
+      <input id="passwordInput" type="password" placeholder="Password" required autofocus />
       <button type="submit">Unlock</button>
     </form>
 
@@ -106,6 +106,16 @@
     const form = document.getElementById("lockForm");
     const input = document.getElementById("passwordInput");
 
+    function focusPassword() {
+      input.focus({ preventScroll: true });
+    }
+
+    window.addEventListener("load", () => {
+      setTimeout(focusPassword, 60);
+    });
+
+    document.addEventListener("touchstart", focusPassword, { once: true, passive: true });
+
     form.addEventListener("submit", (event) => {
       event.preventDefault();
       const value = input.value.trim();
@@ -115,7 +125,12 @@
         return;
       }
 
-      window.location.href = "rickroll.html";
+      if (value === "banoffi") {
+        window.location.href = "banoffi-desktop.html";
+        return;
+      }
+
+      window.location.href = "gateway.html";
     });
   </script>
 </body>
