@@ -1,4 +1,4 @@
-﻿const questions = [
+﻿const questionBank = [
   { id: 1, q: "Ce semnifica bratul ridicat vertical al politistului rutier?", options: ["Liber trecerea pentru vehiculele din fata politistului", "Atentie, oprire pentru toti participantii care se apropie (cu exceptia celor care nu pot opri in siguranta)", "Obligatie de a vira la dreapta"], answer: 1, exp: "Bratul ridicat vertical inseamna Atentie, oprire pentru participantii care se apropie, cu exceptia celor care nu mai pot opri in siguranta." },
   { id: 2, q: "Bratul sau bratele intinse orizontal ale politistului rutier indica oprirea pentru:", options: ["Participantii care circula din directia/directiile intersectate de bratul/bratele intinse", "Doar vehiculele care vin din spatele politistului", "Doar pietonii care traverseaza"], answer: 0, exp: "Semnalul cu bratul/bratele intinse orizontal inseamna Oprire pentru directiile intersectate de bratele intinse." },
   { id: 3, q: "Dupa ce politistul a facut semnalul cu bratele intinse orizontal si apoi le coboara, semnificatia devine:", options: ["Liber trecerea", "Tot Oprire pentru cei care vin din fata ori din spate", "Reduceti viteza"], answer: 1, exp: "Dupa semnalul de Oprire, politistul poate cobori bratele, iar pozitia ramane Oprire pentru cei din fata si din spate." },
@@ -99,7 +99,8 @@
   { id: 90, q: "Daca ai creat un obstacol pe drumul public si nu il poti evita, ai obligatia:", options: ["Sa il inlaturi sau sa il semnalizezi si sa anunti administratorul drumului si politia", "Sa pleci", "Sa astepti fara semnalizare"], answer: 0, exp: "Obstacolul trebuie inlaturat sau semnalizat si raportat autoritatilor competente." }
 ];
 
-const totalQuestions = questions.length;
+const totalQuestions = questionBank.length;
+const questions = shuffle([...questionBank]);
 
 const metaLine = document.getElementById("metaLine");
 const progressText = document.getElementById("progressText");
@@ -203,3 +204,15 @@ function finishQuiz() {
   resultBtn.textContent = "Continua";
   resultBtn.dataset.action = "continue";
 }
+
+
+function shuffle(arr) {
+  const clone = [...arr];
+  for (let i = clone.length - 1; i > 0; i -= 1) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [clone[i], clone[j]] = [clone[j], clone[i]];
+  }
+  return clone;
+}
+
+

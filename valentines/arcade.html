@@ -1,0 +1,129 @@
+﻿<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Kawaii Valentine Arcade</title>
+  <link rel="stylesheet" href="css/arcade.css" />
+</head>
+<body>
+  <div class="bg" aria-hidden="true"></div>
+  <main id="app" class="app" aria-live="polite"></main>
+
+  <template id="screen-main">
+    <section class="screen">
+      <p class="tag">KAWAII VALENTINE</p>
+      <h1 class="title" data-i18n="main_title">Be my Valentine?</h1>
+      <p class="subtitle" data-i18n="main_sub">90-Q exam, then 3 cute mini-games.</p>
+      <div class="row">
+        <button id="startBtn" class="btn" type="button" data-i18n="start">Start</button>
+        <button id="langBtn" class="btn ghost" type="button">RO / EN</button>
+        <button id="motionBtn" class="btn ghost" type="button">Motion</button>
+      </div>
+      <p id="resumeLine" class="meta"></p>
+    </section>
+  </template>
+
+  <template id="screen-quiz">
+    <section class="screen quiz">
+      <header class="quiz-top">
+        <p id="qProgress" class="meta"></p>
+        <div class="row compact">
+          <button id="skipBtn" class="btn ghost" type="button">Skip 🔐</button>
+          <button id="timerBtn" class="btn ghost" type="button">Timer: Off</button>
+        </div>
+      </header>
+
+      <article class="card">
+        <h2 id="qPrompt" class="prompt"></h2>
+        <div id="qChoices" class="choices" role="group" aria-label="Choices"></div>
+        <div class="row compact">
+          <button id="hintBtn" class="btn ghost" type="button">Hint</button>
+          <button id="nextBtn" class="btn" type="button" disabled>Next</button>
+        </div>
+        <p id="qFeedback" class="feedback"></p>
+        <p id="timerLine" class="meta"></p>
+      </article>
+
+      <aside id="skipPanel" class="panel hidden" aria-label="Skip panel">
+        <h3>Skip Lock</h3>
+        <p class="meta">Use checkpoint code to jump.</p>
+        <input id="skipCodeInput" class="input" placeholder="Code" autocomplete="off" />
+        <select id="skipTarget" class="input" aria-label="Skip target">
+          <option value="resume">resume</option>
+          <option value="nextCP">nextCP</option>
+          <option value="nextGame">nextGame</option>
+        </select>
+        <div class="row compact">
+          <button id="skipApplyBtn" class="btn" type="button">Apply</button>
+          <button id="skipCloseBtn" class="btn ghost" type="button">Close</button>
+        </div>
+        <p id="skipMsg" class="feedback"></p>
+      </aside>
+    </section>
+  </template>
+
+  <template id="screen-checkpoint">
+    <section class="screen">
+      <p class="tag">CHECKPOINT</p>
+      <h2 id="cpTitle"></h2>
+      <p id="cpCode" class="code"></p>
+      <div class="row">
+        <button id="copyCodeBtn" class="btn ghost" type="button">Copy</button>
+        <button id="cpNextBtn" class="btn" type="button">Continue</button>
+      </div>
+      <p id="cpMsg" class="meta"></p>
+    </section>
+  </template>
+
+  <template id="screen-results">
+    <section class="screen">
+      <p class="tag">RESULTS</p>
+      <h2 data-i18n="results_title">Quiz Complete</h2>
+      <p id="resultsLine"></p>
+      <div class="row">
+        <button id="toLock1Btn" class="btn" type="button">Unlock Game 1</button>
+        <button id="resetQuizBtn" class="btn ghost" type="button">Restart Quiz</button>
+      </div>
+    </section>
+  </template>
+
+  <template id="screen-lock">
+    <section class="screen lock" id="lockCard">
+      <p class="tag">LOCK</p>
+      <h2 id="lockTitle"></h2>
+      <p data-i18n="lock_help">Enter password to continue.</p>
+      <form id="lockForm" class="row" autocomplete="off">
+        <input id="lockInput" class="input" required placeholder="Password" />
+        <button class="btn" type="submit">Unlock</button>
+      </form>
+      <p id="lockMsg" class="feedback"></p>
+    </section>
+  </template>
+
+  <template id="screen-game">
+    <section class="screen game">
+      <p class="tag" id="gameTag"></p>
+      <h2 id="gameTitle"></h2>
+      <p id="gameMeta" class="meta"></p>
+      <div id="gameArea" class="card"></div>
+      <div class="row">
+        <button id="gameActionBtn" class="btn" type="button">Start</button>
+        <button id="gameExitBtn" class="btn ghost" type="button">Exit</button>
+      </div>
+      <p id="gameMsg" class="feedback"></p>
+    </section>
+  </template>
+
+  <template id="screen-credits">
+    <section class="screen">
+      <p class="tag">CREDITS</p>
+      <h2 data-i18n="credits_title">Thanks</h2>
+      <p data-i18n="credits_body">Original kawaii-style art and effects only. No copyrighted character imagery.</p>
+      <button id="backMainBtn" class="btn" type="button">Back to Main</button>
+    </section>
+  </template>
+
+  <script src="js/arcade.js"></script>
+</body>
+</html>
